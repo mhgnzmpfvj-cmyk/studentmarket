@@ -2,1149 +2,733 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>StudentMarket — маркетплейс учебных заданий</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<meta name="theme-color" content="#0a0a0f" />
+<title>StudentMarket</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f5f6fa; color: #1f2937; line-height: 1.5;
-  }
-  .header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 28px; background: #fff;
-    border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  }
-  .logo { font-weight: 800; font-size: 20px; color: #4a6cf7; cursor: pointer; }
-  nav { display: flex; gap: 20px; align-items: center; }
-  nav a { color: #4b5563; text-decoration: none; cursor: pointer; font-size: 15px; }
-  nav a:hover { color: #4a6cf7; }
-  .user-info { display: flex; gap: 12px; align-items: center; font-size: 14px; }
-  .user-info .name { color: #4b5563; }
-  .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
-  .card {
-    background: #fff; border-radius: 12px; padding: 20px 24px;
-    margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
-  .card h2 { font-size: 22px; margin-bottom: 16px; }
-  .card h3 { font-size: 17px; margin-bottom: 12px; color: #111827; }
-  h1 { font-size: 26px; margin-bottom: 20px; }
-  input, textarea, select {
-    width: 100%; padding: 11px 14px; border: 1px solid #d1d5db;
-    border-radius: 8px; margin-bottom: 12px; font-family: inherit;
-    font-size: 14px; background: #fff; transition: border 0.15s;
-  }
-  input:focus, textarea:focus, select:focus { outline: none; border-color: #4a6cf7; }
-  textarea { resize: vertical; min-height: 80px; }
-  label { display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px; font-weight: 500; }
-  button {
-    background: #4a6cf7; color: #fff; border: 0;
-    padding: 11px 20px; border-radius: 8px; cursor: pointer;
-    font-size: 14px; font-weight: 500; transition: background 0.15s;
-    font-family: inherit;
-  }
-  button:hover { background: #3b5bef; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  button.danger { background: #ef4444; }
-  button.danger:hover { background: #dc2626; }
-  button.primary { background: #10b981; }
-  button.primary:hover { background: #059669; }
-  button.secondary { background: #e5e7eb; color: #374151; }
-  button.secondary:hover { background: #d1d5db; }
-  button.small { padding: 7px 14px; font-size: 13px; }
-  .error {
-    background: #fee2e2; color: #991b1b; padding: 12px 16px;
-    border-radius: 8px; margin-bottom: 16px; font-size: 14px;
-  }
-  .success {
-    background: #d1fae5; color: #065f46; padding: 12px 16px;
-    border-radius: 8px; margin-bottom: 16px; font-size: 14px;
-  }
-  .hint { color: #6b7280; font-size: 13px; margin-top: 8px; }
-  .grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-  }
-  .order-card {
-    background: #fff; border-radius: 12px; padding: 18px 20px;
-    cursor: pointer; transition: all 0.15s; border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  }
-  .order-card:hover { border-color: #4a6cf7; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(74,108,247,0.12); }
-  .order-card .subject { color: #4a6cf7; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-  .order-card h3 { font-size: 16px; margin: 6px 0 8px; color: #111827; }
-  .order-card p { color: #6b7280; font-size: 13px; margin-bottom: 12px; }
-  .order-card .meta { display: flex; justify-content: space-between; align-items: center; }
-  .price { font-weight: 700; font-size: 18px; color: #059669; }
-  .status {
-    padding: 4px 10px; border-radius: 12px; font-size: 11px;
-    font-weight: 600; background: #eef2ff; color: #4a6cf7;
-    text-transform: uppercase; letter-spacing: 0.3px;
-  }
-  .status-paid_out { background: #d1fae5; color: #065f46; }
-  .status-disputed { background: #fee2e2; color: #991b1b; }
-  .status-cancelled, .status-refunded { background: #f3f4f6; color: #4b5563; }
-  .status-result_submitted { background: #fef3c7; color: #92400e; }
-  .status-in_progress { background: #dbeafe; color: #1e40af; }
-  .filters { display: flex; gap: 10px; margin-bottom: 20px; }
-  .filters input { margin: 0; }
-  .actions { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
-  .actions h3 { margin-bottom: 14px; }
-  .proposal {
-    padding: 14px 16px; background: #f9fafb;
-    border-radius: 10px; margin-bottom: 10px; border-left: 3px solid #4a6cf7;
-  }
-  .proposal b { color: #111827; }
-  .proposal .row-buttons { display: flex; gap: 8px; margin-top: 10px; }
-  .chat .messages {
-    max-height: 400px; overflow-y: auto; margin-bottom: 14px;
-    padding: 8px; background: #f9fafb; border-radius: 10px;
-  }
-  .msg {
-    padding: 10px 14px; background: #fff; border-radius: 10px;
-    margin-bottom: 8px; max-width: 75%; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  }
-  .msg.mine { background: #eef2ff; margin-left: auto; }
-  .msg .sender { font-size: 12px; font-weight: 600; color: #4a6cf7; margin-bottom: 4px; }
-  .msg p { font-size: 14px; margin: 4px 0; }
-  .msg small { color: #9ca3af; font-size: 11px; }
-  .chat-form { display: flex; gap: 10px; }
-  .chat-form input { margin: 0; }
-  .wallet-cards {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 16px; margin-bottom: 16px;
-  }
-  .wallet-cards .card { margin: 0; padding: 18px 20px; }
-  .wallet-cards small { color: #6b7280; font-size: 13px; display: block; margin-bottom: 6px; }
-  .wallet-cards h3 { font-size: 26px; color: #111827; }
-  .row { display: flex; gap: 10px; align-items: flex-start; }
-  .row input { margin: 0; flex: 1; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
-  th {
-    color: #6b7280; font-weight: 600; font-size: 12px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  tbody tr:hover { background: #f9fafb; }
-  .pos { color: #059669; font-weight: 600; }
-  .neg { color: #dc2626; font-weight: 600; }
-  .result pre {
-    background: #f3f4f6; padding: 14px; border-radius: 8px;
-    white-space: pre-wrap; font-size: 13px; margin-top: 8px;
-    font-family: ui-monospace, monospace;
-  }
-  .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; }
-  .tab {
-    padding: 10px 18px; cursor: pointer; border-bottom: 2px solid transparent;
-    color: #6b7280; font-size: 14px; font-weight: 500;
-  }
-  .tab.active { color: #4a6cf7; border-bottom-color: #4a6cf7; }
-  .center-page {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 80vh;
-  }
-  .auth-form { width: 100%; max-width: 420px; }
-  .auth-form h1 { text-align: center; color: #4a6cf7; margin-bottom: 24px; }
-  .auth-form h2 { text-align: center; margin-bottom: 20px; font-size: 20px; }
-  .auth-form .link { color: #4a6cf7; cursor: pointer; }
-  .auth-form .link:hover { text-decoration: underline; }
-  .demo-box {
-    background: #eff6ff; border: 1px solid #bfdbfe;
-    padding: 12px 14px; border-radius: 8px; font-size: 12px;
-    color: #1e40af; margin-top: 16px; line-height: 1.7;
-  }
-  .badge {
-    display: inline-block; padding: 2px 8px; border-radius: 10px;
-    font-size: 11px; font-weight: 600; background: #e5e7eb; color: #4b5563;
-    margin-left: 8px;
-  }
-  .badge.admin { background: #fef3c7; color: #92400e; }
-  .toast {
-    position: fixed; top: 20px; right: 20px; z-index: 1000;
-    background: #111827; color: #fff; padding: 14px 20px;
-    border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    font-size: 14px; animation: slideIn 0.25s ease;
-  }
-  .toast.error { background: #dc2626; }
-  .toast.success { background: #059669; }
-  @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-  .empty { text-align: center; padding: 40px; color: #9ca3af; }
-  .steps {
-    display: flex; gap: 0; margin-bottom: 20px; padding: 12px;
-    background: #f9fafb; border-radius: 10px;
-  }
-  .step {
-    flex: 1; text-align: center; font-size: 12px;
-    color: #9ca3af; padding: 6px; position: relative;
-  }
-  .step.done { color: #059669; font-weight: 600; }
-  .step.current { color: #4a6cf7; font-weight: 700; }
-  .step:not(:last-child)::after {
-    content: '→'; position: absolute; right: -8px; top: 6px; color: #d1d5db;
-  }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0a0a0f;--card:#16161f;--card2:#1e1e2a;--border:#26262f;--text:#ededf2;--text2:#8b8b98;--text3:#5c5c68;--accent:#ffd60a;--success:#22c55e;--danger:#ef4444;--info:#5b8cff}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;line-height:1.5;overflow-x:hidden}
+a{color:var(--info);cursor:pointer;text-decoration:none}
+input,textarea,select{width:100%;padding:14px 16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:inherit;font-size:15px;margin-bottom:10px;-webkit-appearance:none}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+textarea{resize:vertical;min-height:90px}
+label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.3px}
+button{background:var(--accent);color:#000;border:0;padding:14px 20px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;min-height:48px;transition:opacity .15s}
+button:active{opacity:.75}
+button:disabled{opacity:.35}
+button.secondary{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+button.danger{background:var(--danger);color:#fff}
+button.success{background:var(--success);color:#fff}
+button.small{padding:9px 14px;font-size:13px;min-height:38px;border-radius:10px}
+button.full{width:100%}
+.header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 16px}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.logo{font-weight:800;font-size:17px;letter-spacing:-.3px;cursor:pointer;white-space:nowrap}
+.logo span{color:var(--accent)}
+.user-chip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#ff8a00);color:#000;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+nav::-webkit-scrollbar{display:none}
+nav a{color:var(--text2);font-size:14px;font-weight:500;padding:8px 12px;border-radius:10px;white-space:nowrap}
+nav a.active{background:var(--card2);color:var(--text)}
+.container{max-width:720px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:16px}
+h2{font-size:20px;font-weight:700;margin-bottom:14px;letter-spacing:-.3px}
+h3{font-size:16px;font-weight:700;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.card-dark{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px}
+.error-box{background:rgba(239,68,68,.12);color:#fca5a5;padding:12px 14px;border-radius:10px;margin-bottom:12px;font-size:14px;border:1px solid rgba(239,68,68,.25)}
+.success-box{background:rgba(34,197,94,.12);color:#86efac;padding:12px 14px;border-radius:10px;margin-bottom:12px;font-size:14px;border:1px solid rgba(34,197,94,.25)}
+.warn-box{background:rgba(255,214,10,.08);color:#ffe94d;padding:12px 14px;border-radius:10px;margin-bottom:12px;font-size:13px;border:1px solid rgba(255,214,10,.2);line-height:1.5}
+.hint{color:var(--text2);font-size:13px;margin-top:6px;line-height:1.5}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:15px 16px;cursor:pointer;transition:border-color .15s,transform .1s}
+.order-card:active{border-color:var(--accent);transform:scale(.99)}
+.order-card .subject{color:var(--accent);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.order-card h3{font-size:15px;margin:6px 0;color:var(--text);font-weight:700}
+.order-card p{color:var(--text2);font-size:13px;margin-bottom:10px;line-height:1.5}
+.order-card .meta{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.price{font-weight:800;font-size:18px;color:var(--accent);white-space:nowrap;letter-spacing:-.3px}
+.status{padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(91,140,255,.15);color:var(--info);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.status-paid_out{background:rgba(34,197,94,.15);color:#86efac}
+.status-disputed{background:rgba(239,68,68,.15);color:#fca5a5}
+.status-cancelled,.status-refunded{background:rgba(139,139,152,.15);color:var(--text2)}
+.status-result_submitted{background:rgba(255,214,10,.15);color:#ffe94d}
+.status-in_progress{background:rgba(91,140,255,.18);color:#93b0ff}
+.status-pending{background:rgba(255,214,10,.15);color:#ffe94d}
+.status-approved,.status-completed{background:rgba(34,197,94,.15);color:#86efac}
+.status-rejected{background:rgba(239,68,68,.15);color:#fca5a5}
+.filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.filters::-webkit-scrollbar{display:none}
+.filters input{margin:0;flex:0 0 120px;padding:10px 12px;font-size:14px}
+.filters button{flex:0 0 auto;padding:10px 16px;min-height:40px;font-size:14px}
+.balance-hero{background:linear-gradient(135deg,#1e1e2a 0%,#16161f 100%);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:12px;position:relative;overflow:hidden}
+.balance-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,214,10,.15) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+.balance-label{color:var(--text2);font-size:13px;font-weight:500;margin-bottom:6px}
+.balance-amount{font-size:36px;font-weight:800;letter-spacing:-1px;color:var(--text)}
+.balance-amount span{color:var(--text2);font-size:24px;font-weight:600}
+.balance-sub{display:flex;gap:20px;margin-top:16px}
+.balance-sub-item{font-size:12px;color:var(--text2)}
+.balance-sub-item b{display:block;color:var(--text);font-size:15px;font-weight:700;margin-top:2px}
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.wallet-actions button{min-height:56px;font-size:15px}
+.tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--card2);padding:4px;border-radius:12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 0 auto;padding:10px 14px;text-align:center;cursor:pointer;border-radius:9px;color:var(--text2);font-size:13px;font-weight:600;white-space:nowrap}
+.tab.active{background:var(--card);color:var(--text)}
+.messages{max-height:380px;overflow-y:auto;margin-bottom:12px;padding:8px;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
+.msg{padding:10px 13px;background:var(--card2);border-radius:12px;margin-bottom:6px;max-width:85%}
+.msg.mine{background:rgba(255,214,10,.12);border:1px solid rgba(255,214,10,.2);margin-left:auto}
+.msg .sender{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:3px}
+.msg p{font-size:14px;margin:3px 0;word-break:break-word}
+.msg small{color:var(--text3);font-size:10px}
+.chat-form{display:flex;gap:8px}
+.chat-form input{margin:0}
+.steps{display:flex;margin-bottom:16px;padding:12px 8px;background:var(--card2);border-radius:12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.steps::-webkit-scrollbar{display:none}
+.step{flex:1 0 auto;text-align:center;font-size:10px;color:var(--text3);padding:3px 8px;position:relative;white-space:nowrap;min-width:76px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.step.done{color:var(--success)}
+.step.current{color:var(--accent)}
+.step:not(:last-child)::after{content:'';position:absolute;right:-3px;top:50%;width:6px;height:1px;background:var(--border)}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:460px}
+th,td{padding:10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+th{color:var(--text2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.pos{color:var(--success);font-weight:700}
+.neg{color:var(--danger);font-weight:700}
+.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.auth-card{width:100%;max-width:380px}
+.auth-logo{text-align:center;font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.auth-logo span{color:var(--accent)}
+.auth-sub{text-align:center;color:var(--text2);font-size:14px;margin-bottom:28px}
+.toast{position:fixed;top:16px;left:16px;right:16px;z-index:1000;background:var(--card);color:var(--text);padding:14px 18px;border-radius:12px;border:1px solid var(--border);box-shadow:0 20px 40px rgba(0,0,0,.5);font-size:14px;font-weight:500;animation:slideDown .2s ease}
+@media(min-width:480px){.toast{left:auto;right:20px;max-width:360px}}
+.toast.error{border-color:rgba(239,68,68,.4);color:#fca5a5}
+.toast.success{border-color:rgba(34,197,94,.4);color:#86efac}
+@keyframes slideDown{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.4}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;background:var(--card2);color:var(--text2);letter-spacing:.3px}
+.badge.admin{background:var(--accent);color:#000}
+.admin-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
+.stat-card small{color:var(--text2);font-size:12px;display:block;margin-bottom:6px;font-weight:500}
+.stat-card .value{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.proposal{padding:13px 15px;background:var(--card2);border-radius:12px;margin-bottom:10px;border-left:3px solid var(--accent)}
+.proposal b{color:var(--text)}
+.row-buttons{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.result pre{background:var(--bg);padding:14px;border-radius:10px;white-space:pre-wrap;font-size:13px;margin-top:8px;font-family:ui-monospace,"SF Mono",monospace;word-break:break-word;color:var(--text);border:1px solid var(--border)}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.pay-card-box{background:linear-gradient(135deg,#2a2a3a 0%,#1a1a24 100%);border-radius:16px;padding:20px;margin-bottom:14px;border:1px solid var(--border);position:relative;overflow:hidden}
+.pay-card-box::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(255,214,10,.12) 0%,transparent 70%);border-radius:50%}
+.pay-card-num{font-family:ui-monospace,"SF Mono",monospace;font-size:18px;font-weight:700;letter-spacing:2px;color:var(--text);margin-bottom:12px;word-break:break-all;line-height:1.4}
+.pay-card-label{color:var(--text2);font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:8px}
+.copy-btn{background:var(--accent);color:#000;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:0;display:inline-flex;align-items:center;gap:5px;min-height:auto}
+@media(max-width:480px){.balance-amount{font-size:32px}h1{font-size:22px}.container{padding:12px 12px 40px}}
 </style>
 </head>
 <body>
 <div id="app"></div>
-
 <script>
-// ============= ХРАНИЛИЩЕ =============
-const DB_KEY = 'studentmarket_db_v1';
-
-function loadDB() {
-  const raw = localStorage.getItem(DB_KEY);
-  if (raw) return JSON.parse(raw);
-  return initDB();
-}
-
-function saveDB(db) {
-  localStorage.setItem(DB_KEY, JSON.stringify(db));
-}
-
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
-}
-
-function initDB() {
-  const db = {
-    users: [],
-    orders: [],
-    proposals: [],
-    transactions: [],
-    messages: [],
-    disputes: [],
-    withdrawals: [],
-    revenues: [],
-    session: null,
-  };
-  // Демо-пользователи
-  db.users.push(
-    { id: uid(), email: 'customer@example.com', password: 'password123', fullName: 'Иван Заказчик', role: 'customer', balance: 1000, heldBalance: 0, totalEarned: 0, blocked: false, createdAt: Date.now() },
-    { id: uid(), email: 'executor@example.com', password: 'password123', fullName: 'Пётр Исполнитель', role: 'executor', balance: 500, heldBalance: 0, totalEarned: 0, blocked: false, createdAt: Date.now() },
-    { id: uid(), email: 'admin@example.com', password: 'password123', fullName: 'Администратор', role: 'admin', balance: 0, heldBalance: 0, totalEarned: 0, blocked: false, createdAt: Date.now() },
-  );
-  // Демо-заявка
-  const demoCustomer = db.users[0];
-  const orderId = uid();
-  db.orders.push({
-    id: orderId,
-    customerId: demoCustomer.id,
-    executorId: null,
-    title: 'Решить контрольную по математике',
-    description: 'Нужно решить 10 задач из контрольной работы по линейной алгебре. Дедлайн — до конца недели. Ответы в виде фото с решениями или LaTeX.',
-    subject: 'Математика',
-    price: 300,
-    commissionRate: 0.10,
-    status: 'paid',
-    resultText: null,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  });
-  demoCustomer.balance -= 300;
-  demoCustomer.heldBalance += 300;
-  db.transactions.push({
-    id: uid(), userId: demoCustomer.id, orderId,
-    type: 'hold', amount: -300, balanceAfter: demoCustomer.balance,
-    idempotencyKey: 'hold-' + orderId, createdAt: Date.now(),
-  });
-  saveDB(db);
+const DB_KEY='sm_db_v2';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function defaultDB(){
+  const db={users:[],orders:[],proposals:[],transactions:[],messages:[],disputes:[],deposits:[],withdrawals:[],revenues:[],
+    settings:{cardNumber:'',cardHolder:'',bankName:'',commissionRate:.10,minWithdraw:300,minDeposit:100},session:null};
+  const p='password123';
+  const c={id:uid(),email:'customer@example.com',password:p,fullName:'Иван Заказчик',role:'customer',balance:1000,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
+  const e={id:uid(),email:'executor@example.com',password:p,fullName:'Пётр Исполнитель',role:'executor',balance:500,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
+  const a={id:uid(),email:'admin@example.com',password:p,fullName:'Администратор',role:'admin',balance:0,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
+  db.users=[c,e,a];
+  const oid=uid();
+  db.orders.push({id:oid,customerId:c.id,executorId:null,title:'Решить контрольную по математике',description:'Нужно решить 10 задач по линейной алгебре. Дедлайн — до конца недели. Ответы — фото решения.',subject:'Математика',price:300,commissionRate:.10,status:'paid',resultText:null,createdAt:Date.now(),updatedAt:Date.now()});
+  c.balance-=300;c.heldBalance+=300;
+  db.transactions.push({id:uid(),userId:c.id,orderId:oid,type:'hold',amount:-300,balanceAfter:c.balance,idempotencyKey:'hold-'+oid,createdAt:Date.now()});
   return db;
 }
-
-let db = loadDB();
-
-// ============= УТИЛИТЫ =============
-function currentUser() {
-  if (!db.session) return null;
-  return db.users.find(u => u.id === db.session) || null;
+let db;
+function loadDB(){
+  try{const r=localStorage.getItem(DB_KEY);if(r){const d=JSON.parse(r);
+    if(!d.deposits)d.deposits=[];if(!d.withdrawals)d.withdrawals=[];
+    if(!d.settings)d.settings={cardNumber:'',cardHolder:'',bankName:'',commissionRate:.10,minWithdraw:300,minDeposit:100};
+    return d}}catch{}
+  return defaultDB();
 }
-
-function setSession(userId) {
-  db.session = userId;
-  saveDB(db);
+const saveDB=()=>localStorage.setItem(DB_KEY,JSON.stringify(db));
+db=loadDB();saveDB();
+const cu=()=>db.session?db.users.find(u=>u.id===db.session):null;
+const findBy=(a,id)=>a.find(x=>x.id===id);
+const money=n=>Number(n).toFixed(2)+' ₽';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dt=ts=>new Date(ts).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+const initials=n=>(n||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const STATUS={paid:'Оплачена',in_progress:'В работе',result_submitted:'Результат отправлен',paid_out:'Выплачено',cancelled:'Отменена',refunded:'Возврат',disputed:'Спор'};
+function toast(m,t=''){const e=document.createElement('div');e.className='toast '+t;e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2800)}
+function copyText(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('Скопировано','success')).catch(()=>fb(t))}else fb(t);
 }
-
-function logout() {
-  db.session = null;
-  saveDB(db);
-  render();
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Скопировано','success')}catch{toast('Не удалось','error')}a.remove()}
+function holdFunds(uid,oid,amt){
+  const k='hold-'+oid;if(db.transactions.find(t=>t.idempotencyKey===k))return{ok:true};
+  const u=findBy(db.users,uid);if(!u)return{ok:false,error:'Пользователь не найден'};
+  if(u.balance<amt)return{ok:false,error:'Недостаточно средств'};
+  u.balance-=amt;u.heldBalance+=amt;
+  db.transactions.push({id:uid(),userId:uid,orderId:oid,type:'hold',amount:-amt,balanceAfter:u.balance,idempotencyKey:k,createdAt:Date.now()});
+  return{ok:true};
 }
-
-function toast(msg, type = '') {
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2800);
+function releaseToExecutor(oid){
+  const o=findBy(db.orders,oid);if(!o||!o.executorId)return{ok:false,error:'Нет исполнителя'};
+  const c=findBy(db.users,o.customerId),e=findBy(db.users,o.executorId);
+  const pay=+(o.price*(1-o.commissionRate)).toFixed(2),com=+(o.price*o.commissionRate).toFixed(2);
+  c.heldBalance-=o.price;e.balance+=pay;e.totalEarned+=pay;
+  db.transactions.push({id:uid(),userId:e.id,orderId:oid,type:'payout',amount:pay,balanceAfter:e.balance,createdAt:Date.now()});
+  db.transactions.push({id:uid(),userId:c.id,orderId:oid,type:'commission',amount:-com,balanceAfter:c.balance,createdAt:Date.now()});
+  db.revenues.push({id:uid(),orderId:oid,amount:com,createdAt:Date.now()});
+  return{ok:true};
 }
-
-function fmtMoney(n) {
-  return Number(n).toFixed(2) + ' ₽';
+function refundCustomer(oid){
+  const o=findBy(db.orders,oid);if(!o)return{ok:false};
+  const u=findBy(db.users,o.customerId);u.balance+=o.price;u.heldBalance-=o.price;
+  db.transactions.push({id:uid(),userId:u.id,orderId:oid,type:'refund',amount:o.price,balanceAfter:u.balance,createdAt:Date.now()});
+  return{ok:true};
 }
+let route={name:'home',params:{}};
+function nav(n,p={}){route={name:n,params:p};render();window.scrollTo(0,0)}
+window.nav=nav;
 
-function fmtDate(ts) {
-  return new Date(ts).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
-const STATUS_LABELS = {
-  paid: 'Оплачена',
-  in_progress: 'В работе',
-  result_submitted: 'Результат отправлен',
-  paid_out: 'Выплачено',
-  cancelled: 'Отменена',
-  refunded: 'Возврат',
-  disputed: 'Спор',
-};
-
-// ============= ФИНАНСЫ =============
-function holdFunds(customerId, orderId, amount) {
-  const idempotencyKey = 'hold-' + orderId;
-  if (db.transactions.find(t => t.idempotencyKey === idempotencyKey)) return { ok: true };
-  const user = db.users.find(u => u.id === customerId);
-  if (!user) return { ok: false, error: 'Пользователь не найден' };
-  if (user.balance < amount) return { ok: false, error: 'Недостаточно средств' };
-  user.balance -= amount;
-  user.heldBalance += amount;
-  db.transactions.push({
-    id: uid(), userId: customerId, orderId,
-    type: 'hold', amount: -amount, balanceAfter: user.balance,
-    idempotencyKey, createdAt: Date.now(),
-  });
-  return { ok: true };
-}
-
-function releaseToExecutor(orderId) {
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order || !order.executorId) return { ok: false, error: 'Нет исполнителя' };
-  const customer = db.users.find(u => u.id === order.customerId);
-  const executor = db.users.find(u => u.id === order.executorId);
-  const payout = +(order.price * (1 - order.commissionRate)).toFixed(2);
-  const commission = +(order.price * order.commissionRate).toFixed(2);
-  customer.heldBalance -= order.price;
-  executor.balance += payout;
-  executor.totalEarned += payout;
-  db.transactions.push({
-    id: uid(), userId: executor.id, orderId,
-    type: 'payout', amount: payout, balanceAfter: executor.balance,
-    createdAt: Date.now(),
-  });
-  db.transactions.push({
-    id: uid(), userId: customer.id, orderId,
-    type: 'commission', amount: -commission, balanceAfter: customer.balance,
-    createdAt: Date.now(),
-  });
-  db.revenues.push({ id: uid(), orderId, amount: commission, createdAt: Date.now() });
-  return { ok: true };
-}
-
-function refundCustomer(orderId) {
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order) return { ok: false, error: 'Заказ не найден' };
-  const customer = db.users.find(u => u.id === order.customerId);
-  customer.balance += order.price;
-  customer.heldBalance -= order.price;
-  db.transactions.push({
-    id: uid(), userId: customer.id, orderId,
-    type: 'refund', amount: order.price, balanceAfter: customer.balance,
-    createdAt: Date.now(),
-  });
-  return { ok: true };
-}
-
-// ============= РОУТЕР =============
-let route = { name: 'home', params: {} };
-
-function navigate(name, params = {}) {
-  route = { name, params };
-  render();
-  window.scrollTo(0, 0);
-}
-
-// ============= СТРАНИЦЫ =============
-function PageLogin() {
-  return `
-    <div class="center-page">
-      <form class="card auth-form" onsubmit="handleLogin(event)">
-        <h1>StudentMarket</h1>
-        <h2>Вход</h2>
-        <div id="login-error"></div>
-        <input name="email" type="email" placeholder="Email" value="customer@example.com" required />
-        <input name="password" type="password" placeholder="Пароль" value="password123" required />
-        <button type="submit" style="width:100%">Войти</button>
-        <p class="hint" style="text-align:center;margin-top:14px">
-          Нет аккаунта? <span class="link" onclick="navigate('register')">Зарегистрироваться</span>
-        </p>
-        <div class="demo-box">
-          <b>Демо-аккаунты (пароль password123):</b><br>
-          👤 customer@example.com — заказчик (1000 ₽)<br>
-          🛠 executor@example.com — исполнитель<br>
-          ⚙️ admin@example.com — администратор
-        </div>
-      </form>
+// ---------- PAGES ----------
+function pageLogin(){return`<div class="auth-wrap"><div class="auth-card">
+  <div class="auth-logo">Student<span>Market</span></div>
+  <div class="auth-sub">Безопасные сделки для учебных заданий</div>
+  <div class="card"><h2>Войти</h2><div id="auth-error"></div>
+    <form onsubmit="handleLogin(event)">
+      <input name="email" type="email" placeholder="Email" value="customer@example.com" required />
+      <input name="password" type="password" placeholder="Пароль" value="password123" required />
+      <button class="full" type="submit">Войти</button>
+    </form>
+    <p class="hint" style="text-align:center;margin-top:14px">Нет аккаунта? <a onclick="nav('register')">Зарегистрироваться</a></p>
+  </div>
+  <div class="card" style="background:var(--card2)">
+    <div style="font-size:12px;color:var(--text2);line-height:1.7">
+      <b style="color:var(--text)">Демо-аккаунты</b> (пароль password123):<br>
+      👤 customer@example.com — заказчик<br>
+      🛠 executor@example.com — исполнитель<br>
+      ⚙️ admin@example.com — администратор
     </div>
-  `;
-}
+  </div>
+</div></div>`}
 
-function PageRegister() {
-  return `
-    <div class="center-page">
-      <form class="card auth-form" onsubmit="handleRegister(event)">
-        <h1>StudentMarket</h1>
-        <h2>Регистрация</h2>
-        <div id="register-error"></div>
-        <input name="fullName" placeholder="Имя и фамилия" required />
-        <input name="email" type="email" placeholder="Email" required />
-        <input name="password" type="password" placeholder="Пароль (минимум 6 символов)" minlength="6" required />
-        <select name="role">
-          <option value="customer">Я заказчик — хочу заказывать работы</option>
-          <option value="executor">Я исполнитель — хочу выполнять работы</option>
-        </select>
-        <button type="submit" style="width:100%">Создать аккаунт</button>
-        <p class="hint" style="text-align:center;margin-top:14px">
-          Уже есть аккаунт? <span class="link" onclick="navigate('login')">Войти</span>
-        </p>
-      </form>
-    </div>
-  `;
-}
+function pageRegister(){return`<div class="auth-wrap"><div class="auth-card">
+  <div class="auth-logo">Student<span>Market</span></div>
+  <div class="auth-sub">Создайте аккаунт за минуту</div>
+  <div class="card"><h2>Регистрация</h2><div id="auth-error"></div>
+    <form onsubmit="handleRegister(event)">
+      <input name="fullName" placeholder="Имя и фамилия" required />
+      <input name="email" type="email" placeholder="Email" required />
+      <input name="password" type="password" placeholder="Пароль (мин. 6 символов)" minlength="6" required />
+      <label>Роль</label>
+      <select name="role">
+        <option value="customer">Заказчик — размещаю задания</option>
+        <option value="executor">Исполнитель — выполняю задания</option>
+      </select>
+      <button class="full" type="submit">Создать аккаунт</button>
+    </form>
+    <p class="hint" style="text-align:center;margin-top:14px">Уже есть аккаунт? <a onclick="nav('login')">Войти</a></p>
+  </div>
+</div></div>`}
 
-function PageHome() {
-  const user = currentUser();
-  const orders = db.orders.filter(o => o.status === 'paid').sort((a, b) => b.createdAt - a.createdAt);
-  return `
-    <h1>Доступные заявки</h1>
+function pageHome(){
+  const list=db.orders.filter(o=>o.status==='paid').sort((a,b)=>b.createdAt-a.createdAt);
+  return`<h1>Заявки</h1>
     <div class="filters">
-      <input id="f-subject" placeholder="Предмет" style="flex:1" />
-      <input id="f-min" type="number" placeholder="Мин. цена" style="max-width:140px" />
-      <input id="f-max" type="number" placeholder="Макс. цена" style="max-width:140px" />
-      <button onclick="applyFilter()">Найти</button>
+      <input id="f-subj" placeholder="Предмет" />
+      <input id="f-min" type="number" placeholder="Мин ₽" />
+      <input id="f-max" type="number" placeholder="Макс ₽" />
+      <button class="small" onclick="applyFilter()">Найти</button>
     </div>
-    <div id="orders-list">${renderOrdersGrid(orders)}</div>
-  `;
+    <div id="orders-list">${renderOrderGrid(list)}</div>`;
 }
-
-function renderOrdersGrid(orders) {
-  if (orders.length === 0) return '<div class="empty">Заявок пока нет</div>';
-  return `<div class="grid">${orders.map(o => {
-    const customer = db.users.find(u => u.id === o.customerId);
-    return `
-      <div class="order-card" onclick="navigate('order', {id:'${o.id}'})">
-        <div class="subject">${escapeHtml(o.subject)}</div>
-        <h3>${escapeHtml(o.title)}</h3>
-        <p>${escapeHtml(o.description.slice(0, 110))}${o.description.length > 110 ? '...' : ''}</p>
-        <div class="meta">
-          <span class="price">${fmtMoney(o.price)}</span>
-          <span class="status status-${o.status}">${STATUS_LABELS[o.status] || o.status}</span>
-        </div>
-        <div class="hint" style="margin-top:8px">Автор: ${escapeHtml(customer?.fullName || '—')}</div>
-      </div>`;
+function renderOrderGrid(list){
+  if(!list.length)return`<div class="empty"><div class="empty-icon">📭</div>Пока нет доступных заявок</div>`;
+  return`<div class="grid">${list.map(o=>{
+    const c=findBy(db.users,o.customerId);
+    return`<div class="order-card" onclick="nav('order',{id:'${o.id}'})">
+      <div class="subject">${esc(o.subject)}</div>
+      <h3>${esc(o.title)}</h3>
+      <p>${esc(o.description.slice(0,120))}${o.description.length>120?'…':''}</p>
+      <div class="meta"><span class="price">${money(o.price)}</span><span class="status status-${o.status}">${STATUS[o.status]}</span></div>
+      <div class="hint" style="margin-top:8px">Автор: ${esc(c?.fullName||'—')}</div>
+    </div>`;
   }).join('')}</div>`;
 }
 
-function PageCreateOrder() {
-  const user = currentUser();
-  if (!user) return '<p>Требуется вход</p>';
-  if (user.role === 'executor') return '<div class="card"><h2>Только для заказчиков</h2><p class="hint">Войдите как заказчик, чтобы создать заявку.</p></div>';
-  return `
-    <div class="card">
-      <h2>Создать заявку</h2>
-      <div id="create-error"></div>
-      <form onsubmit="handleCreateOrder(event)">
-        <label>Заголовок</label>
-        <input name="title" placeholder="Например: Решить контрольную по математике" required minlength="3" />
-        <label>Предмет</label>
-        <input name="subject" placeholder="Математика, физика, программирование..." required minlength="2" />
-        <label>Описание задания</label>
-        <textarea name="description" rows="6" placeholder="Подробно опишите задание, требования, дедлайн, формат сдачи" required minlength="10"></textarea>
-        <label>Оплата, ₽</label>
-        <input name="price" type="number" min="10" step="10" value="300" required />
-        <p class="hint">Доступный баланс: <b>${fmtMoney(user.balance)}</b>. При создании сумма будет заморожена в эскроу до подтверждения.</p>
-        <p class="hint">Комиссия платформы — 10%, исполнитель получит ${'90%'} от суммы.</p>
-        <button type="submit" style="margin-top:12px">Создать и оплатить</button>
-      </form>
-    </div>
-  `;
+function pageCreate(){
+  const u=cu();if(!u)return pageLogin();
+  if(u.role==='executor')return`<div class="card"><h2>Только для заказчиков</h2><p class="hint">Войдите как заказчик, чтобы создать задание.</p></div>`;
+  return`<div class="card"><h2>Новое задание</h2><div id="create-error"></div>
+    <form onsubmit="handleCreate(event)">
+      <label>Заголовок</label><input name="title" placeholder="Например: Контрольная по алгебре" required minlength="3" />
+      <label>Предмет</label><input name="subject" placeholder="Математика" required minlength="2" />
+      <label>Описание</label><textarea name="description" rows="5" placeholder="Что именно нужно сделать, требования, дедлайн" required minlength="10"></textarea>
+      <label>Оплата, ₽</label><input name="price" type="number" min="10" step="10" value="300" required />
+      <div class="card-dark" style="margin-bottom:12px"><div style="font-size:13px;color:var(--text2);line-height:1.7">
+        Доступно: <b style="color:var(--text)">${money(u.balance)}</b><br>
+        При создании сумма замораживается в эскроу до вашего подтверждения.<br>
+        Комиссия платформы: <b style="color:var(--accent)">${(db.settings.commissionRate*100).toFixed(0)}%</b>
+      </div></div>
+      <button class="full" type="submit">Создать и оплатить</button>
+    </form>
+  </div>`;
 }
 
-function PageOrder(params) {
-  const order = db.orders.find(o => o.id === params.id);
-  if (!order) return '<div class="card"><h2>Заявка не найдена</h2></div>';
-  const user = currentUser();
-  const customer = db.users.find(u => u.id === order.customerId);
-  const executor = order.executorId ? db.users.find(u => u.id === order.executorId) : null;
-  const proposals = db.proposals.filter(p => p.orderId === order.id);
-  const isCustomer = user && user.id === order.customerId;
-  const isExecutor = user && user.id === order.executorId;
-  const isAdmin = user && user.role === 'admin';
-  const myProposal = user ? proposals.find(p => p.executorId === user.id) : null;
-  const canChat = user && (isCustomer || isExecutor || isAdmin);
-
-  const steps = ['paid', 'in_progress', 'result_submitted', 'paid_out'];
-  const currentStepIdx = steps.indexOf(order.status);
-
-  return `
-    <div class="card">
-      <div class="subject" style="color:#4a6cf7;font-size:12px;font-weight:700;text-transform:uppercase">${escapeHtml(order.subject)}</div>
-      <h2 style="margin-top:6px">${escapeHtml(order.title)}</h2>
-      <p style="color:#4b5563;margin:14px 0">${escapeHtml(order.description)}</p>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
-        <span class="price" style="font-size:24px">${fmtMoney(order.price)}</span>
-        <span class="status status-${order.status}">${STATUS_LABELS[order.status] || order.status}</span>
-      </div>
-      <div class="hint" style="margin-top:10px">
-        Заказчик: <b>${escapeHtml(customer?.fullName || '—')}</b>
-        ${executor ? ' · Исполнитель: <b>' + escapeHtml(executor.fullName) + '</b>' : ''}
-      </div>
-
-      ${currentStepIdx >= 0 ? `
-        <div class="steps" style="margin-top:20px">
-          ${steps.map((s, i) => `
-            <div class="step ${i < currentStepIdx ? 'done' : i === currentStepIdx ? 'current' : ''}">
-              ${STATUS_LABELS[s]}
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
-
-      <div id="order-error"></div>
-
-      ${order.status === 'paid' && user && !isCustomer && !myProposal && user.role !== 'admin' && user.role !== 'customer' ? `
-        <div class="actions">
-          <h3>Откликнуться на заявку</h3>
-          <textarea id="proposal-msg" placeholder="Сообщите заказчику, почему вы подходите. Укажите сроки и детали." rows="4"></textarea>
-          <label>Ваша цена, ₽</label>
-          <input id="proposal-price" type="number" value="${order.price}" min="10" step="10" />
-          <button onclick="handleProposal('${order.id}')">Отправить отклик</button>
-        </div>
-      ` : ''}
-
-      ${isCustomer && order.status === 'paid' && proposals.length > 0 ? `
-        <div class="actions">
-          <h3>Отклики исполнителей (${proposals.length})</h3>
-          ${proposals.map(p => {
-            const ex = db.users.find(u => u.id === p.executorId);
-            return `
-              <div class="proposal">
-                <b>${escapeHtml(ex?.fullName || 'Аноним')}</b> — предлагает за <b>${fmtMoney(p.price)}</b>
-                <p style="margin-top:6px;color:#4b5563">${escapeHtml(p.message)}</p>
-                <div class="row-buttons">
-                  <button class="small primary" onclick="handleSelectExecutor('${order.id}', '${p.executorId}')">Выбрать исполнителем</button>
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      ` : ''}
-
-      ${isExecutor && order.status === 'in_progress' ? `
-        <div class="actions">
-          <h3>Отправить результат</h3>
-          <textarea id="result-text" rows="6" placeholder="Опишите результат или вставьте ссылку/текст решения"></textarea>
-          <button class="primary" onclick="handleSubmitResult('${order.id}')">Отправить результат</button>
-        </div>
-      ` : ''}
-
-      ${order.resultText ? `
-        <div class="actions">
-          <h3>Результат от исполнителя</h3>
-          <div class="result"><pre>${escapeHtml(order.resultText)}</pre></div>
-        </div>
-      ` : ''}
-
-      ${isCustomer && order.status === 'result_submitted' ? `
-        <div class="actions">
-          <h3>Подтверждение</h3>
-          <p class="hint" style="margin-bottom:12px">Проверьте работу. После подтверждения ${fmtMoney(order.price * (1 - order.commissionRate))} уйдёт исполнителю, а комиссия ${fmtMoney(order.price * order.commissionRate)} — платформе. Действие необратимо.</p>
-          <button class="primary" onclick="handleConfirm('${order.id}')">Подтвердить и выплатить</button>
-        </div>
-      ` : ''}
-
-      ${isCustomer && order.status === 'paid' ? `
-        <div class="actions">
-          <button class="danger" onclick="handleCancel('${order.id}')">Отменить и вернуть средства</button>
-        </div>
-      ` : ''}
-
-      ${user && (isCustomer || isExecutor) && ['in_progress', 'result_submitted'].includes(order.status) ? `
-        <div class="actions">
-          <h3>Открыть спор</h3>
-          <p class="hint" style="margin-bottom:10px">Если что-то пошло не так, откройте спор — администратор рассмотрит ситуацию.</p>
-          <textarea id="dispute-reason" rows="3" placeholder="Опишите проблему"></textarea>
-          <button class="danger" onclick="handleDispute('${order.id}')">Открыть спор</button>
-        </div>
-      ` : ''}
-
-      ${order.status === 'paid_out' && isExecutor ? `
-        <div class="actions">
-          <div class="success">✓ Заказ выполнен. Вы получили ${fmtMoney(order.price * (1 - order.commissionRate))} на баланс.</div>
-        </div>
-      ` : ''}
+function pageOrder({id}){
+  const o=findBy(db.orders,id);if(!o)return`<div class="card"><h2>Заявка не найдена</h2></div>`;
+  const u=cu();
+  const cust=findBy(db.users,o.customerId),exec=o.executorId?findBy(db.users,o.executorId):null;
+  const props=db.proposals.filter(p=>p.orderId===o.id);
+  const isC=u&&u.id===o.customerId,isE=u&&u.id===o.executorId,isA=u&&u.role==='admin';
+  const myP=u?props.find(p=>p.executorId===u.id):null;
+  const canChat=u&&(isC||isE||isA);
+  const steps=['paid','in_progress','result_submitted','paid_out'];
+  const idx=steps.indexOf(o.status);
+  return`<div class="card">
+    <div style="color:var(--accent);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">${esc(o.subject)}</div>
+    <h2 style="margin-top:6px">${esc(o.title)}</h2>
+    <p style="color:var(--text2);margin:14px 0;line-height:1.6">${esc(o.description)}</p>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px">
+      <span class="price" style="font-size:26px">${money(o.price)}</span>
+      <span class="status status-${o.status}">${STATUS[o.status]}</span>
     </div>
-
-    ${canChat ? `
-      <div class="card chat">
-        <h3>Чат заказа</h3>
-        <div class="messages" id="chat-messages">${renderMessages(order.id, user.id)}</div>
-        <form class="chat-form" onsubmit="handleSendMessage(event, '${order.id}')">
-          <input id="chat-input" placeholder="Написать сообщение..." autocomplete="off" />
-          <button type="submit">Отправить</button>
-        </form>
-      </div>
-    ` : ''}
-  `;
+    <div class="hint" style="margin-top:10px">Заказчик: <b style="color:var(--text)">${esc(cust?.fullName||'—')}</b>${exec?` · Исполнитель: <b style="color:var(--text)">${esc(exec.fullName)}</b>`:''}</div>
+    ${idx>=0?`<div class="steps">${steps.map((s,i)=>`<div class="step ${i<idx?'done':i===idx?'current':''}">${STATUS[s]}</div>`).join('')}</div>`:''}
+    <div id="order-error"></div>
+    ${o.status==='paid'&&u&&!isC&&!myP&&u.role!=='admin'&&u.role!=='customer'?`
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+        <h3>Откликнуться</h3>
+        <textarea id="p-msg" rows="3" placeholder="Почему вы подходите, сроки, детали"></textarea>
+        <label>Ваша цена, ₽</label>
+        <input id="p-price" type="number" value="${o.price}" min="10" step="10" />
+        <button class="full" onclick="handleProposal('${o.id}')">Отправить отклик</button>
+      </div>`:''}
+    ${isC&&o.status==='paid'&&props.length?`
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+        <h3>Отклики (${props.length})</h3>
+        ${props.map(p=>{const e=findBy(db.users,p.executorId);return`<div class="proposal">
+          <b>${esc(e?.fullName||'Аноним')}</b> — <b style="color:var(--accent)">${money(p.price)}</b>
+          <p style="margin-top:6px;color:var(--text2);font-size:13px">${esc(p.message)}</p>
+          <div class="row-buttons"><button class="small" onclick="handleSelectExec('${o.id}','${p.executorId}')">Выбрать исполнителем</button></div>
+        </div>`}).join('')}
+      </div>`:''}
+    ${isE&&o.status==='in_progress'?`
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+        <h3>Отправить результат</h3>
+        <textarea id="result-text" rows="5" placeholder="Опишите решение или вставьте текст/ссылку"></textarea>
+        <button class="full" onclick="handleSubmitResult('${o.id}')">Отправить результат</button>
+      </div>`:''}
+    ${o.resultText?`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)"><h3>Результат</h3><div class="result"><pre>${esc(o.resultText)}</pre></div></div>`:''}
+    ${isC&&o.status==='result_submitted'?`
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+        <p class="hint" style="margin-bottom:12px">После подтверждения <b style="color:var(--success)">${money(o.price*(1-o.commissionRate))}</b> уйдёт исполнителю, комиссия <b style="color:var(--accent)">${money(o.price*o.commissionRate)}</b> — платформе.</p>
+        <button class="full success" onclick="handleConfirm('${o.id}')">Подтвердить и выплатить</button>
+      </div>`:''}
+    ${isC&&o.status==='paid'?`<div style="margin-top:16px"><button class="full danger" onclick="handleCancel('${o.id}')">Отменить и вернуть средства</button></div>`:''}
+    ${u&&(isC||isE)&&['in_progress','result_submitted'].includes(o.status)?`
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+        <h3>Открыть спор</h3>
+        <textarea id="disp-reason" rows="3" placeholder="Опишите проблему"></textarea>
+        <button class="full danger" onclick="handleDispute('${o.id}')">Открыть спор</button>
+      </div>`:''}
+  </div>
+  ${canChat?`<div class="card">
+    <h3>Чат заказа</h3>
+    <div class="messages" id="chat-msgs">${renderMessages(o.id,u.id)}</div>
+    <form class="chat-form" onsubmit="handleSendMessage(event,'${o.id}')">
+      <input id="chat-inp" placeholder="Сообщение..." autocomplete="off" />
+      <button type="submit">→</button>
+    </form>
+  </div>`:''}`;
+}
+function renderMessages(oid,me){
+  const ms=db.messages.filter(m=>m.orderId===oid).sort((a,b)=>a.createdAt-b.createdAt);
+  if(!ms.length)return`<div class="empty" style="padding:20px">Нет сообщений</div>`;
+  return ms.map(m=>{const s=findBy(db.users,m.senderId);return`<div class="msg ${m.senderId===me?'mine':''}">
+    <div class="sender">${esc(s?.fullName||'—')}</div><p>${esc(m.body)}</p><small>${dt(m.createdAt)}</small>
+  </div>`}).join('');
 }
 
-function renderMessages(orderId, userId) {
-  const msgs = db.messages.filter(m => m.orderId === orderId).sort((a, b) => a.createdAt - b.createdAt);
-  if (msgs.length === 0) return '<div class="empty" style="padding:20px">Пока нет сообщений</div>';
-  return msgs.map(m => {
-    const sender = db.users.find(u => u.id === m.senderId);
-    return `
-      <div class="msg ${m.senderId === userId ? 'mine' : ''}">
-        <div class="sender">${escapeHtml(sender?.fullName || '—')}</div>
-        <p>${escapeHtml(m.body)}</p>
-        <small>${fmtDate(m.createdAt)}</small>
-      </div>
-    `;
-  }).join('');
+function pageMy(){
+  const u=cu();if(!u)return pageLogin();
+  const list=db.orders.filter(o=>o.customerId===u.id||o.executorId===u.id).sort((a,b)=>b.createdAt-a.createdAt);
+  if(!list.length)return`<h1>Мои заказы</h1><div class="empty"><div class="empty-icon">📋</div>Заказов пока нет</div>`;
+  return`<h1>Мои заказы</h1><div class="grid">${list.map(o=>{
+    const role=o.customerId===u.id?'Вы заказчик':'Вы исполнитель';
+    const other=o.customerId===u.id?(o.executorId?findBy(db.users,o.executorId):null):findBy(db.users,o.customerId);
+    return`<div class="order-card" onclick="nav('order',{id:'${o.id}'})">
+      <div class="subject">${esc(o.subject)} · ${role}</div>
+      <h3>${esc(o.title)}</h3>
+      <div class="meta"><span class="price">${money(o.price)}</span><span class="status status-${o.status}">${STATUS[o.status]}</span></div>
+      ${other?`<div class="hint" style="margin-top:8px">${o.customerId===u.id?'Исполнитель':'Заказчик'}: ${esc(other.fullName)}</div>`:''}
+    </div>`}).join('')}</div>`;
 }
 
-function PageMyOrders() {
-  const user = currentUser();
-  if (!user) return '<p>Требуется вход</p>';
-  const orders = db.orders.filter(o => o.customerId === user.id || o.executorId === user.id)
-    .sort((a, b) => b.createdAt - a.createdAt);
-  if (orders.length === 0) return '<div class="card"><h2>Мои заказы</h2><div class="empty">Заказов пока нет</div></div>';
-  return `
-    <h1>Мои заказы</h1>
-    <div class="grid">
-      ${orders.map(o => {
-        const role = o.customerId === user.id ? 'Вы заказчик' : 'Вы исполнитель';
-        const other = o.customerId === user.id
-          ? (o.executorId ? db.users.find(u => u.id === o.executorId) : null)
-          : db.users.find(u => u.id === o.customerId);
-        return `
-          <div class="order-card" onclick="navigate('order', {id:'${o.id}'})">
-            <div class="subject">${escapeHtml(o.subject)} · ${role}</div>
-            <h3>${escapeHtml(o.title)}</h3>
-            <div class="meta">
-              <span class="price">${fmtMoney(o.price)}</span>
-              <span class="status status-${o.status}">${STATUS_LABELS[o.status] || o.status}</span>
-            </div>
-            ${other ? `<div class="hint" style="margin-top:8px">${o.customerId === user.id ? 'Исполнитель' : 'Заказчик'}: ${escapeHtml(other.fullName)}</div>` : ''}
-          </div>
-        `;
-      }).join('')}
-    </div>
-  `;
-}
-
-function PageWallet() {
-  const user = currentUser();
-  if (!user) return '<p>Требуется вход</p>';
-  const txns = db.transactions.filter(t => t.userId === user.id).sort((a, b) => b.createdAt - a.createdAt);
-  const withdrawals = db.withdrawals.filter(w => w.userId === user.id).sort((a, b) => b.createdAt - a.createdAt);
-  const TX_LABELS = {
-    deposit: 'Пополнение', hold: 'Заморожено в сделке',
-    payout: 'Выплата за заказ', commission: 'Комиссия',
-    refund: 'Возврат', withdrawal: 'Вывод средств',
-  };
-  return `
-    <h1>Кошелёк</h1>
-    <div class="wallet-cards">
-      <div class="card"><small>Доступно</small><h3>${fmtMoney(user.balance)}</h3></div>
-      <div class="card"><small>В активных сделках</small><h3>${fmtMoney(user.heldBalance)}</h3></div>
-      <div class="card"><small>Заработано всего</small><h3>${fmtMoney(user.totalEarned)}</h3></div>
-    </div>
-
-    <div class="card">
-      <h3>Пополнить баланс</h3>
-      <p class="hint" style="margin-bottom:10px">Демо-пополнение. В продакшене — редирект на ЮKassa (холдирование карты).</p>
-      <div class="row">
-        <input id="deposit-amount" type="number" value="500" min="10" step="10" />
-        <button onclick="handleDeposit()">Пополнить</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="secondary small" onclick="document.getElementById('deposit-amount').value=100">100 ₽</button>
-        <button class="secondary small" onclick="document.getElementById('deposit-amount').value=500">500 ₽</button>
-        <button class="secondary small" onclick="document.getElementById('deposit-amount').value=1000">1000 ₽</button>
+function pageWallet({tab}={}){
+  const u=cu();if(!u)return pageLogin();
+  const t=tab||'overview';
+  const txns=db.transactions.filter(x=>x.userId===u.id).sort((a,b)=>b.createdAt-a.createdAt);
+  const deps=db.deposits.filter(x=>x.userId===u.id).sort((a,b)=>b.createdAt-a.createdAt);
+  const wds=db.withdrawals.filter(x=>x.userId===u.id).sort((a,b)=>b.createdAt-a.createdAt);
+  const TX={deposit:'Пополнение',hold:'Заморожено в сделке',payout:'Выплата за заказ',commission:'Комиссия',refund:'Возврат',withdrawal:'Вывод'};
+  return`<h1>Кошелёк</h1>
+    <div class="balance-hero">
+      <div class="balance-label">Доступно</div>
+      <div class="balance-amount">${u.balance.toFixed(2)} <span>₽</span></div>
+      <div class="balance-sub">
+        <div class="balance-sub-item">В сделках<b>${money(u.heldBalance)}</b></div>
+        <div class="balance-sub-item">Заработано<b>${money(u.totalEarned)}</b></div>
       </div>
     </div>
-
-    <div class="card">
-      <h3>Вывод средств</h3>
-      <p class="hint" style="margin-bottom:10px">Минимальная сумма — 300 ₽. Средства поступят на карту или через СБП в течение 1–3 дней.</p>
-      <div class="row">
-        <input id="withdraw-amount" type="number" value="300" min="300" step="10" />
-        <input id="withdraw-dest" placeholder="Номер карты или телефон СБП" />
-        <button onclick="handleWithdraw()">Вывести</button>
-      </div>
-      ${withdrawals.length ? `
-        <h3 style="margin-top:20px">История выводов</h3>
-        <table>
-          <thead><tr><th>Дата</th><th>Сумма</th><th>Реквизиты</th><th>Статус</th></tr></thead>
-          <tbody>
-            ${withdrawals.map(w => `<tr>
-              <td>${fmtDate(w.createdAt)}</td>
-              <td>${fmtMoney(w.amount)}</td>
-              <td>${escapeHtml(w.destination)}</td>
-              <td>${w.status === 'completed' ? 'Выполнено' : 'В обработке'}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      ` : ''}
+    <div class="wallet-actions">
+      <button onclick="nav('wallet',{tab:'deposit'})">＋ Пополнить</button>
+      <button class="secondary" onclick="nav('wallet',{tab:'withdraw'})">↓ Вывести</button>
     </div>
-
-    <div class="card">
-      <h3>История операций</h3>
-      ${txns.length === 0 ? '<div class="empty">Операций нет</div>' : `
-        <table>
-          <thead><tr><th>Дата</th><th>Тип</th><th>Сумма</th><th>Баланс после</th></tr></thead>
-          <tbody>
-            ${txns.map(t => `<tr>
-              <td>${fmtDate(t.createdAt)}</td>
-              <td>${TX_LABELS[t.type] || t.type}</td>
-              <td class="${t.amount >= 0 ? 'pos' : 'neg'}">${t.amount >= 0 ? '+' : ''}${fmtMoney(t.amount)}</td>
-              <td>${fmtMoney(t.balanceAfter)}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      `}
-    </div>
-  `;
-}
-
-function PageAdmin() {
-  const user = currentUser();
-  if (!user || user.role !== 'admin') return '<div class="card"><h2>Доступ запрещён</h2><p class="hint">Только для администратора.</p></div>';
-
-  const tab = route.params.tab || 'stats';
-  const users = db.users.sort((a, b) => b.createdAt - a.createdAt);
-  const orders = db.orders.sort((a, b) => b.createdAt - a.createdAt);
-  const disputes = db.disputes.sort((a, b) => b.createdAt - a.createdAt);
-  const revenue = db.revenues.reduce((s, r) => s + r.amount, 0);
-  const openDisputes = disputes.filter(d => d.status === 'open');
-
-  return `
-    <h1>Админ-панель</h1>
     <div class="tabs">
-      <div class="tab ${tab === 'stats' ? 'active' : ''}" onclick="navigate('admin', {tab:'stats'})">Статистика</div>
-      <div class="tab ${tab === 'disputes' ? 'active' : ''}" onclick="navigate('admin', {tab:'disputes'})">Споры ${openDisputes.length ? '(' + openDisputes.length + ')' : ''}</div>
-      <div class="tab ${tab === 'users' ? 'active' : ''}" onclick="navigate('admin', {tab:'users'})">Пользователи</div>
-      <div class="tab ${tab === 'orders' ? 'active' : ''}" onclick="navigate('admin', {tab:'orders'})">Заказы</div>
+      <div class="tab ${t==='overview'?'active':''}" onclick="nav('wallet',{tab:'overview'})">История</div>
+      <div class="tab ${t==='deposit'?'active':''}" onclick="nav('wallet',{tab:'deposit'})">Пополнения</div>
+      <div class="tab ${t==='withdraw'?'active':''}" onclick="nav('wallet',{tab:'withdraw'})">Выводы</div>
     </div>
-    <div id="admin-content">${renderAdminTab(tab, { users, orders, disputes, revenue, openDisputes })}</div>
-  `;
+    ${t==='overview'?renderTxHistory(txns,TX):''}
+    ${t==='deposit'?renderDepositTab(deps):''}
+    ${t==='withdraw'?renderWithdrawTab(wds):''}`;
+}
+function renderTxHistory(txns,TX){
+  if(!txns.length)return`<div class="empty">Операций пока нет</div>`;
+  return`<div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Дата</th><th>Тип</th><th>Сумма</th><th>Баланс</th></tr></thead>
+    <tbody>${txns.map(t=>`<tr>
+      <td>${dt(t.createdAt)}</td><td>${TX[t.type]||t.type}</td>
+      <td class="${t.amount>=0?'pos':'neg'}">${t.amount>=0?'+':''}${money(t.amount)}</td>
+      <td>${money(t.balanceAfter)}</td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`;
+}
+function renderDepositTab(deps){
+  const s=db.settings,has=!!(s.cardNumber&&s.cardNumber.trim());
+  const u=cu();
+  return`<div class="card">
+    <h3>Пополнить переводом на карту</h3>
+    ${has?`
+      <div class="pay-card-box">
+        <div class="pay-card-label">Переведите на карту</div>
+        <div class="pay-card-num">${esc(s.cardNumber)}</div>
+        ${s.cardHolder?`<div style="font-size:13px;color:var(--text2);margin-bottom:6px">Получатель: <b style="color:var(--text)">${esc(s.cardHolder)}</b></div>`:''}
+        ${s.bankName?`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Банк: ${esc(s.bankName)}</div>`:''}
+        <button class="copy-btn" onclick="copyText(this.closest('.pay-card-box').querySelector('.pay-card-num').textContent.trim())">📋 Скопировать номер</button>
+      </div>
+      <div class="warn-box"><b>Важно:</b> в комментарии к переводу укажите ваш email <b>${esc(u.email)}</b>, чтобы мы зачислили деньги именно вам.</div>
+      <div style="margin-top:16px">
+        <label>Сумма перевода, ₽</label>
+        <input id="dep-amt" type="number" min="${s.minDeposit}" step="10" value="300" />
+        <label>Комментарий к переводу</label>
+        <input id="dep-cmt" value="${esc(u.email)}" />
+        <button class="full" onclick="handleDepositRequest()">Я перевёл — отправить заявку</button>
+        <p class="hint">Заявка появится у администратора. После проверки перевода баланс пополнится.</p>
+      </div>`:`
+      <div class="warn-box">Приём платежей пока не настроен. Администратору нужно указать реквизиты в настройках платформы.</div>`}
+  </div>
+  ${deps.length?`<div class="card"><h3>Мои заявки на пополнение</h3><div class="table-wrap"><table>
+    <thead><tr><th>Дата</th><th>Сумма</th><th>Статус</th></tr></thead>
+    <tbody>${deps.map(d=>`<tr><td>${dt(d.createdAt)}</td><td>${money(d.amount)}</td>
+      <td><span class="status status-${d.status}">${d.status==='pending'?'Ожидает':d.status==='approved'?'Зачислено':'Отклонено'}</span></td>
+    </tr>`).join('')}</tbody></table></div></div>`:''}`;
+}
+function renderWithdrawTab(wds){
+  const u=cu();
+  return`<div class="card">
+    <h3>Вывод средств</h3>
+    <p class="hint" style="margin-bottom:14px">Минимум ${money(db.settings.minWithdraw)}. Администратор вручную переведёт на указанные реквизиты в течение 1–3 дней.</p>
+    <label>Сумма, ₽</label>
+    <input id="wd-amt" type="number" min="${db.settings.minWithdraw}" step="10" value="${db.settings.minWithdraw}" />
+    <label>Реквизиты (карта или телефон СБП)</label>
+    <input id="wd-dest" placeholder="2200 7000 0000 0000 или +7 900 000-00-00" />
+    <button class="full" onclick="handleWithdrawRequest()">Создать заявку на вывод</button>
+    <p class="hint">Доступно: <b style="color:var(--text)">${money(u.balance)}</b>. Сумма спишется с баланса сразу.</p>
+  </div>
+  ${wds.length?`<div class="card"><h3>Мои выводы</h3><div class="table-wrap"><table>
+    <thead><tr><th>Дата</th><th>Сумма</th><th>Реквизиты</th><th>Статус</th></tr></thead>
+    <tbody>${wds.map(w=>`<tr><td>${dt(w.createdAt)}</td><td>${money(w.amount)}</td><td>${esc(w.destination)}</td>
+      <td><span class="status status-${w.status}">${w.status==='pending'?'В обработке':w.status==='completed'?'Выполнено':'Отклонено'}</span></td>
+    </tr>`).join('')}</tbody></table></div></div>`:''}`;
 }
 
-function renderAdminTab(tab, data) {
-  if (tab === 'stats') {
-    return `
-      <div class="wallet-cards">
-        <div class="card"><small>Пользователей</small><h3>${data.users.length}</h3></div>
-        <div class="card"><small>Заказов</small><h3>${data.orders.length}</h3></div>
-        <div class="card"><small>Доход платформы</small><h3>${fmtMoney(data.revenue)}</h3></div>
+function pageAdmin({tab}={}){
+  const u=cu();if(!u||u.role!=='admin')return`<div class="card"><h2>Доступ запрещён</h2><p class="hint">Только для администратора.</p></div>`;
+  const t=tab||'stats';
+  const deps=db.deposits.slice().sort((a,b)=>b.createdAt-a.createdAt);
+  const wds=db.withdrawals.slice().sort((a,b)=>b.createdAt-a.createdAt);
+  const disp=db.disputes.slice().sort((a,b)=>b.createdAt-a.createdAt);
+  const usrs=db.users.slice().sort((a,b)=>b.createdAt-a.createdAt);
+  const ords=db.orders.slice().sort((a,b)=>b.createdAt-a.createdAt);
+  const rev=db.revenues.reduce((s,r)=>s+r.amount,0);
+  const pd=deps.filter(x=>x.status==='pending').length;
+  const pw=wds.filter(x=>x.status==='pending').length;
+  const pdi=disp.filter(x=>x.status==='open').length;
+  return`<h1>Админ-панель</h1>
+    <div class="tabs">
+      <div class="tab ${t==='stats'?'active':''}" onclick="nav('admin',{tab:'stats'})">Обзор</div>
+      <div class="tab ${t==='deposits'?'active':''}" onclick="nav('admin',{tab:'deposits'})">Пополнения${pd?` (${pd})`:''}</div>
+      <div class="tab ${t==='withdrawals'?'active':''}" onclick="nav('admin',{tab:'withdrawals'})">Выводы${pw?` (${pw})`:''}</div>
+      <div class="tab ${t==='disputes'?'active':''}" onclick="nav('admin',{tab:'disputes'})">Споры${pdi?` (${pdi})`:''}</div>
+      <div class="tab ${t==='users'?'active':''}" onclick="nav('admin',{tab:'users'})">Юзеры</div>
+      <div class="tab ${t==='orders'?'active':''}" onclick="nav('admin',{tab:'orders'})">Заказы</div>
+      <div class="tab ${t==='settings'?'active':''}" onclick="nav('admin',{tab:'settings'})">Настройки</div>
+    </div>
+    ${adminTab(t,{usrs,ords,disp,deps,wds,rev})}`;
+}
+function adminTab(t,d){
+  if(t==='stats')return`<div class="admin-stats">
+    <div class="stat-card"><small>Пользователей</small><div class="value">${d.usrs.length}</div></div>
+    <div class="stat-card"><small>Заказов</small><div class="value">${d.ords.length}</div></div>
+    <div class="stat-card"><small>Доход платформы</small><div class="value" style="color:var(--accent)">${money(d.rev)}</div></div>
+    <div class="stat-card"><small>Активные сделки</small><div class="value">${d.ords.filter(o=>['paid','in_progress','result_submitted'].includes(o.status)).length}</div></div>
+  </div>
+  <div class="card"><h3>Заказы по статусам</h3><div class="table-wrap"><table>
+    <thead><tr><th>Статус</th><th>Кол-во</th></tr></thead>
+    <tbody>${Object.entries(STATUS).map(([k,v])=>{const c=d.ords.filter(o=>o.status===k).length;return c?`<tr><td>${v}</td><td>${c}</td></tr>`:''}).join('')}</tbody>
+  </table></div></div>`;
+  if(t==='deposits'){
+    if(!d.deps.length)return`<div class="empty"><div class="empty-icon">💳</div>Заявок нет</div>`;
+    return d.deps.map(x=>{const u=findBy(db.users,x.userId);return`<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
+        <div><b>${esc(u?.fullName||'—')}</b><div class="hint">${esc(u?.email||'')}</div></div>
+        <span class="status status-${x.status}">${x.status==='pending'?'Ожидает':x.status==='approved'?'Зачислено':'Отклонено'}</span>
       </div>
-      <div class="card">
-        <h3>Заказы по статусам</h3>
-        <table>
-          <thead><tr><th>Статус</th><th>Количество</th></tr></thead>
-          <tbody>
-            ${Object.entries(STATUS_LABELS).map(([k, label]) => {
-              const count = data.orders.filter(o => o.status === k).length;
-              return count > 0 ? `<tr><td>${label}</td><td>${count}</td></tr>` : '';
-            }).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
+      <div style="margin-top:12px"><span class="price">${money(x.amount)}</span></div>
+      ${x.comment?`<div class="hint" style="margin-top:6px">Комментарий: ${esc(x.comment)}</div>`:''}
+      <div class="hint">${dt(x.createdAt)}</div>
+      ${x.status==='pending'?`<div class="row-buttons">
+        <button class="small success" onclick="handleApproveDeposit('${x.id}')">Зачислить</button>
+        <button class="small danger" onclick="handleRejectDeposit('${x.id}')">Отклонить</button>
+      </div>`:''}
+    </div>`}).join('');
   }
-  if (tab === 'disputes') {
-    if (data.disputes.length === 0) return '<div class="card"><div class="empty">Споров нет</div></div>';
-    return data.disputes.map(d => {
-      const order = db.orders.find(o => o.id === d.orderId);
-      const initiator = db.users.find(u => u.id === d.initiatorId);
-      const customer = db.users.find(u => u.id === order?.customerId);
-      const executor = order?.executorId ? db.users.find(u => u.id === order.executorId) : null;
-      return `
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:start">
-            <div>
-              <h3>${escapeHtml(order?.title || '—')}</h3>
-              <p class="hint">Заказ на ${fmtMoney(order?.price || 0)} · Заказчик: ${escapeHtml(customer?.fullName || '—')} · Исполнитель: ${escapeHtml(executor?.fullName || '—')}</p>
-            </div>
-            <span class="status status-${d.status === 'open' ? 'disputed' : 'paid_out'}">${d.status === 'open' ? 'Открыт' : 'Решён'}</span>
-          </div>
-          <div style="margin-top:12px;padding:12px;background:#fef3c7;border-radius:8px">
-            <b>Причина спора от ${escapeHtml(initiator?.fullName || '—')}:</b>
-            <p style="margin-top:6px">${escapeHtml(d.reason)}</p>
-          </div>
-          ${d.status === 'open' ? `
-            <div class="actions">
-              <button class="danger" onclick="handleResolveDispute('${d.id}', 'refund')">Вернуть деньги заказчику</button>
-              <button class="primary" style="margin-left:8px" onclick="handleResolveDispute('${d.id}', 'payout')">Выплатить исполнителю</button>
-            </div>
-          ` : `<p class="hint" style="margin-top:12px">Решение: ${d.resolution === 'refund' ? 'возврат заказчику' : 'выплата исполнителю'}</p>`}
+  if(t==='withdrawals'){
+    if(!d.wds.length)return`<div class="empty"><div class="empty-icon">🏦</div>Заявок нет</div>`;
+    return d.wds.map(x=>{const u=findBy(db.users,x.userId);return`<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
+        <div><b>${esc(u?.fullName||'—')}</b><div class="hint">${esc(u?.email||'')}</div></div>
+        <span class="status status-${x.status}">${x.status==='pending'?'В обработке':x.status==='completed'?'Выполнено':'Отклонено'}</span>
+      </div>
+      <div style="margin-top:12px"><span class="price">${money(x.amount)}</span></div>
+      <div class="hint" style="margin-top:6px">Реквизиты: <b style="color:var(--text)">${esc(x.destination)}</b></div>
+      <div class="hint">${dt(x.createdAt)}</div>
+      ${x.status==='pending'?`<div class="row-buttons">
+        <button class="small success" onclick="handleCompleteWithdrawal('${x.id}')">Отметить выполненным</button>
+        <button class="small danger" onclick="handleRejectWithdrawal('${x.id}')">Отклонить и вернуть</button>
+      </div>`:''}
+    </div>`}).join('');
+  }
+  if(t==='disputes'){
+    if(!d.disp.length)return`<div class="empty"><div class="empty-icon">⚖️</div>Споров нет</div>`;
+    return d.disp.map(x=>{
+      const o=findBy(db.orders,x.orderId),init=findBy(db.users,x.initiatorId);
+      const c=o?findBy(db.users,o.customerId):null,e=o?.executorId?findBy(db.users,o.executorId):null;
+      return`<div class="card">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:start">
+          <div><b>${esc(o?.title||'—')}</b><div class="hint">${money(o?.price||0)} · Заказчик: ${esc(c?.fullName||'—')} · Исполнитель: ${esc(e?.fullName||'—')}</div></div>
+          <span class="status status-${x.status==='open'?'disputed':'paid_out'}">${x.status==='open'?'Открыт':'Решён'}</span>
         </div>
-      `;
+        <div class="warn-box" style="margin-top:10px"><b>От ${esc(init?.fullName||'—')}:</b> ${esc(x.reason)}</div>
+        ${x.status==='open'?`<div class="row-buttons">
+          <button class="small danger" onclick="handleResolveDispute('${x.id}','refund')">Вернуть заказчику</button>
+          <button class="small success" onclick="handleResolveDispute('${x.id}','payout')">Выплатить исполнителю</button>
+        </div>`:`<div class="hint" style="margin-top:8px">Решение: ${x.resolution==='refund'?'возврат заказчику':'выплата исполнителю'}</div>`}
+      </div>`;
     }).join('');
   }
-  if (tab === 'users') {
-    return `
-      <div class="card">
-        <table>
-          <thead><tr><th>Email</th><th>Имя</th><th>Роль</th><th>Баланс</th><th>Заморожено</th><th></th></tr></thead>
-          <tbody>
-            ${data.users.map(u => `
-              <tr>
-                <td>${escapeHtml(u.email)}</td>
-                <td>${escapeHtml(u.fullName)}</td>
-                <td>${u.role}${u.role === 'admin' ? '<span class="badge admin">ADMIN</span>' : ''}</td>
-                <td>${fmtMoney(u.balance)}</td>
-                <td>${fmtMoney(u.heldBalance)}</td>
-                <td>
-                  <button class="small ${u.blocked ? 'primary' : 'danger'}" onclick="handleToggleBlock('${u.id}')">
-                    ${u.blocked ? 'Разблокировать' : 'Заблокировать'}
-                  </button>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-  }
-  if (tab === 'orders') {
-    return `
-      <div class="card">
-        <table>
-          <thead><tr><th>Заголовок</th><th>Предмет</th><th>Цена</th><th>Статус</th><th>Заказчик</th><th>Исполнитель</th></tr></thead>
-          <tbody>
-            ${data.orders.map(o => {
-              const c = db.users.find(u => u.id === o.customerId);
-              const e = o.executorId ? db.users.find(u => u.id === o.executorId) : null;
-              return `<tr style="cursor:pointer" onclick="navigate('order', {id:'${o.id}'})">
-                <td>${escapeHtml(o.title)}</td>
-                <td>${escapeHtml(o.subject)}</td>
-                <td>${fmtMoney(o.price)}</td>
-                <td><span class="status status-${o.status}">${STATUS_LABELS[o.status]}</span></td>
-                <td>${escapeHtml(c?.fullName || '—')}</td>
-                <td>${escapeHtml(e?.fullName || '—')}</td>
-              </tr>`;
-            }).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-  }
+  if(t==='users')return`<div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Email</th><th>Имя</th><th>Роль</th><th>Баланс</th><th></th></tr></thead>
+    <tbody>${d.usrs.map(u=>`<tr>
+      <td>${esc(u.email)}</td><td>${esc(u.fullName)}</td>
+      <td>${u.role}${u.role==='admin'?' <span class="badge admin">ADMIN</span>':''}</td>
+      <td>${money(u.balance)}</td>
+      <td><button class="small ${u.blocked?'success':'danger'}" onclick="handleToggleBlock('${u.id}')">${u.blocked?'Разблок.':'Блок.'}</button></td>
+    </tr>`).join('')}</tbody></table></div></div>`;
+  if(t==='orders')return`<div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Заголовок</th><th>Цена</th><th>Статус</th></tr></thead>
+    <tbody>${d.ords.map(o=>`<tr style="cursor:pointer" onclick="nav('order',{id:'${o.id}'})">
+      <td>${esc(o.title)}</td><td>${money(o.price)}</td>
+      <td><span class="status status-${o.status}">${STATUS[o.status]}</span></td>
+    </tr>`).join('')}</tbody></table></div></div>`;
+  if(t==='settings'){const s=db.settings;return`<div class="card">
+    <h3>Реквизиты для приёма платежей</h3>
+    <p class="hint" style="margin-bottom:12px">Пользователи увидят эти данные на странице пополнения.</p>
+    <label>Номер карты / телефон СБП</label>
+    <input id="s-card" value="${esc(s.cardNumber)}" placeholder="2200 7000 0000 0000" />
+    <label>Имя получателя</label>
+    <input id="s-holder" value="${esc(s.cardHolder)}" placeholder="Иванов Иван" />
+    <label>Название банка</label>
+    <input id="s-bank" value="${esc(s.bankName)}" placeholder="Т-Банк" />
+    <div class="divider"></div>
+    <h3>Комиссия платформы</h3>
+    <label>Процент комиссии</label>
+    <input id="s-comm" type="number" min="0" max="50" step="1" value="${(s.commissionRate*100).toFixed(0)}" />
+    <p class="hint">Текущая: ${(s.commissionRate*100).toFixed(0)}%. Из суммы заказа столько уходит платформе, остальное — исполнителю.</p>
+    <div class="divider"></div>
+    <h3>Лимиты</h3>
+    <label>Мин. пополнение, ₽</label>
+    <input id="s-mindep" type="number" min="10" value="${s.minDeposit}" />
+    <label>Мин. вывод, ₽</label>
+    <input id="s-minwd" type="number" min="10" value="${s.minWithdraw}" />
+    <button class="full" style="margin-top:12px" onclick="handleSaveSettings()">Сохранить настройки</button>
+  </div>`}
+  return'';
 }
 
-// ============= ОБРАБОТЧИКИ =============
-window.handleLogin = function(e) {
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const email = fd.get('email').trim().toLowerCase();
-  const password = fd.get('password');
-  const user = db.users.find(u => u.email.toLowerCase() === email);
-  if (!user || user.password !== password) {
-    document.getElementById('login-error').innerHTML = '<div class="error">Неверный email или пароль</div>';
-    return;
-  }
-  if (user.blocked) {
-    document.getElementById('login-error').innerHTML = '<div class="error">Аккаунт заблокирован администратором</div>';
-    return;
-  }
-  setSession(user.id);
-  toast('Добро пожаловать, ' + user.fullName, 'success');
-  navigate('home');
-};
+// ---------- HANDLERS ----------
+window.handleLogin=e=>{e.preventDefault();const fd=new FormData(e.target);
+  const em=fd.get('email').trim().toLowerCase(),pw=fd.get('password');
+  const u=db.users.find(x=>x.email.toLowerCase()===em);
+  if(!u||u.password!==pw)return document.getElementById('auth-error').innerHTML=`<div class="error-box">Неверный email или пароль</div>`;
+  if(u.blocked)return document.getElementById('auth-error').innerHTML=`<div class="error-box">Аккаунт заблокирован</div>`;
+  db.session=u.id;saveDB();toast('Добро пожаловать, '+u.fullName,'success');nav('home')};
+window.handleRegister=e=>{e.preventDefault();const fd=new FormData(e.target);
+  const em=fd.get('email').trim().toLowerCase();
+  if(db.users.find(x=>x.email.toLowerCase()===em))return document.getElementById('auth-error').innerHTML=`<div class="error-box">Этот email уже занят</div>`;
+  const pw=fd.get('password');if(pw.length<6)return document.getElementById('auth-error').innerHTML=`<div class="error-box">Пароль слишком короткий</div>`;
+  const u={id:uid(),email:em,password:pw,fullName:fd.get('fullName').trim(),role:fd.get('role'),balance:0,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
+  db.users.push(u);db.session=u.id;saveDB();toast('Аккаунт создан','success');nav('home')};
+window.logout=()=>{db.session=null;saveDB();nav('login')};
+window.handleCreate=e=>{e.preventDefault();const u=cu();if(!u)return;
+  const fd=new FormData(e.target),price=Number(fd.get('price'));
+  if(u.balance<price)return document.getElementById('create-error').innerHTML=`<div class="error-box">Недостаточно средств. Пополните кошелёк.</div>`;
+  const o={id:uid(),customerId:u.id,executorId:null,title:fd.get('title').trim(),subject:fd.get('subject').trim(),description:fd.get('description').trim(),price,commissionRate:db.settings.commissionRate,status:'paid',resultText:null,createdAt:Date.now(),updatedAt:Date.now()};
+  const r=holdFunds(u.id,o.id,price);
+  if(!r.ok)return document.getElementById('create-error').innerHTML=`<div class="error-box">${esc(r.error)}</div>`;
+  db.orders.push(o);saveDB();toast('Заявка создана. '+money(price)+' в эскроу','success');nav('order',{id:o.id})};
+window.handleProposal=oid=>{const u=cu();if(!u)return;
+  const msg=document.getElementById('p-msg').value.trim(),price=Number(document.getElementById('p-price').value);
+  if(!msg)return toast('Напишите сообщение','error');
+  if(db.proposals.find(p=>p.orderId===oid&&p.executorId===u.id))return toast('Вы уже откликнулись','error');
+  db.proposals.push({id:uid(),orderId:oid,executorId:u.id,message:msg,price:price||findBy(db.orders,oid).price,status:'pending',createdAt:Date.now()});
+  saveDB();toast('Отклик отправлен','success');render()};
+window.handleSelectExec=(oid,eid)=>{const o=findBy(db.orders,oid);if(!o)return;
+  o.executorId=eid;o.status='in_progress';o.updatedAt=Date.now();
+  db.proposals.filter(p=>p.orderId===oid).forEach(p=>p.status=p.executorId===eid?'accepted':'rejected');
+  saveDB();toast('Исполнитель выбран','success');render()};
+window.handleSubmitResult=oid=>{const o=findBy(db.orders,oid);if(!o)return;
+  const t=document.getElementById('result-text').value.trim();
+  if(!t)return toast('Введите результат','error');
+  o.resultText=t;o.status='result_submitted';o.updatedAt=Date.now();
+  saveDB();toast('Результат отправлен','success');render()};
+window.handleConfirm=oid=>{if(!confirm('Подтвердить? Деньги уйдут исполнителю.'))return;
+  const o=findBy(db.orders,oid);if(!o)return;
+  const r=releaseToExecutor(oid);if(!r.ok)return toast(r.error,'error');
+  o.status='paid_out';o.updatedAt=Date.now();saveDB();toast('Оплата переведена','success');render()};
+window.handleCancel=oid=>{if(!confirm('Отменить заявку и вернуть деньги?'))return;
+  const o=findBy(db.orders,oid);if(!o)return;
+  refundCustomer(oid);o.status='cancelled';o.updatedAt=Date.now();
+  saveDB();toast('Заявка отменена','success');render()};
+window.handleSendMessage=(e,oid)=>{e.preventDefault();const u=cu();if(!u)return;
+  const inp=document.getElementById('chat-inp'),body=inp.value.trim();if(!body)return;
+  db.messages.push({id:uid(),orderId:oid,senderId:u.id,body,createdAt:Date.now()});
+  saveDB();render();setTimeout(()=>{const c=document.getElementById('chat-msgs');if(c)c.scrollTop=c.scrollHeight},30)};
+window.handleDispute=oid=>{const u=cu();if(!u)return;
+  const r=document.getElementById('disp-reason').value.trim();
+  if(r.length<5)return toast('Опишите проблему','error');
+  const o=findBy(db.orders,oid);if(!o)return;
+  db.disputes.push({id:uid(),orderId:oid,initiatorId:u.id,reason:r,status:'open',resolution:null,createdAt:Date.now()});
+  o.status='disputed';o.updatedAt=Date.now();
+  saveDB();toast('Спор открыт','success');render()};
+window.applyFilter=()=>{const s=document.getElementById('f-subj').value.trim().toLowerCase();
+  const mn=Number(document.getElementById('f-min').value)||0,mx=Number(document.getElementById('f-max').value)||Infinity;
+  let l=db.orders.filter(o=>o.status==='paid');
+  if(s)l=l.filter(o=>o.subject.toLowerCase().includes(s));
+  l=l.filter(o=>o.price>=mn&&o.price<=mx);
+  document.getElementById('orders-list').innerHTML=renderOrderGrid(l)};
+window.handleDepositRequest=()=>{const u=cu();if(!u)return;
+  const amt=Number(document.getElementById('dep-amt').value),cmt=document.getElementById('dep-cmt').value.trim();
+  if(!amt||amt<db.settings.minDeposit)return toast('Минимум '+money(db.settings.minDeposit),'error');
+  db.deposits.push({id:uid(),userId:u.id,amount:amt,comment:cmt,status:'pending',createdAt:Date.now()});
+  saveDB();toast('Заявка отправлена администратору','success');nav('wallet',{tab:'deposit'})};
+window.handleWithdrawRequest=()=>{const u=cu();if(!u)return;
+  const amt=Number(document.getElementById('wd-amt').value),dest=document.getElementById('wd-dest').value.trim();
+  if(!amt||amt<db.settings.minWithdraw)return toast('Минимум '+money(db.settings.minWithdraw),'error');
+  if(amt>u.balance)return toast('Недостаточно средств','error');
+  if(dest.length<5)return toast('Укажите реквизиты','error');
+  u.balance-=amt;
+  db.transactions.push({id:uid(),userId:u.id,orderId:null,type:'withdrawal',amount:-amt,balanceAfter:u.balance,createdAt:Date.now()});
+  db.withdrawals.push({id:uid(),userId:u.id,amount:amt,destination:dest,status:'pending',createdAt:Date.now()});
+  saveDB();toast('Заявка на вывод создана','success');nav('wallet',{tab:'withdraw'})};
+window.handleApproveDeposit=id=>{const d=findBy(db.deposits,id);if(!d||d.status!=='pending')return;
+  const u=findBy(db.users,d.userId);if(!u)return;
+  u.balance+=d.amount;
+  db.transactions.push({id:uid(),userId:u.id,orderId:null,type:'deposit',amount:d.amount,balanceAfter:u.balance,createdAt:Date.now()});
+  d.status='approved';saveDB();toast('Зачислено '+money(d.amount),'success');render()};
+window.handleRejectDeposit=id=>{const d=findBy(db.deposits,id);if(!d)return;
+  if(!confirm('Отклонить?'))return;d.status='rejected';saveDB();toast('Отклонено','success');render()};
+window.handleCompleteWithdrawal=id=>{const w=findBy(db.withdrawals,id);if(!w||w.status!=='pending')return;
+  if(!confirm('Отметить как выполненный?'))return;w.status='completed';saveDB();toast('Готово','success');render()};
+window.handleRejectWithdrawal=id=>{const w=findBy(db.withdrawals,id);if(!w||w.status!=='pending')return;
+  if(!confirm('Отклонить и вернуть на баланс?'))return;
+  const u=findBy(db.users,w.userId);u.balance+=w.amount;
+  db.transactions.push({id:uid(),userId:u.id,orderId:null,type:'refund',amount:w.amount,balanceAfter:u.balance,createdAt:Date.now()});
+  w.status='rejected';saveDB();toast('Возвращено','success');render()};
+window.handleResolveDispute=(id,res)=>{const d=findBy(db.disputes,id);if(!d)return;
+  const o=findBy(db.orders,d.orderId);if(!o)return;
+  if(res==='refund'){refundCustomer(o.id);o.status='refunded'}else{releaseToExecutor(o.id);o.status='paid_out'}
+  d.status='resolved';d.resolution=res;o.updatedAt=Date.now();
+  saveDB();toast('Спор решён','success');render()};
+window.handleToggleBlock=id=>{const u=findBy(db.users,id);if(!u)return;
+  u.blocked=!u.blocked;saveDB();toast(u.blocked?'Заблокирован':'Разблокирован','success');render()};
+window.handleSaveSettings=()=>{
+  db.settings.cardNumber=document.getElementById('s-card').value.trim();
+  db.settings.cardHolder=document.getElementById('s-holder').value.trim();
+  db.settings.bankName=document.getElementById('s-bank').value.trim();
+  const c=Number(document.getElementById('s-comm').value);
+  if(c>=0&&c<=50)db.settings.commissionRate=c/100;
+  db.settings.minDeposit=Number(document.getElementById('s-mindep').value)||100;
+  db.settings.minWithdraw=Number(document.getElementById('s-minwd').value)||300;
+  saveDB();toast('Настройки сохранены','success');render()};
 
-window.handleRegister = function(e) {
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const fullName = fd.get('fullName').trim();
-  const email = fd.get('email').trim().toLowerCase();
-  const password = fd.get('password');
-  const role = fd.get('role');
-  if (password.length < 6) {
-    document.getElementById('register-error').innerHTML = '<div class="error">Пароль должен быть минимум 6 символов</div>';
-    return;
-  }
-  if (db.users.find(u => u.email.toLowerCase() === email)) {
-    document.getElementById('register-error').innerHTML = '<div class="error">Такой email уже зарегистрирован</div>';
-    return;
-  }
-  const user = { id: uid(), email, password, fullName, role, balance: 0, heldBalance: 0, totalEarned: 0, blocked: false, createdAt: Date.now() };
-  db.users.push(user);
-  setSession(user.id);
-  toast('Аккаунт создан', 'success');
-  navigate('home');
-};
+// ---------- RENDER ----------
+function render(){
+  const u=cu();let content='';
+  if(route.name==='login')content=pageLogin();
+  else if(route.name==='register')content=pageRegister();
+  else if(route.name==='home')content=pageHome();
+  else if(route.name==='create')content=pageCreate();
+  else if(route.name==='order')content=pageOrder(route.params);
+  else if(route.name==='my')content=pageMy();
+  else if(route.name==='wallet')content=pageWallet(route.params);
+  else if(route.name==='admin')content=pageAdmin(route.params);
+  else content=pageHome();
 
-window.handleCreateOrder = function(e) {
-  e.preventDefault();
-  const user = currentUser();
-  if (!user) return;
-  const fd = new FormData(e.target);
-  const price = Number(fd.get('price'));
-  if (user.balance < price) {
-    document.getElementById('create-error').innerHTML = '<div class="error">Недостаточно средств. Пополните кошелёк.</div>';
-    return;
-  }
-  const order = {
-    id: uid(),
-    customerId: user.id,
-    executorId: null,
-    title: fd.get('title').trim(),
-    subject: fd.get('subject').trim(),
-    description: fd.get('description').trim(),
-    price,
-    commissionRate: 0.10,
-    status: 'paid',
-    resultText: null,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
-  const res = holdFunds(user.id, order.id, price);
-  if (!res.ok) {
-    document.getElementById('create-error').innerHTML = '<div class="error">' + res.error + '</div>';
-    return;
-  }
-  db.orders.push(order);
-  saveDB(db);
-  toast('Заявка создана. ' + fmtMoney(price) + ' заморожено.', 'success');
-  navigate('order', { id: order.id });
-};
-
-window.handleProposal = function(orderId) {
-  const user = currentUser();
-  if (!user) return;
-  const message = document.getElementById('proposal-msg').value.trim();
-  const price = Number(document.getElementById('proposal-price').value);
-  if (!message) { toast('Напишите сообщение', 'error'); return; }
-  if (db.proposals.find(p => p.orderId === orderId && p.executorId === user.id)) {
-    toast('Вы уже откликнулись', 'error'); return;
-  }
-  db.proposals.push({
-    id: uid(), orderId, executorId: user.id,
-    message, price: price || db.orders.find(o => o.id === orderId).price,
-    status: 'pending', createdAt: Date.now(),
-  });
-  saveDB(db);
-  toast('Отклик отправлен', 'success');
-  render();
-};
-
-window.handleSelectExecutor = function(orderId, executorId) {
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order) return;
-  order.executorId = executorId;
-  order.status = 'in_progress';
-  order.updatedAt = Date.now();
-  db.proposals.filter(p => p.orderId === orderId).forEach(p => {
-    p.status = p.executorId === executorId ? 'accepted' : 'rejected';
-  });
-  saveDB(db);
-  toast('Исполнитель выбран', 'success');
-  render();
-};
-
-window.handleSubmitResult = function(orderId) {
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order) return;
-  const text = document.getElementById('result-text').value.trim();
-  if (!text) { toast('Введите результат', 'error'); return; }
-  order.resultText = text;
-  order.status = 'result_submitted';
-  order.updatedAt = Date.now();
-  saveDB(db);
-  toast('Результат отправлен заказчику', 'success');
-  render();
-};
-
-window.handleConfirm = function(orderId) {
-  if (!confirm('Подтвердить выполнение? Деньги будут переведены исполнителю, действие необратимо.')) return;
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order) return;
-  const res = releaseToExecutor(orderId);
-  if (!res.ok) { toast(res.error, 'error'); return; }
-  order.status = 'paid_out';
-  order.updatedAt = Date.now();
-  saveDB(db);
-  toast('Оплата переведена исполнителю', 'success');
-  render();
-};
-
-window.handleCancel = function(orderId) {
-  if (!confirm('Отменить заявку и вернуть деньги на баланс?')) return;
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order) return;
-  refundCustomer(orderId);
-  order.status = 'cancelled';
-  order.updatedAt = Date.now();
-  saveDB(db);
-  toast('Заявка отменена, средства возвращены', 'success');
-  render();
-};
-
-window.handleSendMessage = function(e, orderId) {
-  e.preventDefault();
-  const user = currentUser();
-  if (!user) return;
-  const input = document.getElementById('chat-input');
-  const body = input.value.trim();
-  if (!body) return;
-  db.messages.push({ id: uid(), orderId, senderId: user.id, body, createdAt: Date.now() });
-  saveDB(db);
-  render();
-  setTimeout(() => { const el = document.getElementById('chat-messages'); if (el) el.scrollTop = el.scrollHeight; }, 30);
-};
-
-window.handleDispute = function(orderId) {
-  const user = currentUser();
-  if (!user) return;
-  const reason = document.getElementById('dispute-reason').value.trim();
-  if (reason.length < 5) { toast('Опишите проблему подробнее', 'error'); return; }
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order) return;
-  db.disputes.push({
-    id: uid(), orderId, initiatorId: user.id, reason,
-    status: 'open', resolution: null, createdAt: Date.now(),
-  });
-  order.status = 'disputed';
-  order.updatedAt = Date.now();
-  saveDB(db);
-  toast('Спор открыт. Администратор рассмотрит обращение.', 'success');
-  render();
-};
-
-window.handleResolveDispute = function(disputeId, resolution) {
-  const dispute = db.disputes.find(d => d.id === disputeId);
-  if (!dispute) return;
-  const order = db.orders.find(o => o.id === dispute.orderId);
-  if (!order) return;
-  if (resolution === 'refund') {
-    refundCustomer(order.id);
-    order.status = 'refunded';
-  } else {
-    releaseToExecutor(order.id);
-    order.status = 'paid_out';
-  }
-  dispute.status = 'resolved';
-  dispute.resolution = resolution;
-  order.updatedAt = Date.now();
-  saveDB(db);
-  toast('Спор решён', 'success');
-  render();
-};
-
-window.handleDeposit = function() {
-  const user = currentUser();
-  if (!user) return;
-  const amount = Number(document.getElementById('deposit-amount').value);
-  if (!amount || amount <= 0) { toast('Неверная сумма', 'error'); return; }
-  user.balance += amount;
-  db.transactions.push({
-    id: uid(), userId: user.id, orderId: null,
-    type: 'deposit', amount, balanceAfter: user.balance,
-    createdAt: Date.now(),
-  });
-  saveDB(db);
-  toast('Баланс пополнен на ' + fmtMoney(amount), 'success');
-  render();
-};
-
-window.handleWithdraw = function() {
-  const user = currentUser();
-  if (!user) return;
-  const amount = Number(document.getElementById('withdraw-amount').value);
-  const dest = document.getElementById('withdraw-dest').value.trim();
-  if (!amount || amount < 300) { toast('Минимальная сумма вывода — 300 ₽', 'error'); return; }
-  if (amount > user.balance) { toast('Недостаточно средств', 'error'); return; }
-  if (dest.length < 5) { toast('Укажите реквизиты (карта или телефон)', 'error'); return; }
-  user.balance -= amount;
-  db.transactions.push({
-    id: uid(), userId: user.id, orderId: null,
-    type: 'withdrawal', amount: -amount, balanceAfter: user.balance,
-    createdAt: Date.now(),
-  });
-  db.withdrawals.push({
-    id: uid(), userId: user.id, amount, destination: dest,
-    status: 'pending', createdAt: Date.now(),
-  });
-  saveDB(db);
-  toast('Заявка на вывод создана', 'success');
-  render();
-};
-
-window.handleToggleBlock = function(userId) {
-  const u = db.users.find(x => x.id === userId);
-  if (!u) return;
-  u.blocked = !u.blocked;
-  saveDB(db);
-  toast(u.blocked ? 'Пользователь заблокирован' : 'Пользователь разблокирован', 'success');
-  render();
-};
-
-window.applyFilter = function() {
-  const subject = document.getElementById('f-subject').value.trim().toLowerCase();
-  const min = Number(document.getElementById('f-min').value) || 0;
-  const max = Number(document.getElementById('f-max').value) || Infinity;
-  let orders = db.orders.filter(o => o.status === 'paid');
-  if (subject) orders = orders.filter(o => o.subject.toLowerCase().includes(subject));
-  orders = orders.filter(o => o.price >= min && o.price <= max);
-  document.getElementById('orders-list').innerHTML = renderOrdersGrid(orders);
-};
-
-// ============= РЕНДЕР =============
-function render() {
-  const user = currentUser();
-  let content = '';
-
-  if (route.name === 'login') content = PageLogin();
-  else if (route.name === 'register') content = PageRegister();
-  else if (route.name === 'home') content = PageHome();
-  else if (route.name === 'create') content = user ? PageCreateOrder() : PageLogin();
-  else if (route.name === 'order') content = PageOrder(route.params);
-  else if (route.name === 'my') content = user ? PageMyOrders() : PageLogin();
-  else if (route.name === 'wallet') content = user ? PageWallet() : PageLogin();
-  else if (route.name === 'admin') content = user ? PageAdmin() : PageLogin();
-  else content = PageHome();
-
-  document.getElementById('app').innerHTML = `
-    <header class="header">
-      <div class="logo" onclick="navigate('home')">StudentMarket</div>
-      <nav>
-        <a onclick="navigate('home')">Заявки</a>
-        ${user ? `<a onclick="navigate('my')">Мои заказы</a>` : ''}
-        ${user && user.role !== 'executor' ? `<a onclick="navigate('create')">Создать</a>` : ''}
-        ${user ? `<a onclick="navigate('wallet')">Кошелёк · ${fmtMoney(user.balance)}</a>` : ''}
-        ${user && user.role === 'admin' ? `<a onclick="navigate('admin')">Админ</a>` : ''}
-      </nav>
-      <div class="user-info">
-        ${user ? `
-          <span class="name">${escapeHtml(user.fullName)}</span>
-          ${user.role === 'admin' ? '<span class="badge admin">ADMIN</span>' : ''}
-          <button class="secondary small" onclick="logout()">Выйти</button>
-        ` : `
-          <a onclick="navigate('login')" style="color:#4a6cf7;cursor:pointer">Вход</a>
-          <a onclick="navigate('register')" style="color:#4a6cf7;cursor:pointer">Регистрация</a>
-        `}
+  const isAuth=route.name==='login'||route.name==='register';
+  const header=isAuth?'':`<header class="header">
+    <div class="header-row">
+      <div class="logo" onclick="nav('home')">Student<span>Market</span></div>
+      <div class="user-chip">
+        ${u?`<div class="avatar">${esc(initials(u.fullName))}</div>
+             <div style="font-size:13px;color:var(--text);font-weight:600">${esc(u.fullName.split(' ')[0])}</div>
+             <button class="secondary small" onclick="logout()">Выйти</button>`
+            :`<button class="small" onclick="nav('login')">Войти</button>`}
       </div>
-    </header>
-    <div class="container">${content}</div>
-  `;
+    </div>
+    <nav>
+      <a class="${route.name==='home'?'active':''}" onclick="nav('home')">Заявки</a>
+      ${u?`<a class="${route.name==='my'?'active':''}" onclick="nav('my')">Мои</a>`:''}
+      ${u&&u.role!=='executor'?`<a class="${route.name==='create'?'active':''}" onclick="nav('create')">Создать</a>`:''}
+      ${u?`<a class="${route.name==='wallet'?'active':''}" onclick="nav('wallet')">Кошелёк · ${u.balance.toFixed(0)} ₽</a>`:''}
+      ${u&&u.role==='admin'?`<a class="${route.name==='admin'?'active':''}" onclick="nav('admin')">Админ</a>`:''}
+    </nav>
+  </header>`;
 
-  // Скролл чата вниз
-  const chatEl = document.getElementById('chat-messages');
-  if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+  document.getElementById('app').innerHTML=header+`<div class="container">${content}</div>`;
+  const c=document.getElementById('chat-msgs');
+  if(c)c.scrollTop=c.scrollHeight;
 }
-
 render();
 </script>
 </body>
