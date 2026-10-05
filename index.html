@@ -62,7 +62,7 @@ h3{font-size:16px;font-weight:700;margin-bottom:12px}
 .status-rejected{background:rgba(239,68,68,.15);color:#fca5a5}
 .filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
 .filters::-webkit-scrollbar{display:none}
-.filters input{margin:0;flex:0 0 120px;padding:10px 12px;font-size:14px}
+.filters input,.filters select{margin:0;flex:0 0 130px;padding:10px 12px;font-size:14px}
 .filters button{flex:0 0 auto;padding:10px 16px;min-height:40px;font-size:14px}
 .balance-hero{background:linear-gradient(135deg,#1e1e2a 0%,#16161f 100%);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:12px;position:relative;overflow:hidden}
 .balance-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,214,10,.15) 0%,transparent 70%);border-radius:50%;pointer-events:none}
@@ -126,24 +126,30 @@ th{color:var(--text2);font-weight:600;font-size:11px;text-transform:uppercase;le
 .pay-card-num{font-family:ui-monospace,"SF Mono",monospace;font-size:18px;font-weight:700;letter-spacing:2px;color:var(--text);margin-bottom:12px;word-break:break-all;line-height:1.4}
 .pay-card-label{color:var(--text2);font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:8px}
 .copy-btn{background:var(--accent);color:#000;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:0;display:inline-flex;align-items:center;gap:5px;min-height:auto}
-@media(max-width:480px){.balance-amount{font-size:32px}h1{font-size:22px}.container{padding:12px 12px 40px}}
+.id-display{background:linear-gradient(135deg,rgba(255,214,10,.14),rgba(255,140,0,.06));border:1px solid rgba(255,214,10,.3);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center}
+.id-label{color:var(--text2);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;font-weight:600}
+.id-value{font-family:ui-monospace,"SF Mono",monospace;font-size:34px;font-weight:800;color:var(--accent);letter-spacing:5px;margin-bottom:12px;line-height:1}
+.id-pill{display:inline-block;padding:3px 9px;border-radius:6px;background:rgba(255,214,10,.12);color:var(--accent);font-family:ui-monospace,monospace;font-weight:700;font-size:12px;letter-spacing:.5px}
+@media(max-width:480px){.balance-amount{font-size:32px}h1{font-size:22px}.container{padding:12px 12px 40px}.id-value{font-size:28px;letter-spacing:3px}}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-const DB_KEY='sm_db_v2';
+const DB_KEY='sm_db_v3';
+const CATEGORIES=['Домашнее задание','Контрольная работа','Самостоятельная работа','Реферат','Курсовая работа','Дипломная работа','Эссе / Сочинение','Лабораторная работа','Презентация','Тест / Экзамен','Чертёж / Схема','Программирование','Другое'];
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function genShortId(existing){let id;do{id=String(Math.floor(100000+Math.random()*900000))}while(existing&&existing.includes(id));return id}
 function defaultDB(){
-  const db={users:[],orders:[],proposals:[],transactions:[],messages:[],disputes:[],deposits:[],withdrawals:[],revenues:[],
+  const db={users:[],orders:[],proposals:[],transactions:[],messages:[],disputes:[],deposits:[],withdrawals:[],revenues:[],manualCredits:[],
     settings:{cardNumber:'',cardHolder:'',bankName:'',commissionRate:.10,minWithdraw:300,minDeposit:100},session:null};
   const p='password123';
-  const c={id:uid(),email:'customer@example.com',password:p,fullName:'Иван Заказчик',role:'customer',balance:1000,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
-  const e={id:uid(),email:'executor@example.com',password:p,fullName:'Пётр Исполнитель',role:'executor',balance:500,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
-  const a={id:uid(),email:'admin@example.com',password:p,fullName:'Администратор',role:'admin',balance:0,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
+  const c={id:uid(),publicId:'100001',email:'customer@example.com',password:p,fullName:'Иван Заказчик',role:'customer',balance:1000,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
+  const e={id:uid(),publicId:'100002',email:'executor@example.com',password:p,fullName:'Пётр Исполнитель',role:'executor',balance:500,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
+  const a={id:uid(),publicId:'100000',email:'admin@example.com',password:p,fullName:'Администратор',role:'admin',balance:0,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
   db.users=[c,e,a];
   const oid=uid();
-  db.orders.push({id:oid,customerId:c.id,executorId:null,title:'Решить контрольную по математике',description:'Нужно решить 10 задач по линейной алгебре. Дедлайн — до конца недели. Ответы — фото решения.',subject:'Математика',price:300,commissionRate:.10,status:'paid',resultText:null,createdAt:Date.now(),updatedAt:Date.now()});
+  db.orders.push({id:oid,customerId:c.id,executorId:null,title:'Решить контрольную по математике',description:'Нужно решить 10 задач по линейной алгебре. Дедлайн — до конца недели.',subject:'Контрольная работа',price:300,commissionRate:.10,status:'paid',resultText:null,createdAt:Date.now(),updatedAt:Date.now()});
   c.balance-=300;c.heldBalance+=300;
   db.transactions.push({id:uid(),userId:c.id,orderId:oid,type:'hold',amount:-300,balanceAfter:c.balance,idempotencyKey:'hold-'+oid,createdAt:Date.now()});
   return db;
@@ -151,8 +157,11 @@ function defaultDB(){
 let db;
 function loadDB(){
   try{const r=localStorage.getItem(DB_KEY);if(r){const d=JSON.parse(r);
-    if(!d.deposits)d.deposits=[];if(!d.withdrawals)d.withdrawals=[];
+    if(!d.deposits)d.deposits=[];if(!d.withdrawals)d.withdrawals=[];if(!d.manualCredits)d.manualCredits=[];
     if(!d.settings)d.settings={cardNumber:'',cardHolder:'',bankName:'',commissionRate:.10,minWithdraw:300,minDeposit:100};
+    // Миграция: добавить publicId тем у кого нет
+    const ids=d.users.map(u=>u.publicId).filter(Boolean);
+    d.users.forEach(u=>{if(!u.publicId){u.publicId=genShortId(ids);ids.push(u.publicId)}});
     return d}}catch{}
   return defaultDB();
 }
@@ -160,6 +169,7 @@ const saveDB=()=>localStorage.setItem(DB_KEY,JSON.stringify(db));
 db=loadDB();saveDB();
 const cu=()=>db.session?db.users.find(u=>u.id===db.session):null;
 const findBy=(a,id)=>a.find(x=>x.id===id);
+const findById=(arr,pid)=>arr.find(u=>u.publicId===String(pid));
 const money=n=>Number(n).toFixed(2)+' ₽';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dt=ts=>new Date(ts).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
@@ -170,12 +180,12 @@ function copyText(t){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('Скопировано','success')).catch(()=>fb(t))}else fb(t);
 }
 function fb(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Скопировано','success')}catch{toast('Не удалось','error')}a.remove()}
-function holdFunds(uid,oid,amt){
+function holdFunds(userId,oid,amt){
   const k='hold-'+oid;if(db.transactions.find(t=>t.idempotencyKey===k))return{ok:true};
-  const u=findBy(db.users,uid);if(!u)return{ok:false,error:'Пользователь не найден'};
+  const u=findBy(db.users,userId);if(!u)return{ok:false,error:'Пользователь не найден'};
   if(u.balance<amt)return{ok:false,error:'Недостаточно средств'};
   u.balance-=amt;u.heldBalance+=amt;
-  db.transactions.push({id:uid(),userId:uid,orderId:oid,type:'hold',amount:-amt,balanceAfter:u.balance,idempotencyKey:k,createdAt:Date.now()});
+  db.transactions.push({id:uid(),userId:userId,orderId:oid,type:'hold',amount:-amt,balanceAfter:u.balance,idempotencyKey:k,createdAt:Date.now()});
   return{ok:true};
 }
 function releaseToExecutor(oid){
@@ -213,9 +223,9 @@ function pageLogin(){return`<div class="auth-wrap"><div class="auth-card">
   <div class="card" style="background:var(--card2)">
     <div style="font-size:12px;color:var(--text2);line-height:1.7">
       <b style="color:var(--text)">Демо-аккаунты</b> (пароль password123):<br>
-      👤 customer@example.com — заказчик<br>
-      🛠 executor@example.com — исполнитель<br>
-      ⚙️ admin@example.com — администратор
+      👤 customer@example.com — заказчик, ID 100001<br>
+      🛠 executor@example.com — исполнитель, ID 100002<br>
+      ⚙️ admin@example.com — администратор, ID 100000
     </div>
   </div>
 </div></div>`}
@@ -243,7 +253,7 @@ function pageHome(){
   const list=db.orders.filter(o=>o.status==='paid').sort((a,b)=>b.createdAt-a.createdAt);
   return`<h1>Заявки</h1>
     <div class="filters">
-      <input id="f-subj" placeholder="Предмет" />
+      <select id="f-subj"><option value="">Все категории</option>${CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')}</select>
       <input id="f-min" type="number" placeholder="Мин ₽" />
       <input id="f-max" type="number" placeholder="Макс ₽" />
       <button class="small" onclick="applyFilter()">Найти</button>
@@ -269,14 +279,16 @@ function pageCreate(){
   if(u.role==='executor')return`<div class="card"><h2>Только для заказчиков</h2><p class="hint">Войдите как заказчик, чтобы создать задание.</p></div>`;
   return`<div class="card"><h2>Новое задание</h2><div id="create-error"></div>
     <form onsubmit="handleCreate(event)">
-      <label>Заголовок</label><input name="title" placeholder="Например: Контрольная по алгебре" required minlength="3" />
-      <label>Предмет</label><input name="subject" placeholder="Математика" required minlength="2" />
-      <label>Описание</label><textarea name="description" rows="5" placeholder="Что именно нужно сделать, требования, дедлайн" required minlength="10"></textarea>
-      <label>Оплата, ₽</label><input name="price" type="number" min="10" step="10" value="300" required />
+      <label>Что нужно сделать</label><input name="title" placeholder="Например: Контрольная по алгебре, 10 задач" required minlength="3" />
+      <label>Категория работы</label>
+      <select name="subject" required>${CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')}</select>
+      <label>Описание задания</label>
+      <textarea name="description" rows="5" placeholder="Что именно нужно сделать, требования, объём, дедлайн" required minlength="10"></textarea>
+      <label>Оплата исполнителю, ₽</label><input name="price" type="number" min="10" step="10" value="300" required />
       <div class="card-dark" style="margin-bottom:12px"><div style="font-size:13px;color:var(--text2);line-height:1.7">
         Доступно: <b style="color:var(--text)">${money(u.balance)}</b><br>
-        При создании сумма замораживается в эскроу до вашего подтверждения.<br>
-        Комиссия платформы: <b style="color:var(--accent)">${(db.settings.commissionRate*100).toFixed(0)}%</b>
+        Комиссия платформы: <b style="color:var(--accent)">${(db.settings.commissionRate*100).toFixed(0)}%</b> — из суммы заказа<br>
+        Исполнитель получит: <b style="color:var(--success)">${money(u.balance>=10?300*(1-db.settings.commissionRate):0)}</b> (при цене 300 ₽)
       </div></div>
       <button class="full" type="submit">Создать и оплатить</button>
     </form>
@@ -301,7 +313,7 @@ function pageOrder({id}){
       <span class="price" style="font-size:26px">${money(o.price)}</span>
       <span class="status status-${o.status}">${STATUS[o.status]}</span>
     </div>
-    <div class="hint" style="margin-top:10px">Заказчик: <b style="color:var(--text)">${esc(cust?.fullName||'—')}</b>${exec?` · Исполнитель: <b style="color:var(--text)">${esc(exec.fullName)}</b>`:''}</div>
+    <div class="hint" style="margin-top:10px">Заказчик: <b style="color:var(--text)">${esc(cust?.fullName||'—')}</b> <span class="id-pill">${esc(cust?.publicId||'—')}</span>${exec?` · Исполнитель: <b style="color:var(--text)">${esc(exec.fullName)}</b> <span class="id-pill">${esc(exec.publicId)}</span>`:''}</div>
     ${idx>=0?`<div class="steps">${steps.map((s,i)=>`<div class="step ${i<idx?'done':i===idx?'current':''}">${STATUS[s]}</div>`).join('')}</div>`:''}
     <div id="order-error"></div>
     ${o.status==='paid'&&u&&!isC&&!myP&&u.role!=='admin'&&u.role!=='customer'?`
@@ -316,7 +328,7 @@ function pageOrder({id}){
       <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
         <h3>Отклики (${props.length})</h3>
         ${props.map(p=>{const e=findBy(db.users,p.executorId);return`<div class="proposal">
-          <b>${esc(e?.fullName||'Аноним')}</b> — <b style="color:var(--accent)">${money(p.price)}</b>
+          <b>${esc(e?.fullName||'Аноним')}</b> <span class="id-pill">${esc(e?.publicId||'—')}</span> — <b style="color:var(--accent)">${money(p.price)}</b>
           <p style="margin-top:6px;color:var(--text2);font-size:13px">${esc(p.message)}</p>
           <div class="row-buttons"><button class="small" onclick="handleSelectExec('${o.id}','${p.executorId}')">Выбрать исполнителем</button></div>
         </div>`}).join('')}
@@ -399,8 +411,8 @@ function pageWallet({tab}={}){
       <div class="tab ${t==='withdraw'?'active':''}" onclick="nav('wallet',{tab:'withdraw'})">Выводы</div>
     </div>
     ${t==='overview'?renderTxHistory(txns,TX):''}
-    ${t==='deposit'?renderDepositTab(deps):''}
-    ${t==='withdraw'?renderWithdrawTab(wds):''}`;
+    ${t==='deposit'?renderDepositTab(deps,u):''}
+    ${t==='withdraw'?renderWithdrawTab(wds,u):''}`;
 }
 function renderTxHistory(txns,TX){
   if(!txns.length)return`<div class="empty">Операций пока нет</div>`;
@@ -413,25 +425,30 @@ function renderTxHistory(txns,TX){
     </tr>`).join('')}</tbody>
   </table></div></div>`;
 }
-function renderDepositTab(deps){
+function renderDepositTab(deps,u){
   const s=db.settings,has=!!(s.cardNumber&&s.cardNumber.trim());
-  const u=cu();
   return`<div class="card">
-    <h3>Пополнить переводом на карту</h3>
+    <h3>Пополнение баланса</h3>
+    <div class="id-display">
+      <div class="id-label">Ваш ID для зачисления</div>
+      <div class="id-value">${esc(u.publicId)}</div>
+      <button class="copy-btn" onclick="copyText('${esc(u.publicId)}')">📋 Скопировать ID</button>
+    </div>
     ${has?`
+      <p class="hint" style="margin-bottom:12px">Переведите нужную сумму на карту ниже. В комментарии к переводу обязательно укажите ваш ID <b style="color:var(--accent)">${esc(u.publicId)}</b> — по нему администратор зачислит деньги на баланс.</p>
       <div class="pay-card-box">
-        <div class="pay-card-label">Переведите на карту</div>
+        <div class="pay-card-label">Карта для перевода</div>
         <div class="pay-card-num">${esc(s.cardNumber)}</div>
         ${s.cardHolder?`<div style="font-size:13px;color:var(--text2);margin-bottom:6px">Получатель: <b style="color:var(--text)">${esc(s.cardHolder)}</b></div>`:''}
         ${s.bankName?`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Банк: ${esc(s.bankName)}</div>`:''}
-        <button class="copy-btn" onclick="copyText(this.closest('.pay-card-box').querySelector('.pay-card-num').textContent.trim())">📋 Скопировать номер</button>
+        <button class="copy-btn" onclick="copyText(this.closest('.pay-card-box').querySelector('.pay-card-num').textContent.trim())">📋 Скопировать номер карты</button>
       </div>
-      <div class="warn-box"><b>Важно:</b> в комментарии к переводу укажите ваш email <b>${esc(u.email)}</b>, чтобы мы зачислили деньги именно вам.</div>
+      <div class="warn-box"><b>Важно:</b> в комментарии к переводу укажите <b>${esc(u.publicId)}</b>. Без ID зачисление может занять больше времени.</div>
       <div style="margin-top:16px">
         <label>Сумма перевода, ₽</label>
         <input id="dep-amt" type="number" min="${s.minDeposit}" step="10" value="300" />
         <label>Комментарий к переводу</label>
-        <input id="dep-cmt" value="${esc(u.email)}" />
+        <input id="dep-cmt" value="ID ${esc(u.publicId)}" />
         <button class="full" onclick="handleDepositRequest()">Я перевёл — отправить заявку</button>
         <p class="hint">Заявка появится у администратора. После проверки перевода баланс пополнится.</p>
       </div>`:`
@@ -443,21 +460,32 @@ function renderDepositTab(deps){
       <td><span class="status status-${d.status}">${d.status==='pending'?'Ожидает':d.status==='approved'?'Зачислено':'Отклонено'}</span></td>
     </tr>`).join('')}</tbody></table></div></div>`:''}`;
 }
-function renderWithdrawTab(wds){
-  const u=cu();
+function renderWithdrawTab(wds,u){
   return`<div class="card">
     <h3>Вывод средств</h3>
-    <p class="hint" style="margin-bottom:14px">Минимум ${money(db.settings.minWithdraw)}. Администратор вручную переведёт на указанные реквизиты в течение 1–3 дней.</p>
+    <div class="id-display">
+      <div class="id-label">Ваш ID для вывода</div>
+      <div class="id-value">${esc(u.publicId)}</div>
+      <button class="copy-btn" onclick="copyText('${esc(u.publicId)}')">📋 Скопировать ID</button>
+    </div>
+    <p class="hint" style="margin-bottom:14px">Минимум ${money(db.settings.minWithdraw)}. Администратор переведёт деньги на указанные реквизиты в течение 1–3 дней. ID будет привязан к заявке.</p>
     <label>Сумма, ₽</label>
     <input id="wd-amt" type="number" min="${db.settings.minWithdraw}" step="10" value="${db.settings.minWithdraw}" />
-    <label>Реквизиты (карта или телефон СБП)</label>
+    <label>Способ вывода</label>
+    <select id="wd-service">
+      <option>Карта банка</option>
+      <option>СБП (по номеру телефона)</option>
+      <option>ЮMoney</option>
+      <option>Другое</option>
+    </select>
+    <label>Реквизиты (номер карты или телефон)</label>
     <input id="wd-dest" placeholder="2200 7000 0000 0000 или +7 900 000-00-00" />
     <button class="full" onclick="handleWithdrawRequest()">Создать заявку на вывод</button>
     <p class="hint">Доступно: <b style="color:var(--text)">${money(u.balance)}</b>. Сумма спишется с баланса сразу.</p>
   </div>
   ${wds.length?`<div class="card"><h3>Мои выводы</h3><div class="table-wrap"><table>
-    <thead><tr><th>Дата</th><th>Сумма</th><th>Реквизиты</th><th>Статус</th></tr></thead>
-    <tbody>${wds.map(w=>`<tr><td>${dt(w.createdAt)}</td><td>${money(w.amount)}</td><td>${esc(w.destination)}</td>
+    <thead><tr><th>Дата</th><th>Сумма</th><th>Способ</th><th>Статус</th></tr></thead>
+    <tbody>${wds.map(w=>`<tr><td>${dt(w.createdAt)}</td><td>${money(w.amount)}</td><td>${esc(w.service||'—')}</td>
       <td><span class="status status-${w.status}">${w.status==='pending'?'В обработке':w.status==='completed'?'Выполнено':'Отклонено'}</span></td>
     </tr>`).join('')}</tbody></table></div></div>`:''}`;
 }
@@ -477,7 +505,8 @@ function pageAdmin({tab}={}){
   return`<h1>Админ-панель</h1>
     <div class="tabs">
       <div class="tab ${t==='stats'?'active':''}" onclick="nav('admin',{tab:'stats'})">Обзор</div>
-      <div class="tab ${t==='deposits'?'active':''}" onclick="nav('admin',{tab:'deposits'})">Пополнения${pd?` (${pd})`:''}</div>
+      <div class="tab ${t==='credit'?'active':''}" onclick="nav('admin',{tab:'credit'})">💰 Зачислить</div>
+      <div class="tab ${t==='deposits'?'active':''}" onclick="nav('admin',{tab:'deposits'})">Пополн.${pd?` (${pd})`:''}</div>
       <div class="tab ${t==='withdrawals'?'active':''}" onclick="nav('admin',{tab:'withdrawals'})">Выводы${pw?` (${pw})`:''}</div>
       <div class="tab ${t==='disputes'?'active':''}" onclick="nav('admin',{tab:'disputes'})">Споры${pdi?` (${pdi})`:''}</div>
       <div class="tab ${t==='users'?'active':''}" onclick="nav('admin',{tab:'users'})">Юзеры</div>
@@ -497,38 +526,66 @@ function adminTab(t,d){
     <thead><tr><th>Статус</th><th>Кол-во</th></tr></thead>
     <tbody>${Object.entries(STATUS).map(([k,v])=>{const c=d.ords.filter(o=>o.status===k).length;return c?`<tr><td>${v}</td><td>${c}</td></tr>`:''}).join('')}</tbody>
   </table></div></div>`;
+
+  if(t==='credit'){
+    const mc=db.manualCredits.slice().sort((a,b)=>b.createdAt-a.createdAt).slice(0,20);
+    return`<div class="card">
+      <h3>Ручное зачисление по ID</h3>
+      <p class="hint" style="margin-bottom:14px">Введите ID пользователя и сумму. Деньги зачислятся мгновенно. Используйте, когда пользователь перевёл вам деньги на карту и указал свой ID в комментарии.</p>
+      <label>ID пользователя</label>
+      <input id="mc-id" placeholder="Например: 100001" inputmode="numeric" />
+      <label>Сумма зачисления, ₽</label>
+      <input id="mc-amt" type="number" min="1" step="10" value="300" />
+      <label>Комментарий (необязательно)</label>
+      <input id="mc-note" placeholder="Например: перевод с карты 2200..." />
+      <button class="full" onclick="handleManualCredit()">💰 Зачислить</button>
+      <div id="mc-result"></div>
+    </div>
+    ${mc.length?`<div class="card"><h3>Последние зачисления</h3><div class="table-wrap"><table>
+      <thead><tr><th>Дата</th><th>ID</th><th>Имя</th><th>Сумма</th></tr></thead>
+      <tbody>${mc.map(m=>{const u=findBy(db.users,m.userId);return`<tr>
+        <td>${dt(m.createdAt)}</td>
+        <td><span class="id-pill">${esc(m.publicId)}</span></td>
+        <td>${esc(u?.fullName||'—')}</td>
+        <td class="pos">+${money(m.amount)}</td>
+      </tr>`}).join('')}</tbody></table></div></div>`:''}`;
+  }
+
   if(t==='deposits'){
     if(!d.deps.length)return`<div class="empty"><div class="empty-icon">💳</div>Заявок нет</div>`;
     return d.deps.map(x=>{const u=findBy(db.users,x.userId);return`<div class="card">
       <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
-        <div><b>${esc(u?.fullName||'—')}</b><div class="hint">${esc(u?.email||'')}</div></div>
+        <div><b>${esc(u?.fullName||'—')}</b> <span class="id-pill">${esc(u?.publicId||'—')}</span><div class="hint">${esc(u?.email||'')}</div></div>
         <span class="status status-${x.status}">${x.status==='pending'?'Ожидает':x.status==='approved'?'Зачислено':'Отклонено'}</span>
       </div>
       <div style="margin-top:12px"><span class="price">${money(x.amount)}</span></div>
       ${x.comment?`<div class="hint" style="margin-top:6px">Комментарий: ${esc(x.comment)}</div>`:''}
       <div class="hint">${dt(x.createdAt)}</div>
       ${x.status==='pending'?`<div class="row-buttons">
-        <button class="small success" onclick="handleApproveDeposit('${x.id}')">Зачислить</button>
+        <button class="small success" onclick="handleApproveDeposit('${x.id}')">Зачислить ${money(x.amount)}</button>
         <button class="small danger" onclick="handleRejectDeposit('${x.id}')">Отклонить</button>
       </div>`:''}
     </div>`}).join('');
   }
+
   if(t==='withdrawals'){
     if(!d.wds.length)return`<div class="empty"><div class="empty-icon">🏦</div>Заявок нет</div>`;
     return d.wds.map(x=>{const u=findBy(db.users,x.userId);return`<div class="card">
       <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
-        <div><b>${esc(u?.fullName||'—')}</b><div class="hint">${esc(u?.email||'')}</div></div>
+        <div><b>${esc(u?.fullName||'—')}</b> <span class="id-pill">${esc(u?.publicId||'—')}</span><div class="hint">${esc(u?.email||'')}</div></div>
         <span class="status status-${x.status}">${x.status==='pending'?'В обработке':x.status==='completed'?'Выполнено':'Отклонено'}</span>
       </div>
       <div style="margin-top:12px"><span class="price">${money(x.amount)}</span></div>
-      <div class="hint" style="margin-top:6px">Реквизиты: <b style="color:var(--text)">${esc(x.destination)}</b></div>
+      ${x.service?`<div class="hint" style="margin-top:6px">Способ: <b style="color:var(--text)">${esc(x.service)}</b></div>`:''}
+      <div class="hint" style="margin-top:4px">Реквизиты: <b style="color:var(--text)">${esc(x.destination)}</b></div>
       <div class="hint">${dt(x.createdAt)}</div>
       ${x.status==='pending'?`<div class="row-buttons">
-        <button class="small success" onclick="handleCompleteWithdrawal('${x.id}')">Отметить выполненным</button>
+        <button class="small success" onclick="handleCompleteWithdrawal('${x.id}')">✓ Отметить выполненным</button>
         <button class="small danger" onclick="handleRejectWithdrawal('${x.id}')">Отклонить и вернуть</button>
       </div>`:''}
     </div>`}).join('');
   }
+
   if(t==='disputes'){
     if(!d.disp.length)return`<div class="empty"><div class="empty-icon">⚖️</div>Споров нет</div>`;
     return d.disp.map(x=>{
@@ -547,23 +604,27 @@ function adminTab(t,d){
       </div>`;
     }).join('');
   }
+
   if(t==='users')return`<div class="card"><div class="table-wrap"><table>
-    <thead><tr><th>Email</th><th>Имя</th><th>Роль</th><th>Баланс</th><th></th></tr></thead>
+    <thead><tr><th>ID</th><th>Email</th><th>Имя</th><th>Роль</th><th>Баланс</th><th></th></tr></thead>
     <tbody>${d.usrs.map(u=>`<tr>
+      <td><span class="id-pill">${esc(u.publicId)}</span></td>
       <td>${esc(u.email)}</td><td>${esc(u.fullName)}</td>
       <td>${u.role}${u.role==='admin'?' <span class="badge admin">ADMIN</span>':''}</td>
       <td>${money(u.balance)}</td>
       <td><button class="small ${u.blocked?'success':'danger'}" onclick="handleToggleBlock('${u.id}')">${u.blocked?'Разблок.':'Блок.'}</button></td>
     </tr>`).join('')}</tbody></table></div></div>`;
+
   if(t==='orders')return`<div class="card"><div class="table-wrap"><table>
     <thead><tr><th>Заголовок</th><th>Цена</th><th>Статус</th></tr></thead>
     <tbody>${d.ords.map(o=>`<tr style="cursor:pointer" onclick="nav('order',{id:'${o.id}'})">
       <td>${esc(o.title)}</td><td>${money(o.price)}</td>
       <td><span class="status status-${o.status}">${STATUS[o.status]}</span></td>
     </tr>`).join('')}</tbody></table></div></div>`;
+
   if(t==='settings'){const s=db.settings;return`<div class="card">
     <h3>Реквизиты для приёма платежей</h3>
-    <p class="hint" style="margin-bottom:12px">Пользователи увидят эти данные на странице пополнения.</p>
+    <p class="hint" style="margin-bottom:12px">Пользователи увидят эти данные на странице пополнения вместе со своим ID.</p>
     <label>Номер карты / телефон СБП</label>
     <input id="s-card" value="${esc(s.cardNumber)}" placeholder="2200 7000 0000 0000" />
     <label>Имя получателя</label>
@@ -574,7 +635,7 @@ function adminTab(t,d){
     <h3>Комиссия платформы</h3>
     <label>Процент комиссии</label>
     <input id="s-comm" type="number" min="0" max="50" step="1" value="${(s.commissionRate*100).toFixed(0)}" />
-    <p class="hint">Текущая: ${(s.commissionRate*100).toFixed(0)}%. Из суммы заказа столько уходит платформе, остальное — исполнителю.</p>
+    <p class="hint">Текущая: ${(s.commissionRate*100).toFixed(0)}%.</p>
     <div class="divider"></div>
     <h3>Лимиты</h3>
     <label>Мин. пополнение, ₽</label>
@@ -597,13 +658,14 @@ window.handleRegister=e=>{e.preventDefault();const fd=new FormData(e.target);
   const em=fd.get('email').trim().toLowerCase();
   if(db.users.find(x=>x.email.toLowerCase()===em))return document.getElementById('auth-error').innerHTML=`<div class="error-box">Этот email уже занят</div>`;
   const pw=fd.get('password');if(pw.length<6)return document.getElementById('auth-error').innerHTML=`<div class="error-box">Пароль слишком короткий</div>`;
-  const u={id:uid(),email:em,password:pw,fullName:fd.get('fullName').trim(),role:fd.get('role'),balance:0,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
-  db.users.push(u);db.session=u.id;saveDB();toast('Аккаунт создан','success');nav('home')};
+  const pid=genShortId(db.users.map(u=>u.publicId));
+  const u={id:uid(),publicId:pid,email:em,password:pw,fullName:fd.get('fullName').trim(),role:fd.get('role'),balance:0,heldBalance:0,totalEarned:0,blocked:false,createdAt:Date.now()};
+  db.users.push(u);db.session=u.id;saveDB();toast('Аккаунт создан. Ваш ID: '+pid,'success');nav('home')};
 window.logout=()=>{db.session=null;saveDB();nav('login')};
 window.handleCreate=e=>{e.preventDefault();const u=cu();if(!u)return;
   const fd=new FormData(e.target),price=Number(fd.get('price'));
   if(u.balance<price)return document.getElementById('create-error').innerHTML=`<div class="error-box">Недостаточно средств. Пополните кошелёк.</div>`;
-  const o={id:uid(),customerId:u.id,executorId:null,title:fd.get('title').trim(),subject:fd.get('subject').trim(),description:fd.get('description').trim(),price,commissionRate:db.settings.commissionRate,status:'paid',resultText:null,createdAt:Date.now(),updatedAt:Date.now()};
+  const o={id:uid(),customerId:u.id,executorId:null,title:fd.get('title').trim(),subject:fd.get('subject'),description:fd.get('description').trim(),price,commissionRate:db.settings.commissionRate,status:'paid',resultText:null,createdAt:Date.now(),updatedAt:Date.now()};
   const r=holdFunds(u.id,o.id,price);
   if(!r.ok)return document.getElementById('create-error').innerHTML=`<div class="error-box">${esc(r.error)}</div>`;
   db.orders.push(o);saveDB();toast('Заявка создана. '+money(price)+' в эскроу','success');nav('order',{id:o.id})};
@@ -641,10 +703,10 @@ window.handleDispute=oid=>{const u=cu();if(!u)return;
   db.disputes.push({id:uid(),orderId:oid,initiatorId:u.id,reason:r,status:'open',resolution:null,createdAt:Date.now()});
   o.status='disputed';o.updatedAt=Date.now();
   saveDB();toast('Спор открыт','success');render()};
-window.applyFilter=()=>{const s=document.getElementById('f-subj').value.trim().toLowerCase();
+window.applyFilter=()=>{const s=document.getElementById('f-subj').value.trim();
   const mn=Number(document.getElementById('f-min').value)||0,mx=Number(document.getElementById('f-max').value)||Infinity;
   let l=db.orders.filter(o=>o.status==='paid');
-  if(s)l=l.filter(o=>o.subject.toLowerCase().includes(s));
+  if(s)l=l.filter(o=>o.subject===s);
   l=l.filter(o=>o.price>=mn&&o.price<=mx);
   document.getElementById('orders-list').innerHTML=renderOrderGrid(l)};
 window.handleDepositRequest=()=>{const u=cu();if(!u)return;
@@ -653,14 +715,32 @@ window.handleDepositRequest=()=>{const u=cu();if(!u)return;
   db.deposits.push({id:uid(),userId:u.id,amount:amt,comment:cmt,status:'pending',createdAt:Date.now()});
   saveDB();toast('Заявка отправлена администратору','success');nav('wallet',{tab:'deposit'})};
 window.handleWithdrawRequest=()=>{const u=cu();if(!u)return;
-  const amt=Number(document.getElementById('wd-amt').value),dest=document.getElementById('wd-dest').value.trim();
+  const amt=Number(document.getElementById('wd-amt').value),dest=document.getElementById('wd-dest').value.trim(),service=document.getElementById('wd-service').value;
   if(!amt||amt<db.settings.minWithdraw)return toast('Минимум '+money(db.settings.minWithdraw),'error');
   if(amt>u.balance)return toast('Недостаточно средств','error');
   if(dest.length<5)return toast('Укажите реквизиты','error');
   u.balance-=amt;
   db.transactions.push({id:uid(),userId:u.id,orderId:null,type:'withdrawal',amount:-amt,balanceAfter:u.balance,createdAt:Date.now()});
-  db.withdrawals.push({id:uid(),userId:u.id,amount:amt,destination:dest,status:'pending',createdAt:Date.now()});
+  db.withdrawals.push({id:uid(),userId:u.id,publicId:u.publicId,amount:amt,destination:dest,service,status:'pending',createdAt:Date.now()});
   saveDB();toast('Заявка на вывод создана','success');nav('wallet',{tab:'withdraw'})};
+window.handleManualCredit=()=>{
+  const pid=document.getElementById('mc-id').value.trim();
+  const amt=Number(document.getElementById('mc-amt').value);
+  const note=document.getElementById('mc-note').value.trim();
+  const el=document.getElementById('mc-result');
+  if(!pid){el.innerHTML=`<div class="error-box">Введите ID пользователя</div>`;return}
+  if(!amt||amt<=0){el.innerHTML=`<div class="error-box">Введите сумму</div>`;return}
+  const u=findById(db.users,pid);
+  if(!u){el.innerHTML=`<div class="error-box">Пользователь с ID ${esc(pid)} не найден</div>`;return}
+  u.balance+=amt;
+  db.transactions.push({id:uid(),userId:u.id,orderId:null,type:'deposit',amount:amt,balanceAfter:u.balance,createdAt:Date.now()});
+  db.manualCredits.push({id:uid(),userId:u.id,publicId:pid,amount:amt,note,createdAt:Date.now()});
+  saveDB();
+  el.innerHTML=`<div class="success-box">✓ Зачислено ${money(amt)} пользователю <b>${esc(u.fullName)}</b> (ID ${esc(pid)}). Новый баланс: ${money(u.balance)}</div>`;
+  document.getElementById('mc-id').value='';
+  document.getElementById('mc-note').value='';
+  setTimeout(()=>render(),1500);
+};
 window.handleApproveDeposit=id=>{const d=findBy(db.deposits,id);if(!d||d.status!=='pending')return;
   const u=findBy(db.users,d.userId);if(!u)return;
   u.balance+=d.amount;
@@ -711,7 +791,7 @@ function render(){
       <div class="logo" onclick="nav('home')">Student<span>Market</span></div>
       <div class="user-chip">
         ${u?`<div class="avatar">${esc(initials(u.fullName))}</div>
-             <div style="font-size:13px;color:var(--text);font-weight:600">${esc(u.fullName.split(' ')[0])}</div>
+             <span class="id-pill">${esc(u.publicId)}</span>
              <button class="secondary small" onclick="logout()">Выйти</button>`
             :`<button class="small" onclick="nav('login')">Войти</button>`}
       </div>
