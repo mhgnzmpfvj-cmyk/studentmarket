@@ -115,10 +115,11 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase;letter-spacing:.4px}
 .idbig .val{font-family:ui-monospace,monospace;font-size:30px;font-weight:800;color:var(--a);letter-spacing:4px;line-height:1;margin-bottom:12px}
 .vb{background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(255,138,0,.08));border:1px solid rgba(239,68,68,.4);border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.5}
 .stars{color:var(--a);font-size:13px;letter-spacing:1px}
+.loading{display:flex;align-items:center;justify-content:center;min-height:100vh;color:var(--t2);font-size:14px}
 </style>
 </head>
 <body>
-<div id="app"><div style="display:flex;align-items:center;justify-content:center;min-height:100vh;color:var(--t2)">Загрузка…</div></div>
+<div id="app"><div class="loading">Загрузка…</div></div>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
@@ -132,7 +133,7 @@ const HINTS={'Домашнее задание':'Задачи, упражнени
 const DS={awaiting_payment:'Ожидает оплаты',in_progress:'В работе',result_submitted:'Результат отправлен',paid_out:'Выполнено',cancelled:'Отменено',disputed:'Спор',refunded:'Возврат'};
 
 let D={users:{},lots:{},chats:{},msgs:{},deals:{},txs:{},deps:{},wds:{},disps:{},revs:{},settings:{}};
-let FU=null,SID=localStorage.getItem('gm_sid'),route={name:'home',params:{}};
+let FU=null,SID=localStorage.getItem('gm_sid'),route={name:'home',params:{}},bootDone=false;
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -157,20 +158,33 @@ function holdFunds(userId,dealId,amt){const k='hold-'+dealId;if(Object.values(D.
 function release(dealId){const d=D.deals[dealId];if(!d||!d.executorId)return;const c=D.users[d.customerId],e=D.users[d.executorId];if(!c||!e)return;const pay=+(d.price*(1-d.commissionRate)).toFixed(2),com=+(d.price*d.commissionRate).toFixed(2);if(!unl(c))DB.child('users/'+c.id+'/heldBalance').set(Math.max(0,(c.heldBalance||0)-d.price));if(!unl(e))DB.child('users/'+e.id).update({balance:(e.balance||0)+pay,totalEarned:(e.totalEarned||0)+pay});DB.child('txs/'+uid()).set({id:uid(),userId:e.id,dealId,type:'payout',amount:pay,createdAt:Date.now()});DB.child('txs/'+uid()).set({id:uid(),userId:c.id,dealId,type:'commission',amount:-com,createdAt:Date.now()})}
 function refund(dealId){const d=D.deals[dealId];if(!d)return;const u=D.users[d.customerId];if(!u||unl(u))return;const nb=(u.balance||0)+d.price;DB.child('users/'+u.id).update({balance:nb,heldBalance:Math.max(0,(u.heldBalance||0)-d.price)});DB.child('txs/'+uid()).set({id:uid(),userId:u.id,dealId,type:'refund',amount:d.price,balanceAfter:nb,createdAt:Date.now()})}
 
-DB.on('value',s=>{const v=s.val()||{};D={users:v.users||{},lots:v.lots||{},chats:v.chats||{},msgs:v.msgs||{},deals:v.deals||{},txs:v.txs||{},deps:v.deps||{},wds:v.wds||{},disps:v.disps||{},revs:v.revs||{},settings:v.settings||{}};render()});
+DB.on('value',s=>{const v=s.val()||{};D={users:v.users||{},lots:v.lots||{},chats:v.chats||{},msgs:v.msgs||{},deals:v.deals||{},txs:v.txs||{},deps:v.deps||{},wds:v.wds||{},disps:v.disps||{},revs:v.revs||{},settings:v.settings||{}};bootDone=true;render()});
 
 auth.onAuthStateChanged(async user=>{
-  if(user){FU=user;SID=user.uid;localStorage.setItem('gm_sid',SID);
+  if(user){
+    FU=user;SID=user.uid;localStorage.setItem('gm_sid',SID);
     DB.child('users/'+user.uid).update({lastSeen:Date.now(),deviceId:fp()});
     const u=D.users[user.uid];
     if(!u||!u.ip||u.ip==='—'){fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>DB.child('users/'+user.uid+'/ip').set(d.ip||'—')).catch(()=>{})}
     if(user.emailVerified){DB.child('users/'+user.uid+'/emailVerified').once('value').then(s=>{if(!s.val())DB.child('users/'+user.uid+'/emailVerified').set(true)})}
-  }else{FU=null;SID=null;localStorage.removeItem('gm_sid')}
+    if(['login','register','verify','home'].includes(route.name)&&!user.emailVerified===false){/* ничего */}
+    if(['login','register'].includes(route.name)){
+      if(!user.emailVerified){route={name:'verify',params:{}}}
+      else{route={name:'home',params:{}}}
+    }
+  }else{
+    FU=null;SID=null;localStorage.removeItem('gm_sid');
+    if(!['login','register'].includes(route.name))route={name:'login',params:{}};
+  }
   render();
 });
 
-// ========== РЕНДЕР ==========
 function render(){
+  if(bootDone&&SID&&['login','register'].includes(route.name)){
+    const u=D.users[SID];
+    if(u&&!u.emailVerified)route={name:'verify',params:{}};
+    else route={name:'home',params:{}};
+  }
   const u=me();
   const isAuth=['login','register','verify'].includes(route.name);
   let c='';
@@ -218,31 +232,35 @@ function render(){
 
 // ========== СТРАНИЦЫ ==========
 function pgLogin(){return`<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="asub">Площадка для учебных заданий</div><div class="card"><h2>Вход</h2><div id="aerr"></div><form onsubmit="doLogin(event)"><input name="email" type="email" placeholder="Email" required/><input name="password" type="password" placeholder="Пароль" required/><button class="full" type="submit">Войти</button></form><p class="hint" style="text-align:center;margin-top:12px">Нет аккаунта? <a onclick="nav('register')">Зарегистрироваться</a></p></div></div></div>`}
-function pgReg(){return`<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="asub">Создайте аккаунт за минуту</div><div class="card"><h2>Регистрация</h2><div id="aerr"></div><form onsubmit="doReg(event)"><input name="fullName" placeholder="Имя и фамилия" required minlength="2"/><input name="email" type="email" placeholder="Email" required/><input name="password" type="password" placeholder="Пароль (мин. 6)" minlength="6" required/><label>Роль</label><select name="role"><option value="customer">Заказчик — ищу исполнителей</option><option value="executor">Исполнитель — выполняю задания</option></select><input name="adminCode" placeholder="Код админа (необязательно)"/><button class="full" type="submit">Создать аккаунт</button></form><p class="hint" style="text-align:center;margin-top:12px">Уже есть? <a onclick="nav('login')">Войти</a></p><div class="inf" style="margin-top:12px">Придёт письмо со ссылкой — кликните, чтобы подтвердить почту.</div></div></div></div>`}
+
+function pgReg(){return`<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="asub">Создайте аккаунт за минуту</div><div class="card"><h2>Регистрация</h2><div id="aerr"></div><form onsubmit="doReg(event)"><input name="fullName" placeholder="Имя и фамилия" required minlength="2"/><input name="email" type="email" placeholder="Email" required/><input name="password" type="password" placeholder="Пароль (мин. 6)" minlength="6" required/><label>Роль</label><select name="role"><option value="customer">Заказчик</option><option value="executor">Исполнитель</option></select><input name="adminCode" placeholder="Код админа (необязательно)"/><button class="full" type="submit">Создать аккаунт</button></form><p class="hint" style="text-align:center;margin-top:12px">Уже есть? <a onclick="nav('login')">Войти</a></p><div class="inf" style="margin-top:12px">Придёт письмо со ссылкой — кликните, чтобы подтвердить почту.</div></div></div></div>`}
+
 function pgVerify(){const u=me();return`<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="card"><h2>Подтверждение почты</h2><p class="hint" style="margin-bottom:14px">Откройте письмо на <b style="color:var(--t)">${esc(u?.email||FU?.email||'')}</b> и нажмите на ссылку.</p><button class="full ok" onclick="checkV()">Я подтвердил — продолжить</button><button class="sec full" style="margin-top:8px" onclick="resendV()">Отправить письмо повторно</button><button class="sec full" style="margin-top:8px" onclick="logout()">Выйти</button><div class="inf" style="margin-top:14px">Если письма нет — проверьте «Спам».</div></div></div></div>`}
 
 function pgHome(){const f=route.params.f||{};const lots=Object.values(D.lots).filter(l=>l.status==='active').sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));return`<h1>Лоты исполнителей</h1><p class="hint" style="margin-top:-10px;margin-bottom:12px">Выберите лот → напишите исполнителю → договоритесь → сделка через эскроу</p><div class="fil"><select id="f-c"><option value="">Все категории</option>${CATS.map(c=>`<option value="${esc(c)}" ${f.c===c?'selected':''}>${esc(c)}</option>`).join('')}</select><input id="f-mn" type="number" placeholder="Мин ₽" value="${esc(f.mn||'')}"/><input id="f-mx" type="number" placeholder="Макс ₽" value="${esc(f.mx||'')}"/><button class="sm" onclick="applyF()">Найти</button></div><div id="lots">${renderLots(lots)}</div>`}
+
 function renderLots(lots){if(!lots.length)return`<div class="empty"><div class="empty-icon">📭</div>Лотов пока нет</div>`;return`<div class="grid">${lots.map(l=>{const e=D.users[l.executorId]||{};return`<div class="item" onclick="nav('lot',{id:'${l.id}'})"><div class="cat">${esc(l.category)}</div><h3>${esc(l.title)}</h3><p>${esc((l.description||'').slice(0,110))}${(l.description||'').length>110?'…':''}</p><div class="meta"><span class="price">${money(l.price)}</span><span class="st st-active">Активен</span></div><div class="hint" style="margin-top:8px">${esc(e.fullName||'—')} ${stHtml(e.rating,e.ratingCount)}</div></div>`}).join('')}</div>`}
+
 function stHtml(r,c){if(!c)return'<span class="stars" style="color:var(--t3)">нет оценок</span>';const f=Math.round(r);return`<span class="stars">${'★'.repeat(f)}${'☆'.repeat(5-f)}</span> <span style="color:var(--t2);font-size:11px">${r.toFixed(1)} (${c})</span>`}
 
 function pgLot({id}){const l=D.lots[id];if(!l)return`<div class="card"><h2>Лот не найден</h2></div>`;const e=D.users[l.executorId]||{};const mine=l.executorId===SID;const canChat=SID&&!mine&&l.status==='active';return`<div class="card"><div class="cat">${esc(l.category)}</div><h2 style="margin-top:6px">${esc(l.title)}</h2><p style="color:var(--t2);margin:14px 0;line-height:1.6;white-space:pre-wrap">${esc(l.description)}</p><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="price" style="font-size:26px">${money(l.price)}</span><span class="st st-${l.status}">${l.status==='active'?'Активен':'Закрыт'}</span></div><div style="display:flex;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><div class="av" style="width:44px;height:44px;font-size:15px">${esc(ini(e.fullName))}</div><div><div style="font-weight:700">${esc(e.fullName||'—')} <span class="pid">${esc(e.publicId||'')}</span></div><div>${stHtml(e.rating,e.ratingCount)}</div></div></div>${canChat?`<button class="full" style="margin-top:14px" onclick="startChat('${l.id}')">💬 Написать исполнителю</button>`:''}${mine?`<button class="full dgr" style="margin-top:14px" onclick="closeLot('${l.id}')">Закрыть лот</button>`:''}${!SID?`<div class="inf" style="margin-top:14px">Войдите, чтобы написать исполнителю.</div>`:''}</div>`}
 
 function pgCreateLot(){if(!SID)return pgLogin();const u=me();if(!u)return'';if(u.role==='customer')return`<div class="card"><h2>Только для исполнителей</h2><p class="hint">Зарегистрируйтесь как исполнитель.</p></div>`;return`<div class="card"><h2>Создать лот</h2><div class="inf">Опишите, что готовы делать. Заказчики найдут лот и напишут вам.</div><div id="cerr"></div><form onsubmit="doCreateLot(event)"><label>Что вы делаете</label><input name="title" placeholder="Например: Решу контрольную по алгебре" required minlength="3"/><label>Категория</label><select name="category" id="cs" onchange="updHint()" required>${CATS.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')}</select><div class="hint" id="ch" style="margin-top:-4px;margin-bottom:12px">${esc(HINTS[CATS[0]])}</div><label>Описание</label><textarea name="description" rows="5" placeholder="Что сделаете, сроки, детали" required minlength="10"></textarea><label>Цена от, ₽</label><input name="price" type="number" min="10" step="10" value="300" required/><button class="full" type="submit">Опубликовать лот</button></form></div>`}
-window.updHint=()=>{const s=document.getElementById('cs').value;document.getElementById('ch').textContent=HINTS[s]||''};
 
 function pgMyLots(){const u=me();if(!u)return pgLogin();const lots=Object.values(D.lots).filter(l=>l.executorId===SID).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h1 style="margin:0">Мои лоты</h1><button class="sm" onclick="nav('create-lot')">+ Создать</button></div>${!lots.length?`<div class="empty"><div class="empty-icon">📦</div>Лотов пока нет</div>`:`<div class="grid">${lots.map(l=>`<div class="item" onclick="nav('lot',{id:'${l.id}'})"><div class="cat">${esc(l.category)}</div><h3>${esc(l.title)}</h3><div class="meta" style="margin-top:8px"><span class="price">${money(l.price)}</span><span class="st st-${l.status}">${l.status==='active'?'Активен':'Закрыт'}</span></div></div>`).join('')}</div>`}`}
 
 function pgChats(){if(!SID)return pgLogin();const chs=Object.values(D.chats).filter(c=>c.customerId===SID||c.executorId===SID).sort((a,b)=>(b.lastAt||0)-(a.lastAt||0));if(!chs.length)return`<h1>Чаты</h1><div class="empty"><div class="empty-icon">💬</div>Чатов пока нет</div>`;return`<h1>Чаты</h1>${chs.map(c=>{const oid=c.customerId===SID?c.executorId:c.customerId;const o=D.users[oid]||{};const un=(c.customerId===SID&&c.cU)||(c.executorId===SID&&c.eU);return`<div class="citem ${un?'un':''}" onclick="nav('chat',{id:'${c.id}'})"><div class="citem-h"><div style="display:flex;align-items:center;gap:10px"><div class="av">${esc(ini(o.fullName))}</div><div><div class="citem-n">${esc(o.fullName||'—')}</div><div style="font-size:11px;color:var(--t2)"><span class="dot ${onl(o)?'on':''}"></span>${onl(o)?'онлайн':'офлайн'}</div></div></div>${un?'<span class="bdg new">NEW</span>':''}</div><div class="citem-p">${esc(c.lastMsg||'Нет сообщений')}</div><div style="font-size:10px;color:var(--t3);margin-top:4px">${c.lastAt?dt(c.lastAt):''}</div></div>`}).join('')}`}
 
 function pgChat({id}){if(!SID)return pgLogin();const c=D.chats[id];if(!c)return`<div class="card"><h2>Чат не найден</h2></div>`;const oid=c.customerId===SID?c.executorId:c.customerId;const o=D.users[oid]||{};const ms=Object.values(D.msgs[id]||{}).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));const active=Object.values(D.deals).filter(d=>d.chatId===id&&!['paid_out','cancelled','refunded'].includes(d.status));return`<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div class="av" style="width:44px;height:44px;font-size:15px">${esc(ini(o.fullName))}</div><div style="flex:1"><div style="font-weight:700">${esc(o.fullName||'—')} <span class="pid">${esc(o.publicId||'')}</span></div><div style="font-size:12px"><span class="dot ${onl(o)?'on':''}"></span>${onl(o)?'онлайн':'офлайн'}</div></div></div><div class="msgs" id="cmsgs">${ms.length?ms.map(m=>{const s=D.users[m.senderId]||{};return`<div class="msg ${m.senderId===SID?'mine':''}"><div class="who">${esc(s.fullName||'—')}</div><p>${esc(m.body)}</p><small>${dt(m.createdAt)}</small></div>`}).join(''):'<div class="empty" style="padding:18px">Нет сообщений</div>'}</div><form class="cform" onsubmit="sendMsg(event,'${id}')"><input id="cinp" placeholder="Написать..." autocomplete="off"/><button type="submit">→</button></form>${active.length?`<div class="inf" style="margin-top:12px">В чате уже ${active.length} активная сделка.</div>`:`<button class="full ok" style="margin-top:12px" onclick="showDF('${id}')">💰 Создать сделку</button>`}</div><div class="card" id="df" style="display:none"><h3>Новая сделка</h3><div id="derr"></div><label>Что делаем</label><input id="d-title" placeholder="Контрольная по алгебре"/><label>Сумма, ₽</label><input id="d-price" type="number" min="10" step="10" value="300"/><div class="hint">Деньги заморозятся. Комиссия ${((D.settings?.commissionRate||.1)*100).toFixed(0)}%.</div><button class="full ok" style="margin-top:10px" onclick="doCreateDeal('${id}','${c.customerId}','${c.executorId}')">Создать</button></div>`}
-window.showDF=id=>{const e=document.getElementById('df');if(e){e.style.display='block';e.scrollIntoView({behavior:'smooth'})}};
 
 function pgDeals(){if(!SID)return pgLogin();const list=Object.values(D.deals).filter(d=>d.customerId===SID||d.executorId===SID).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));if(!list.length)return`<h1>Сделки</h1><div class="empty"><div class="empty-icon">📋</div>Сделок пока нет</div>`;return`<h1>Сделки</h1><div class="grid">${list.map(d=>{const ic=d.customerId===SID;const o=D.users[ic?d.executorId:d.customerId]||{};return`<div class="item" onclick="nav('deal',{id:'${d.id}'})"><div class="cat">${ic?'Вы заказчик':'Вы исполнитель'}</div><h3>${esc(d.title)}</h3><div class="meta"><span class="price">${money(d.price)}</span><span class="st st-${d.status}">${DS[d.status]||d.status}</span></div><div class="hint" style="margin-top:6px">${ic?'Исполнитель':'Заказчик'}: ${esc(o.fullName||'—')}</div></div>`}).join('')}</div>`}
 
 function pgDeal({id}){const d=D.deals[id];if(!d)return`<div class="card"><h2>Сделка не найдена</h2></div>`;if(!SID)return pgLogin();const ic=d.customerId===SID,ie=d.executorId===SID,ia=me()?.role==='admin';if(!ic&&!ie&&!ia)return`<div class="card"><h2>Нет доступа</h2></div>`;const c=D.users[d.customerId]||{},e=D.users[d.executorId]||{};const myRev=Object.values(D.revs).find(r=>r.dealId===d.id&&r.fromId===SID);const canPay=ic&&d.status==='awaiting_payment'&&(unl(me())||(me().balance||0)>=d.price);const steps=['awaiting_payment','in_progress','result_submitted','paid_out'];const ix=steps.indexOf(d.status);return`<div class="card"><div class="cat">Сделка</div><h2 style="margin-top:6px">${esc(d.title)}</h2><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:8px"><span class="price" style="font-size:26px">${money(d.price)}</span><span class="st st-${d.status}">${DS[d.status]||d.status}</span></div><div class="hint" style="margin-top:10px">Заказчик: <b style="color:var(--t)">${esc(c.fullName||'—')}</b>${e.fullName?` · Исполнитель: <b style="color:var(--t)">${esc(e.fullName)}</b>`:''}</div>${ix>=0?`<div style="display:flex;gap:4px;margin-top:14px;background:var(--c2);padding:10px;border-radius:10px;overflow-x:auto">${steps.map((s,i)=>`<div style="flex:1 0 auto;text-align:center;font-size:9px;font-weight:600;text-transform:uppercase;color:${i<ix?'var(--ok)':i===ix?'var(--a)':'var(--t3)'};min-width:70px">${DS[s]}</div>`).join('')}</div>`:''}${ic&&d.status==='awaiting_payment'?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><p class="hint" style="margin-bottom:10px">Оплатите ${money(d.price)}, чтобы начать.</p>${canPay?`<button class="full ok" onclick="payDeal('${d.id}')">Оплатить и начать</button>`:`<div class="err">Недостаточно средств. Нужно ${money(d.price)}.</div><button class="full" onclick="nav('wallet',{tab:'dep'})">Пополнить</button>`}<button class="sec full" style="margin-top:6px" onclick="cancelDeal('${d.id}')">Отменить</button></div>`:''}${ie&&d.status==='awaiting_payment'?`<div class="wrn" style="margin-top:14px">Заказчик пока не оплатил.</div>`:''}${ie&&d.status==='in_progress'?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Результат</h3><textarea id="res-t" rows="5" placeholder="Решение, текст или ссылка"></textarea><button class="full" onclick="submitRes('${d.id}')">Отправить</button></div>`:''}${d.resultText?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Результат</h3><pre style="background:var(--bg);padding:12px;border-radius:10px;white-space:pre-wrap;font-size:13px">${esc(d.resultText)}</pre></div>`:''}${ic&&d.status==='result_submitted'?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><p class="hint" style="margin-bottom:10px">Исполнителю <b style="color:var(--ok)">${money(d.price*(1-d.commissionRate))}</b>, платформе <b style="color:var(--a)">${money(d.price*d.commissionRate)}</b>.</p><button class="full ok" onclick="confirmDeal('${d.id}')">Подтвердить и выплатить</button></div>`:''}${ic&&d.status==='paid_out'&&!myRev?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Оцените исполнителя</h3><div style="display:flex;gap:6px">${[1,2,3,4,5].map(n=>`<button class="sec sm" style="flex:1;font-size:22px;min-height:52px" onclick="doReview('${d.id}','${d.executorId}',${n})">★</button>`).join('')}</div></div>`:''}${myRev?`<div class="suc" style="margin-top:14px">Ваша оценка: <span class="stars">${'★'.repeat(myRev.stars)}${'☆'.repeat(5-myRev.stars)}</span></div>`:''}${(ic||ie)&&['in_progress','result_submitted'].includes(d.status)?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Открыть спор</h3><textarea id="dr" rows="3" placeholder="Опишите проблему"></textarea><button class="full dgr" onclick="doDispute('${d.id}')">Открыть спор</button></div>`:''}<button class="sec full" style="margin-top:14px" onclick="nav('chat',{id:'${d.chatId}'})">💬 Открыть чат</button></div>`}
 
 function pgWallet({tab}={}){const u=me();if(!u)return pgLogin();const t=tab||'ov';const txs=Object.values(D.txs).filter(x=>x.userId===SID).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));const deps=Object.values(D.deps).filter(x=>x.userId===SID).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));const wds=Object.values(D.wds).filter(x=>x.userId===SID).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));const TX={deposit:'Пополнение',hold:'Заморожено',payout:'Выплата',commission:'Комиссия',refund:'Возврат',withdrawal:'Вывод'};const s=D.settings||{};return`<h1>Кошелёк</h1><div class="hero"><div style="font-size:12px;color:var(--t2);margin-bottom:4px">Доступно</div><div class="bal">${unl(u)?'∞':(u.balance||0).toFixed(2)} <span>₽</span></div><div style="display:flex;gap:20px;margin-top:14px"><div style="font-size:11px;color:var(--t2)">В сделках<b style="display:block;color:var(--t);font-size:14px;margin-top:2px">${unl(u)?'∞':money(u.heldBalance||0)}</b></div><div style="font-size:11px;color:var(--t2)">Заработано<b style="display:block;color:var(--t);font-size:14px;margin-top:2px">${unl(u)?'∞':money(u.totalEarned||0)}</b></div></div></div><div class="wacts"><button onclick="nav('wallet',{tab:'dep'})">＋ Пополнить</button><button class="sec" onclick="nav('wallet',{tab:'wd'})">↓ Вывести</button></div><div class="tabs"><div class="tab ${t==='ov'?'on':''}" onclick="nav('wallet',{tab:'ov'})">История</div><div class="tab ${t==='dep'?'on':''}" onclick="nav('wallet',{tab:'dep'})">Пополн.</div><div class="tab ${t==='wd'?'on':''}" onclick="nav('wallet',{tab:'wd'})">Выводы</div></div>${t==='ov'?(txs.length?`<div class="card"><div class="tw"><table><thead><tr><th>Дата</th><th>Тип</th><th>Сумма</th></tr></thead><tbody>${txs.slice(0,100).map(x=>`<tr><td>${dt(x.createdAt)}</td><td>${TX[x.type]||x.type}</td><td class="${x.amount>=0?'pos':'neg'}">${x.amount>=0?'+':''}${money(x.amount)}</td></tr>`).join('')}</tbody></table></div></div>`:'<div class="empty">Операций нет</div>'):''}${t==='dep'?renderDep(u,deps,s):''}${t==='wd'?renderWd(u,wds,s):''}`}
+
 function renderDep(u,deps,s){if(unl(u))return`<div class="card"><div class="suc">У вас безлимитный баланс.</div></div>`;const has=s.cardNumber&&s.cardNumber.trim();return`<div class="card"><h3>Пополнение</h3><div class="idbig"><div class="lbl">Ваш ID для зачисления</div><div class="val">${esc(u.publicId)}</div><button class="sm" onclick="copy('${esc(u.publicId)}')">📋 Скопировать ID</button></div>${has?`<p class="hint" style="margin-bottom:12px">Переведите на карту ниже. В комментарии укажите ваш ID.</p><div style="background:linear-gradient(135deg,#2a2a3a,#1a1a24);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:14px"><div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:6px">Карта для перевода</div><div style="font-family:ui-monospace,monospace;font-size:17px;font-weight:700;letter-spacing:2px;margin-bottom:10px;word-break:break-all">${esc(s.cardNumber)}</div>${s.cardHolder?`<div style="font-size:12px;color:var(--t2);margin-bottom:4px">Получатель: <b style="color:var(--t)">${esc(s.cardHolder)}</b></div>`:''}${s.bankName?`<div style="font-size:12px;color:var(--t2)">Банк: ${esc(s.bankName)}</div>`:''}</div><label>Сумма, ₽</label><input id="dep-a" type="number" min="10" step="10" value="300"/><label>Комментарий</label><input id="dep-c" value="ID ${esc(u.publicId)}"/><button class="full" onclick="doDep()">Я перевёл — отправить</button>`:'<div class="wrn">Приём платежей ещё не настроен админом.</div>'}</div>${deps.length?`<div class="card"><h3>Мои заявки</h3><div class="tw"><table><thead><tr><th>Дата</th><th>Сумма</th><th>Статус</th></tr></thead><tbody>${deps.map(x=>`<tr><td>${dt(x.createdAt)}</td><td>${money(x.amount)}</td><td><span class="st st-${x.status}">${x.status==='pending'?'Ожидает':x.status==='approved'?'Зачислено':'Отклонено'}</span></td></tr>`).join('')}</tbody></table></div></div>`:''}`}
+
 function renderWd(u,wds,s){if(unl(u))return`<div class="card"><div class="suc">У вас безлимитный баланс.</div></div>`;const mw=s.minWithdraw||300;return`<div class="card"><h3>Вывод</h3><p class="hint" style="margin-bottom:14px">Минимум ${money(mw)}. Админ переведёт на реквизиты.</p><label>Сумма, ₽</label><input id="wd-a" type="number" min="${mw}" step="10" value="${mw}"/><label>Способ</label><select id="wd-s"><option>Карта банка</option><option>СБП</option><option>ЮMoney</option><option>Другое</option></select><label>Реквизиты</label><input id="wd-d" placeholder="2200 7000 0000 0000"/><button class="full" onclick="doWd()">Создать заявку</button><p class="hint">Доступно: <b style="color:var(--t)">${money(u.balance||0)}</b>.</p></div>${wds.length?`<div class="card"><h3>Мои выводы</h3><div class="tw"><table><thead><tr><th>Дата</th><th>Сумма</th><th>Статус</th></tr></thead><tbody>${wds.map(x=>`<tr><td>${dt(x.createdAt)}</td><td>${money(x.amount)}</td><td><span class="st st-${x.status}">${x.status==='pending'?'В обработке':x.status==='completed'?'Выполнено':'Отклонено'}</span></td></tr>`).join('')}</tbody></table></div></div>`:''}`}
 
 function pgAdmin({tab}={}){const u=me();if(!u||u.role!=='admin')return`<div class="card"><h2>Доступ запрещён</h2></div>`;const t=tab||'stats';const users=Object.entries(D.users).sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0));const deps=Object.values(D.deps).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));const wds=Object.values(D.wds).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));const disps=Object.values(D.disps).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));const newU=users.filter(([id,x])=>x.isNew);const onlN=users.filter(([id,x])=>onl(x)).length;const pd=deps.filter(x=>x.status==='pending').length;const pw=wds.filter(x=>x.status==='pending').length;const pdi=disps.filter(x=>x.status==='open').length;return`<h1>Админ-панель</h1>${newU.length?`<div class="wrn"><b>Новые регистрации (${newU.length})</b> — зайдите во вкладку «Юзеры».</div>`:''}<div class="tabs"><div class="tab ${t==='stats'?'on':''}" onclick="nav('admin',{tab:'stats'})">Обзор</div><div class="tab ${t==='credit'?'on':''}" onclick="nav('admin',{tab:'credit'})">💰 Зачислить</div><div class="tab ${t==='deps'?'on':''}" onclick="nav('admin',{tab:'deps'})">Пополн.${pd?` (${pd})`:''}</div><div class="tab ${t==='wds'?'on':''}" onclick="nav('admin',{tab:'wds'})">Выводы${pw?` (${pw})`:''}</div><div class="tab ${t==='disps'?'on':''}" onclick="nav('admin',{tab:'disps'})">Споры${pdi?` (${pdi})`:''}</div><div class="tab ${t==='users'?'on':''}" onclick="nav('admin',{tab:'users'})">Юзеры${newU.length?` (${newU.length})`:''}</div><div class="tab ${t==='settings'?'on':''}" onclick="nav('admin',{tab:'settings'})">Настройки</div></div>${adminT(t,{users,deps,wds,disps,onlN})}`}
@@ -257,147 +275,392 @@ function adminT(t,d){
   if(t==='settings'){const s=D.settings||{};return`<div class="card"><h3>Реквизиты для приёма платежей</h3><label>Номер карты / телефон СБП</label><input id="s-card" value="${esc(s.cardNumber||'')}" placeholder="2200 7000 0000 0000"/><label>Имя получателя</label><input id="s-holder" value="${esc(s.cardHolder||'')}" placeholder="Иванов Иван"/><label>Банк</label><input id="s-bank" value="${esc(s.bankName||'')}" placeholder="Т-Банк"/><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Комиссия</h3><label>% с каждой сделки</label><input id="s-comm" type="number" min="0" max="50" value="${((s.commissionRate||.1)*100).toFixed(0)}"/><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Лимиты</h3><label>Мин. пополнение, ₽</label><input id="s-md" type="number" value="${s.minDeposit||100}"/><label>Мин. вывод, ₽</label><input id="s-mw" type="number" value="${s.minWithdraw||300}"/><button class="full" style="margin-top:12px" onclick="adminSave()">Сохранить</button><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Новые регистрации</h3><button class="sec full" onclick="adminMark()">Отметить прочитанными</button></div>`}
   return'';
 }
-
+  
 // ========== HANDLERS ==========
-window.doLogin=async e=>{e.preventDefault();const fd=new FormData(e.target);
-  try{await auth.signInWithEmailAndPassword(fd.get('email').trim().toLowerCase(),fd.get('password'));toast('Добро пожаловать','success')}
-  catch(err){document.getElementById('aerr').innerHTML=`<div class="err">${err.message}</div>`}};
+window.doLogin=async e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const email=fd.get('email').trim().toLowerCase();
+  const password=fd.get('password');
+  try{
+    await auth.signInWithEmailAndPassword(email,password);
+    toast('Добро пожаловать','success');
+  }catch(err){
+    document.getElementById('aerr').innerHTML='<div class="err">'+err.message+'</div>';
+  }
+};
 
-window.doReg=async e=>{e.preventDefault();const fd=new FormData(e.target);
-  const email=fd.get('email').trim().toLowerCase(),pw=fd.get('password'),name=fd.get('fullName').trim(),role=fd.get('role'),ac=fd.get('adminCode').trim();
-  if(pw.length<6)return document.getElementById('aerr').innerHTML='<div class="err">Пароль слишком короткий</div>';
+window.doReg=async e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const email=fd.get('email').trim().toLowerCase();
+  const pw=fd.get('password');
+  const name=fd.get('fullName').trim();
+  const role=fd.get('role');
+  const ac=(fd.get('adminCode')||'').trim();
+  if(pw.length<6){document.getElementById('aerr').innerHTML='<div class="err">Пароль слишком короткий</div>';return}
   try{
     const cred=await auth.createUserWithEmailAndPassword(email,pw);
     const uid_=cred.user.uid;
     const pid=await genPid();
     const isAdmin=ac===ADMIN_CODE;
-    const user={id:uid_,publicId:pid,email,fullName:name,role:isAdmin?'admin':role,balance:0,heldBalance:0,totalEarned:0,blocked:false,isUnlimited:isAdmin,ip:'—',deviceId:fp(),lastSeen:Date.now(),rating:0,ratingCount:0,emailVerified:false,isNew:!isAdmin,createdAt:Date.now()};
+    const user={
+      id:uid_,publicId:pid,email,fullName:name,role:isAdmin?'admin':role,
+      balance:0,heldBalance:0,totalEarned:0,blocked:false,isUnlimited:isAdmin,
+      ip:'—',deviceId:fp(),lastSeen:Date.now(),rating:0,ratingCount:0,
+      emailVerified:false,isNew:!isAdmin,createdAt:Date.now()
+    };
     await DB.child('users/'+uid_).set(user);
     try{await cred.user.sendEmailVerification()}catch(err){console.warn(err)}
     toast('Аккаунт создан! Проверьте почту','success');
-    nav('verify');
-  }catch(err){document.getElementById('aerr').innerHTML=`<div class="err">${err.message}</div>`}};
+    route={name:'verify',params:{}};
+    render();
+  }catch(err){
+    document.getElementById('aerr').innerHTML='<div class="err">'+err.message+'</div>';
+  }
+};
 
-window.checkV=async()=>{if(!FU)return;await FU.reload();
-  if(FU.emailVerified){await DB.child('users/'+FU.uid+'/emailVerified').set(true);toast('Почта подтверждена!','success');nav('home')}
-  else toast('Почта ещё не подтверждена','error')};
-window.resendV=async()=>{if(!FU)return;try{await FU.sendEmailVerification();toast('Письмо отправлено','success')}catch{toast('Ошибка','error')}};
-window.logout=async()=>{await auth.signOut();SID=null;localStorage.removeItem('gm_sid');nav('login')};
+window.checkV=async()=>{
+  if(!FU)return;
+  try{await FU.reload()}catch{}
+  if(FU.emailVerified){
+    await DB.child('users/'+FU.uid+'/emailVerified').set(true);
+    toast('Почта подтверждена!','success');
+    route={name:'home',params:{}};
+    render();
+  }else{
+    toast('Почта ещё не подтверждена. Проверьте письмо.','error');
+  }
+};
 
-window.doCreateLot=async e=>{e.preventDefault();const fd=new FormData(e.target);const u=me();if(!u)return;
+window.resendV=async()=>{
+  if(!FU)return;
+  try{await FU.sendEmailVerification();toast('Письмо отправлено','success')}catch{toast('Ошибка','error')}
+};
+
+window.logout=async()=>{
+  await auth.signOut();
+  SID=null;FU=null;
+  localStorage.removeItem('gm_sid');
+  route={name:'login',params:{}};
+  render();
+};
+
+window.doCreateLot=async e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const u=me();
+  if(!u)return;
   const id=uid();
-  await DB.child('lots/'+id).set({id,executorId:u.id,title:fd.get('title').trim(),category:fd.get('category'),description:fd.get('description').trim(),price:Number(fd.get('price')),status:'active',createdAt:Date.now()});
-  toast('Лот создан','success');nav('mylots')};
+  await DB.child('lots/'+id).set({
+    id,executorId:u.id,
+    title:fd.get('title').trim(),
+    category:fd.get('category'),
+    description:fd.get('description').trim(),
+    price:Number(fd.get('price')),
+    status:'active',createdAt:Date.now()
+  });
+  toast('Лот создан','success');
+  nav('mylots');
+};
 
-window.closeLot=async id=>{if(!confirm('Закрыть лот?'))return;await DB.child('lots/'+id+'/status').set('closed');toast('Лот закрыт');render()};
+window.closeLot=async id=>{
+  if(!confirm('Закрыть лот?'))return;
+  await DB.child('lots/'+id+'/status').set('closed');
+  toast('Лот закрыт');
+  render();
+};
 
-window.startChat=async lotId=>{if(!SID)return;const l=D.lots[lotId];if(!l)return;
+window.startChat=async lotId=>{
+  if(!SID)return;
+  const l=D.lots[lotId];
+  if(!l)return;
   const exist=Object.values(D.chats).find(c=>c.lotId===lotId&&c.customerId===SID&&c.executorId===l.executorId);
   if(exist){nav('chat',{id:exist.id});return}
   const id=uid();
-  await DB.child('chats/'+id).set({id,lotId,customerId:SID,executorId:l.executorId,lastAt:Date.now(),lastMsg:'Чат создан'});
-  nav('chat',{id})};
+  await DB.child('chats/'+id).set({
+    id,lotId,customerId:SID,executorId:l.executorId,
+    lastAt:Date.now(),lastMsg:'Чат создан'
+  });
+  nav('chat',{id});
+};
 
-window.sendMsg=async(e,chatId)=>{e.preventDefault();const inp=document.getElementById('cinp'),body=inp.value.trim();if(!body)return;
+window.sendMsg=async(e,chatId)=>{
+  e.preventDefault();
+  const inp=document.getElementById('cinp');
+  const body=inp.value.trim();
+  if(!body)return;
   const id=uid();
-  await DB.child('msgs/'+chatId+'/'+id).set({id,chatId,senderId:SID,body,createdAt:Date.now()});
+  await DB.child('msgs/'+chatId+'/'+id).set({
+    id,chatId,senderId:SID,body,createdAt:Date.now()
+  });
   const c=D.chats[chatId]||{};
   const upd={lastAt:Date.now(),lastMsg:body.slice(0,60)};
   if(c.customerId===SID)upd.eU=true;else upd.cU=true;
   await DB.child('chats/'+chatId).update(upd);
-  inp.value=''};
+  inp.value='';
+};
 
-window.doCreateDeal=async(chatId,custId,execId)=>{const u=me();if(!u)return;
+window.showDF=id=>{
+  const e=document.getElementById('df');
+  if(e){e.style.display='block';e.scrollIntoView({behavior:'smooth'})}
+};
+
+window.doCreateDeal=async(chatId,custId,execId)=>{
+  const u=me();if(!u)return;
   const title=document.getElementById('d-title').value.trim();
   const price=Number(document.getElementById('d-price').value);
-  if(!title||!price||price<10)return document.getElementById('derr').innerHTML='<div class="err">Заполните все поля</div>';
+  if(!title||!price||price<10){
+    document.getElementById('derr').innerHTML='<div class="err">Заполните все поля</div>';
+    return;
+  }
   const id=uid();
-  await DB.child('deals/'+id).set({id,chatId,customerId:custId,executorId:execId,title,price,commissionRate:D.settings?.commissionRate||0.1,status:'awaiting_payment',createdAt:Date.now()});
-  toast('Сделка создана','success');nav('deal',{id})};
+  await DB.child('deals/'+id).set({
+    id,chatId,customerId:custId,executorId:execId,
+    title,price,commissionRate:D.settings?.commissionRate||0.1,
+    status:'awaiting_payment',createdAt:Date.now()
+  });
+  toast('Сделка создана','success');
+  nav('deal',{id});
+};
 
-window.payDeal=async id=>{const d=D.deals[id];const u=me();if(!d||!u)return;
+window.payDeal=async id=>{
+  const d=D.deals[id];const u=me();
+  if(!d||!u)return;
   const r=holdFunds(u.id,id,d.price);
   if(!r.ok)return toast(r.error,'error');
   await DB.child('deals/'+id).update({status:'in_progress'});
-  toast('Оплачено','success');render()};
+  toast('Оплачено. Работа началась','success');
+  render();
+};
 
-window.cancelDeal=async id=>{if(!confirm('Отменить?'))return;const d=D.deals[id];if(!d)return;
+window.cancelDeal=async id=>{
+  if(!confirm('Отменить сделку?'))return;
+  const d=D.deals[id];if(!d)return;
   if(['in_progress','result_submitted'].includes(d.status))refund(id);
-  await DB.child('deals/'+id).update({status:'cancelled'});toast('Отменено');render()};
+  await DB.child('deals/'+id).update({status:'cancelled'});
+  toast('Отменено');
+  render();
+};
 
-window.submitRes=async id=>{const t=document.getElementById('res-t').value.trim();if(!t)return toast('Введите результат','error');
-  await DB.child('deals/'+id).update({resultText:t,status:'result_submitted'});toast('Отправлено','success');render()};
+window.submitRes=async id=>{
+  const t=document.getElementById('res-t').value.trim();
+  if(!t)return toast('Введите результат','error');
+  await DB.child('deals/'+id).update({resultText:t,status:'result_submitted'});
+  toast('Отправлено','success');
+  render();
+};
 
-window.confirmDeal=async id=>{if(!confirm('Подтвердить? Деньги уйдут исполнителю.'))return;
-  const d=D.deals[id];if(!d)return;release(id);
-  await DB.child('deals/'+id).update({status:'paid_out'});toast('Оплата переведена','success');render()};
+window.confirmDeal=async id=>{
+  if(!confirm('Подтвердить? Деньги уйдут исполнителю.'))return;
+  const d=D.deals[id];if(!d)return;
+  release(id);
+  await DB.child('deals/'+id).update({status:'paid_out'});
+  toast('Оплата переведена','success');
+  render();
+};
 
-window.doReview=async(dealId,toId,stars)=>{const u=me();if(!u)return;
+window.doReview=async(dealId,toId,starsCount)=>{
+  const u=me();if(!u)return;
   const id=uid();
-  await DB.child('revs/'+id).set({id,dealId,fromId:SID,toId,stars,createdAt:Date.now()});
-  const t=D.users[toId];if(t){const cnt=(t.ratingCount||0)+1;const nr=((t.rating||0)*(t.ratingCount||0)+stars)/cnt;await DB.child('users/'+toId).update({rating:nr,ratingCount:cnt})}
-  toast('Спасибо','success');render()};
+  await DB.child('revs/'+id).set({
+    id,dealId,fromId:SID,toId,stars:starsCount,createdAt:Date.now()
+  });
+  const t=D.users[toId];
+  if(t){
+    const cnt=(t.ratingCount||0)+1;
+    const nr=((t.rating||0)*(t.ratingCount||0)+starsCount)/cnt;
+    await DB.child('users/'+toId).update({rating:nr,ratingCount:cnt});
+  }
+  toast('Спасибо за отзыв','success');
+  render();
+};
 
-window.doDispute=async dealId=>{const r=document.getElementById('dr').value.trim();if(r.length<5)return toast('Опишите проблему','error');
+window.doDispute=async dealId=>{
+  const r=document.getElementById('dr').value.trim();
+  if(r.length<5)return toast('Опишите проблему','error');
   const id=uid();
-  await DB.child('disps/'+id).set({id,dealId,initiatorId:SID,reason:r,status:'open',createdAt:Date.now()});
-  await DB.child('deals/'+dealId+'/status').set('disputed');toast('Спор открыт','success');render()};
+  await DB.child('disps/'+id).set({
+    id,dealId,initiatorId:SID,reason:r,status:'open',createdAt:Date.now()
+  });
+  await DB.child('deals/'+dealId+'/status').set('disputed');
+  toast('Спор открыт','success');
+  render();
+};
 
-window.doDep=async()=>{const u=me();if(!u)return;const amt=Number(document.getElementById('dep-a').value);const cmt=document.getElementById('dep-c').value.trim();
+window.doDep=async()=>{
+  const u=me();if(!u)return;
+  const amt=Number(document.getElementById('dep-a').value);
+  const cmt=document.getElementById('dep-c').value.trim();
   if(!amt||amt<10)return toast('Минимум 10 ₽','error');
   const id=uid();
-  await DB.child('deps/'+id).set({id,userId:SID,publicId:u.publicId,amount:amt,comment:cmt,status:'pending',createdAt:Date.now()});
-  toast('Заявка отправлена','success');nav('wallet',{tab:'dep'})};
+  await DB.child('deps/'+id).set({
+    id,userId:SID,publicId:u.publicId,amount:amt,comment:cmt,
+    status:'pending',createdAt:Date.now()
+  });
+  toast('Заявка отправлена','success');
+  nav('wallet',{tab:'dep'});
+};
 
-window.doWd=async()=>{const u=me();if(!u)return;const amt=Number(document.getElementById('wd-a').value);const svc=document.getElementById('wd-s').value;const dst=document.getElementById('wd-d').value.trim();
+window.doWd=async()=>{
+  const u=me();if(!u)return;
+  const amt=Number(document.getElementById('wd-a').value);
+  const svc=document.getElementById('wd-s').value;
+  const dst=document.getElementById('wd-d').value.trim();
   const mw=D.settings?.minWithdraw||300;
   if(!amt||amt<mw)return toast('Минимум '+money(mw),'error');
-  if(amt>(u.balance||0))return toast('Недостаточно','error');
+  if(amt>(u.balance||0))return toast('Недостаточно средств','error');
   if(dst.length<5)return toast('Укажите реквизиты','error');
   const id=uid();
   await DB.child('users/'+SID).update({balance:(u.balance||0)-amt});
-  await DB.child('wds/'+id).set({id,userId:SID,publicId:u.publicId,amount:amt,service:svc,dest:dst,status:'pending',createdAt:Date.now()});
-  await DB.child('txs/'+uid()).set({id:uid(),userId:SID,type:'withdrawal',amount:-amt,balanceAfter:(u.balance||0)-amt,createdAt:Date.now()});
-  toast('Заявка создана','success');nav('wallet',{tab:'wd'})};
+  await DB.child('wds/'+id).set({
+    id,userId:SID,publicId:u.publicId,amount:amt,service:svc,dest:dst,
+    status:'pending',createdAt:Date.now()
+  });
+  await DB.child('txs/'+uid()).set({
+    id:uid(),userId:SID,type:'withdrawal',amount:-amt,
+    balanceAfter:(u.balance||0)-amt,createdAt:Date.now()
+  });
+  toast('Заявка создана','success');
+  nav('wallet',{tab:'wd'});
+};
 
-window.adminCredit=async()=>{const pid=document.getElementById('mc-i').value.trim();const amt=Number(document.getElementById('mc-a').value);const el=document.getElementById('mcr');
+window.adminCredit=async()=>{
+  const pid=document.getElementById('mc-i').value.trim();
+  const amt=Number(document.getElementById('mc-a').value);
+  const el=document.getElementById('mcr');
   if(!pid)return el.innerHTML='<div class="err">Введите ID</div>';
   if(!amt||amt<=0)return el.innerHTML='<div class="err">Введите сумму</div>';
   const res=uByPid(pid);
-  if(!res)return el.innerHTML=`<div class="err">ID ${esc(pid)} не найден</div>`;
+  if(!res)return el.innerHTML='<div class="err">ID '+esc(pid)+' не найден</div>';
   const [userId,u]=res;
   const nb=(u.balance||0)+amt;
   await DB.child('users/'+userId+'/balance').set(nb);
-  await DB.child('txs/'+uid()).set({id:uid(),userId,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});
-  el.innerHTML=`<div class="suc">✓ Зачислено ${money(amt)} пользователю <b>${esc(u.fullName)}</b></div>`;
-  document.getElementById('mc-i').value='';};
+  await DB.child('txs/'+uid()).set({
+    id:uid(),userId,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()
+  });
+  el.innerHTML='<div class="suc">✓ Зачислено '+money(amt)+' пользователю <b>'+esc(u.fullName)+'</b></div>';
+  document.getElementById('mc-i').value='';
+};
 
-window.adminQuick=async pid=>{const res=uByPid(String(pid));if(!res)return toast('Не найден','error');const [id,u]=res;
-  const s=prompt(`Зачислить ${u.fullName}\nБаланс: ${money(u.balance||0)}\n\nСумма в ₽:`,'300');
-  if(s===null)return;const amt=Number(s);if(!amt||amt<=0)return;
+window.adminQuick=async pid=>{
+  const res=uByPid(String(pid));
+  if(!res)return toast('Не найден','error');
+  const [id,u]=res;
+  const s=prompt('Зачислить '+u.fullName+'\nБаланс: '+money(u.balance||0)+'\n\nСумма в ₽:','300');
+  if(s===null)return;
+  const amt=Number(s);
+  if(!amt||amt<=0)return;
   const nb=(u.balance||0)+amt;
   await DB.child('users/'+id+'/balance').set(nb);
-  await DB.child('txs/'+uid()).set({id:uid(),userId:id,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});
-  toast('Зачислено '+money(amt),'success');render()};
+  await DB.child('txs/'+uid()).set({
+    id:uid(),userId:id,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()
+  });
+  toast('Зачислено '+money(amt),'success');
+  render();
+};
 
-window.adminDep=async(id,act)=>{const d=D.deps[id];if(!d||d.status!=='pending')return;
-  if(act==='ok'){const u=D.users[d.userId];if(!u)return;const nb=(u.balance||0)+d.amount;await DB.child('users/'+d.userId+'/balance').set(nb);await DB.child('txs/'+uid()).set({id:uid(),userId:d.userId,type:'deposit',amount:d.amount,balanceAfter:nb,createdAt:Date.now()});await DB.child('deps/'+id+'/status').set('approved');toast('Зачислено','success')}
-  else{await DB.child('deps/'+id+'/status').set('rejected');toast('Отклонено')}render()};
+window.adminDep=async(id,act)=>{
+  const d=D.deps[id];
+  if(!d||d.status!=='pending')return;
+  if(act==='ok'){
+    const u=D.users[d.userId];
+    if(!u)return;
+    const nb=(u.balance||0)+d.amount;
+    await DB.child('users/'+d.userId+'/balance').set(nb);
+    await DB.child('txs/'+uid()).set({
+      id:uid(),userId:d.userId,type:'deposit',amount:d.amount,
+      balanceAfter:nb,createdAt:Date.now()
+    });
+    await DB.child('deps/'+id+'/status').set('approved');
+    toast('Зачислено','success');
+  }else{
+    await DB.child('deps/'+id+'/status').set('rejected');
+    toast('Отклонено');
+  }
+  render();
+};
 
-window.adminWd=async(id,act)=>{const w=D.wds[id];if(!w||w.status!=='pending')return;
-  if(act==='ok'){await DB.child('wds/'+id+'/status').set('completed');toast('Готово','success')}
-  else{const u=D.users[w.userId];if(u){const nb=(u.balance||0)+w.amount;await DB.child('users/'+w.userId+'/balance').set(nb);await DB.child('txs/'+uid()).set({id:uid(),userId:w.userId,type:'refund',amount:w.amount,balanceAfter:nb,createdAt:Date.now()})}await DB.child('wds/'+id+'/status').set('rejected');toast('Возвращено','success')}render()};
+window.adminWd=async(id,act)=>{
+  const w=D.wds[id];
+  if(!w||w.status!=='pending')return;
+  if(act==='ok'){
+    await DB.child('wds/'+id+'/status').set('completed');
+    toast('Готово','success');
+  }else{
+    const u=D.users[w.userId];
+    if(u){
+      const nb=(u.balance||0)+w.amount;
+      await DB.child('users/'+w.userId+'/balance').set(nb);
+      await DB.child('txs/'+uid()).set({
+        id:uid(),userId:w.userId,type:'refund',amount:w.amount,
+        balanceAfter:nb,createdAt:Date.now()
+      });
+    }
+    await DB.child('wds/'+id+'/status').set('rejected');
+    toast('Возвращено','success');
+  }
+  render();
+};
 
-window.adminDisp=async(id,res)=>{const d=D.disps[id];if(!d||d.status!=='open')return;const deal=D.deals[d.dealId];if(!deal)return;
-  if(res==='refund'){refund(d.dealId);await DB.child('deals/'+d.dealId+'/status').set('refunded')}else{release(d.dealId);await DB.child('deals/'+d.dealId+'/status').set('paid_out')}
-  await DB.child('disps/'+id).update({status:'resolved',resolution:res});toast('Спор решён','success');render()};
+window.adminDisp=async(id,res)=>{
+  const d=D.disps[id];
+  if(!d||d.status!=='open')return;
+  const deal=D.deals[d.dealId];
+  if(!deal)return;
+  if(res==='refund'){
+    refund(d.dealId);
+    await DB.child('deals/'+d.dealId+'/status').set('refunded');
+  }else{
+    release(d.dealId);
+    await DB.child('deals/'+d.dealId+'/status').set('paid_out');
+  }
+  await DB.child('disps/'+id).update({status:'resolved',resolution:res});
+  toast('Спор решён','success');
+  render();
+};
 
-window.adminBlock=async id=>{const u=D.users[id];if(!u)return;await DB.child('users/'+id+'/blocked').set(!u.blocked);toast(u.blocked?'Разблокирован':'Заблокирован','success');render()};
-window.adminSave=async()=>{await DB.child('settings').update({cardNumber:document.getElementById('s-card').value.trim(),cardHolder:document.getElementById('s-holder').value.trim(),bankName:document.getElementById('s-bank').value.trim(),commissionRate:Number(document.getElementById('s-comm').value)/100,minDeposit:Number(document.getElementById('s-md').value)||100,minWithdraw:Number(document.getElementById('s-mw').value)||300});toast('Сохранено','success')};
-window.adminMark=async()=>{for(const [id,u] of Object.entries(D.users)){if(u.isNew)await DB.child('users/'+id+'/isNew').set(false)}toast('Все прочитаны','success');render()};
-window.applyF=()=>{const c=document.getElementById('f-c').value;const mn=Number(document.getElementById('f-mn').value)||0;const mx=Number(document.getElementById('f-mx').value)||Infinity;let lots=Object.values(D.lots).filter(l=>l.status==='active');if(c)lots=lots.filter(l=>l.category===c);lots=lots.filter(l=>l.price>=mn&&l.price<=mx);document.getElementById('lots').innerHTML=renderLots(lots.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)))};
+window.adminBlock=async id=>{
+  const u=D.users[id];if(!u)return;
+  await DB.child('users/'+id+'/blocked').set(!u.blocked);
+  toast(u.blocked?'Разблокирован':'Заблокирован','success');
+  render();
+};
 
+window.adminSave=async()=>{
+  await DB.child('settings').update({
+    cardNumber:document.getElementById('s-card').value.trim(),
+    cardHolder:document.getElementById('s-holder').value.trim(),
+    bankName:document.getElementById('s-bank').value.trim(),
+    commissionRate:Number(document.getElementById('s-comm').value)/100,
+    minDeposit:Number(document.getElementById('s-md').value)||100,
+    minWithdraw:Number(document.getElementById('s-mw').value)||300
+  });
+  toast('Сохранено','success');
+};
+
+window.adminMark=async()=>{
+  for(const [id,u] of Object.entries(D.users)){
+    if(u.isNew)await DB.child('users/'+id+'/isNew').set(false);
+  }
+  toast('Все прочитаны','success');
+  render();
+};
+
+window.applyF=()=>{
+  const c=document.getElementById('f-c').value;
+  const mn=Number(document.getElementById('f-mn').value)||0;
+  const mx=Number(document.getElementById('f-mx').value)||Infinity;
+  let lots=Object.values(D.lots).filter(l=>l.status==='active');
+  if(c)lots=lots.filter(l=>l.category===c);
+  lots=lots.filter(l=>l.price>=mn&&l.price<=mx);
+  document.getElementById('lots').innerHTML=renderLots(lots.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)));
+};
+
+window.updHint=()=>{
+  const s=document.getElementById('cs').value;
+  document.getElementById('ch').textContent=HINTS[s]||'';
+};
+
+// Первый рендер
 render();
-</script>
-</body>
-</html>
