@@ -52,9 +52,9 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .price{font-weight:800;font-size:17px;color:var(--a);white-space:nowrap}
 .st{padding:3px 9px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(91,140,255,.15);color:var(--in);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-.st-active,.st-completed,.st-paid_out,.st-approved{background:rgba(34,197,94,.15);color:#86efac}
-.st-pending,.st-awaiting_payment,.st-result_submitted{background:rgba(255,214,10,.15);color:#ffe94d}
-.st-in_progress{background:rgba(91,140,255,.18);color:#93b0ff}
+.st-open,.st-active,.st-completed,.st-paid_out,.st-approved{background:rgba(34,197,94,.15);color:#86efac}
+.st-pending,.st-awaiting_payment,.st-result_submitted,.st-submitted{background:rgba(255,214,10,.15);color:#ffe94d}
+.st-taken,.st-in_progress{background:rgba(91,140,255,.18);color:#93b0ff}
 .st-disputed,.st-rejected,.st-cancelled{background:rgba(239,68,68,.15);color:#fca5a5}
 .st-closed{background:rgba(139,139,152,.15);color:var(--t2)}
 .fil{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
@@ -84,9 +84,9 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 .pos{color:var(--ok);font-weight:700}.neg{color:var(--dn);font-weight:700}
 .auth{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
 .acard{width:100%;max-width:400px}
-.alogo{text-align:center;font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px}
-.alogo span{color:var(--a)}
-.asub{text-align:center;color:var(--t2);font-size:13px;margin-bottom:22px}
+.alogo{text-align:center;font-size:32<':'&px;font-weight:900;letter-spacing:-1px;margin-bottom:6px}
+.alogo span{colorlt:var(--a)}
+.asub{text-align:center;color;:var(--t2);font-size:','13px;margin-bottom:22px}
 .tst{position:fixed;top:14px;left:14px;right:14px;z-index:2000;background:var(--c);color:var(--t);padding:13px 16px;border-radius:12px;border:1px solid var(--b);box-shadow:0 20px 40px rgba(0,0,0,.5);font-size:13px}
 @media(min-width:480px){.tst{left:auto;right:20px;max-width:340px}}
 .tst.error{border-color:rgba(239,68,68,.5);color:#fca5a5}
@@ -121,30 +121,30 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 <script>
-window.onerror=function(m,u,l,c){document.getElementById('app').innerHTML='<div style="padding:20px;color:#f66;font-size:14px"><b>Ошибка:</b><br>'+m+'<br><br>Строка: '+l+'</div>';return false};
-try{
+window.onerror=function(m,u,l){document.getElementById('app').innerHTML='<div style="padding:20px;color:#f66;font-size:14px"><b>Ошибка:</b><br>'+m+'<br>Строка: '+l+'</div>';return false};
+
+var ADMIN_EMAIL='artemogannisyan09@icloud.com';
+
 var CFG={apiKey:"AIzaSyBFpwNqfxsYAdAvcaW5HeTelGTtaA_zPbE",authDomain:"ghost-market-b7a80.firebaseapp.com",databaseURL:"https://ghost-market-b7a80-default-rtdb.europe-west1.firebasedatabase.app",projectId:"ghost-market-b7a80",storageBucket:"ghost-market-b7a80.firebasestorage.app",messagingSenderId:"67074440378",appId:"1:67074440378:web:f505b077262e2e4ab29683"};
 firebase.initializeApp(CFG);
-}catch(e){document.getElementById('app').innerHTML='<div style="padding:20px;color:#f66">Firebase не загрузился. Проверь интернет.<br>'+e.message+'</div>'}
-
 var auth=firebase.auth(),DB=firebase.database().ref('gm');
-var ADMIN_CODE='GHOST-ADMIN-2025';
+
 var CATS=['Домашнее задание','Реферат','Курсовая работа','Презентация','Контрольная работа','Эссе / сочинение','Покупка и доставка (еда, напитки, в колледж)','Другое'];
 var HINTS={'Домашнее задание':'Задачи, упражнения, параграфы','Реферат':'Обзор темы, список литературы','Курсовая работа':'Полный текст','Презентация':'Слайды с текстом','Контрольная работа':'Решение варианта','Эссе / сочинение':'200–500 слов','Покупка и доставка (еда, напитки, в колледж)':'Купить и привезти','Другое':'Опишите'};
-var DS={awaiting_payment:'Ожидает оплаты',in_progress:'В работе',result_submitted:'Результат отправлен',paid_out:'Выполнено',cancelled:'Отменено',disputed:'Спор',refunded:'Возврат'};
+var OS={open:'Открыт',taken:'В работе',submitted:'Результат отправлен',done:'Выполнен',cancelled:'Отменён',disputed:'Спор'};
 
-var D={users:{},lots:{},chats:{},msgs:{},deals:{},txs:{},deps:{},wds:{},disps:{},revs:{},settings:{}};
+var D={users:{},orders:{},chats:{},msgs:{},txs:{},deps:{},wds:{},disps:{},revs:{},settings:{}};
 var FU=null,SID=localStorage.getItem('gm_sid'),route={name:'home',params:{}};
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function money(n){return Number(n||0).toFixed(2)+' ₽'}
 function dt(ts){return new Date(ts||Date.now()).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}
 function ini(n){return (n||'?').split(' ').map(function(w){return w[0]}).slice(0,2).join('').toUpperCase()}
 function onl(u){return u&&u.lastSeen&&(Date.now()-u.lastSeen<5*60*1000)}
 function me(){return SID?D.users[SID]:null}
-function uByPid(pid){var k=Object.keys(D.users);for(var i=0;i<k.length;i++){if(String(D.users[k[i]].publicId)===String(pid))return[k[i],D.users[k[i]]]}return null}
 function unl(u){return u&&(u.isUnlimited||u.role==='admin')}
+function uByPid(pid){var k=Object.keys(D.users);for(var i=0;i<k.length;i++){if(String(D.users[k[i]].publicId)===String(pid))return[k[i],D.users[k[i]]]}return null}
 function toast(m,t){var e=document.createElement('div');e.className='tst '+(t||'');e.textContent=m;document.body.appendChild(e);setTimeout(function(){e.remove()},3000)}
 function copy(t){if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){toast('Скопировано','success')}).catch(function(){fb(t)});else fb(t)}
 function fb(t){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Скопировано','success')}catch(e){toast('Ошибка','error')}a.remove()}
@@ -152,38 +152,36 @@ function nav(n,p){route={name:n,params:p||{}};render();window.scrollTo(0,0)}
 function fp(){try{var s=[navigator.userAgent||'',navigator.language||'',screen.width+'x'+screen.height].join('|');var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return'DEV-'+Math.abs(h).toString(36).toUpperCase()}catch(e){return'DEV-X'}}
 function genPid(){var ids=Object.keys(D.users).map(function(k){return String(D.users[k].publicId)});var i;do{i=String(Math.floor(10000000+Math.random()*90000000))}while(ids.indexOf(i)>=0);return i}
 
-function holdFunds(userId,dealId,amt){
-  var k='hold-'+dealId;
-  var exists=Object.keys(D.txs).filter(function(id){return D.txs[id].idempotencyKey===k});
-  if(exists.length)return{ok:true};
-  var u=D.users[userId];if(!u)return{ok:false,error:'Нет юзера'};
-  if(unl(u)){var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:userId,dealId:dealId,type:'hold',amount:-amt,balanceAfter:0,idempotencyKey:k,createdAt:Date.now()});return{ok:true}}
+function hold(uid_,oid,amt){
+  var u=D.users[uid_];if(!u)return{ok:false,error:'Нет юзера'};
+  if(unl(u)){var t=uid();DB.child('txs/'+t).set({id:t,userId:uid_,orderId:oid,type:'hold',amount:-amt,balanceAfter:0,createdAt:Date.now()});return{ok:true}}
   if((u.balance||0)<amt)return{ok:false,error:'Недостаточно средств'};
   var nb=(u.balance||0)-amt;
-  DB.child('users/'+userId).update({balance:nb,heldBalance:(u.heldBalance||0)+amt});
-  var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:userId,dealId:dealId,type:'hold',amount:-amt,balanceAfter:nb,idempotencyKey:k,createdAt:Date.now()});
+  DB.child('users/'+uid_).update({balance:nb,heldBalance:(u.heldBalance||0)+amt});
+  var t=uid();DB.child('txs/'+t).set({id:t,userId:uid_,orderId:oid,type:'hold',amount:-amt,balanceAfter:nb,createdAt:Date.now()});
   return{ok:true}
 }
-function release(dealId){
-  var d=D.deals[dealId];if(!d||!d.executorId)return;
-  var c=D.users[d.customerId],e=D.users[d.executorId];if(!c||!e)return;
-  var pay=+(d.price*(1-d.commissionRate)).toFixed(2),com=+(d.price*d.commissionRate).toFixed(2);
-  if(!unl(c))DB.child('users/'+c.id+'/heldBalance').set(Math.max(0,(c.heldBalance||0)-d.price));
+function payout(orderId){
+  var o=D.orders[orderId];if(!o||!o.executorId)return;
+  var c=D.users[o.customerId],e=D.users[o.executorId];if(!c||!e)return;
+  var pay=+(o.price*(1-o.commissionRate)).toFixed(2),com=+(o.price*o.commissionRate).toFixed(2);
+  if(!unl(c))DB.child('users/'+c.id+'/heldBalance').set(Math.max(0,(c.heldBalance||0)-o.price));
   if(!unl(e))DB.child('users/'+e.id).update({balance:(e.balance||0)+pay,totalEarned:(e.totalEarned||0)+pay});
-  var t1=uid();DB.child('txs/'+t1).set({id:t1,userId:e.id,dealId:dealId,type:'payout',amount:pay,createdAt:Date.now()});
-  var t2=uid();DB.child('txs/'+t2).set({id:t2,userId:c.id,dealId:dealId,type:'commission',amount:-com,createdAt:Date.now()});
+  var t1=uid();DB.child('txs/'+t1).set({id:t1,userId:e.id,orderId:orderId,type:'payout',amount:pay,createdAt:Date.now()});
+  var t2=uid();DB.child('txs/'+t2).set({id:t2,userId:c.id,orderId:orderId,type:'commission',amount:-com,createdAt:Date.now()});
 }
-function refund(dealId){
-  var d=D.deals[dealId];if(!d)return;
-  var u=D.users[d.customerId];if(!u||unl(u))return;
-  var nb=(u.balance||0)+d.price;
-  DB.child('users/'+u.id).update({balance:nb,heldBalance:Math.max(0,(u.heldBalance||0)-d.price)});
-  var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:u.id,dealId:dealId,type:'refund',amount:d.price,balanceAfter:nb,createdAt:Date.now()});
+function refund(orderId){
+  var o=D.orders[orderId];if(!o)return;
+  var u=D.users[o.customerId];if(!u||unl(u))return;
+  var nb=(u.balance||0)+o.price;
+  DB.child('users/'+u.id).update({balance:nb,heldBalance:Math.max(0,(u.heldBalance||0)-o.price)});
+  var t=uid();DB.child('txs/'+t).set({id:t,userId:u.id,orderId:orderId,type:'refund',amount:o.price,balanceAfter:nb,createdAt:Date.now()});
 }
 
 DB.on('value',function(s){
   var v=s.val()||{};
-  D={users:v.users||{},lots:v.lots||{},chats:v.chats||{},msgs:v.msgs||{},deals:v.deals||{},txs:v.txs||{},deps:v.deps||{},wds:v.wds||{},disps:v.disps||{},revs:v.revs||{},settings:v.settings||{}};
+  D={users:v.users||{},orders:v.orders||{},chats:v.chats||{},msgs:v.msgs||{},txs:v.txs||{},deps:v.deps||{},wds:v.wds||{},disps:v.disps||{},revs:v.revs||{},settings:v.settings||{}};
+  try{localStorage.setItem('gm_cache',JSON.stringify(D))}catch(e){}
   render();
 });
 
@@ -195,48 +193,49 @@ auth.onAuthStateChanged(function(user){
     if(!u||!u.ip||u.ip==='—'){
       fetch('https://api.ipify.org?format=json').then(function(r){return r.json()}).then(function(d){DB.child('users/'+user.uid+'/ip').set(d.ip||'—')}).catch(function(){});
     }
+    if(!user.emailVerified){route={name:'verify',params:{}}}
+    else if(route.name==='verify'||route.name==='login'||route.name==='register'){route={name:'home',params:{}}}
   }else{
     FU=null;SID=null;localStorage.removeItem('gm_sid');
+    route={name:'login',params:{}};
   }
   render();
 });
 
 function render(){
   var u=me();
-  if(SID&&u&&['login','register'].indexOf(route.name)>=0){
-    route={name:'home',params:{}};
-  }
-  var isAuth=['login','register'].indexOf(route.name)>=0;
+  if(SID&&FU&&!FU.emailVerified&&route.name!=='verify'){route={name:'verify',params:{}};}
+  if(SID&&FU&&FU.emailVerified&&route.name==='verify'){route={name:'home',params:{}};}
+  var isAuth=['login','register','verify'].indexOf(route.name)>=0;
   var c='';
   if(route.name==='login')c=pgLogin();
   else if(route.name==='register')c=pgReg();
+  else if(route.name==='verify')c=pgVerify();
   else if(route.name==='home')c=pgHome();
-  else if(route.name==='lot')c=pgLot(route.params);
-  else if(route.name==='create-lot')c=pgCreateLot();
-  else if(route.name==='mylots')c=pgMyLots();
+  else if(route.name==='order')c=pgOrder(route.params);
+  else if(route.name==='create')c=pgCreate();
+  else if(route.name==='myorders')c=pgMyOrders();
   else if(route.name==='chats')c=pgChats();
   else if(route.name==='chat')c=pgChat(route.params);
-  else if(route.name==='deals')c=pgDeals();
-  else if(route.name==='deal')c=pgDeal(route.params);
   else if(route.name==='wallet')c=pgWallet(route.params);
   else if(route.name==='admin')c=pgAdmin(route.params);
   else c=pgHome();
 
   var unread=0;
-  if(u){var chk=Object.keys(D.chats);for(var i=0;i<chk.length;i++){var x=D.chats[chk[i]];if((x.customerId===SID&&x.cU)||(x.executorId===SID&&x.eU))unread++}}
+  if(u){var ck=Object.keys(D.chats);for(var i=0;i<ck.length;i++){var x=D.chats[ck[i]];if((x.customerId===SID&&x.cU)||(x.executorId===SID&&x.eU))unread++}}
   var nnew=0;
   if(u&&u.role==='admin'){var uk=Object.keys(D.users);for(var j=0;j<uk.length;j++){if(D.users[uk[j]].isNew)nnew++}}
 
   var hdr=isAuth?'':'<header class="hdr"><div class="hrow"><div class="logo" onclick="nav(\'home\')">Ghost<span>Market</span></div><div class="chip">'+
     (u?('<div class="av">'+esc(ini(u.fullName))+'</div><span class="pid">'+esc(u.publicId)+'</span><button class="sec sm" onclick="logout()">Выйти</button>'):'<button class="sm" onclick="nav(\'login\')">Войти</button>')+
     '</div></div><nav>'+
-    '<a class="'+(route.name==='home'?'on':'')+'" onclick="nav(\'home\')">Лоты</a>'+
+    '<a class="'+(route.name==='home'?'on':'')+'" onclick="nav(\'home\')">Заявки</a>'+
+    (u?'<a class="'+(route.name==='create'?'on':'')+'" onclick="nav(\'create\')">+ Создать</a>':'')+
+    (u?'<a class="'+(route.name==='myorders'?'on':'')+'" onclick="nav(\'myorders\')">Мои</a>':'')+
     (u?'<a class="'+(route.name==='chats'?'on':'')+'" onclick="nav(\'chats\')">Чаты'+(unread?'<span class="b">'+unread+'</span>':'')+'</a>':'')+
-    (u?'<a class="'+(route.name==='deals'?'on':'')+'" onclick="nav(\'deals\')">Сделки</a>':'')+
-    (u&&u.role!=='customer'?'<a class="'+(route.name==='mylots'?'on':'')+'" onclick="nav(\'mylots\')">Мои лоты</a>':'')+
     (u?'<a class="'+(route.name==='wallet'?'on':'')+'" onclick="nav(\'wallet\')">Кошелёк · '+(unl(u)?'∞':(u.balance||0).toFixed(0)+' ₽')+'</a>':'')+
     (u&&u.role==='admin'?'<a class="'+(route.name==='admin'?'on':'')+'" onclick="nav(\'admin\')">Админ'+(nnew?'<span class="b">'+nnew+'</span>':'')+'</a>':'')+
-    '</nav></header>';
+    '</nav>'+(u&&FU&&!FU.emailVerified?'<div style="background:rgba(239,68,68,.15);border-top:1px solid rgba(239,68,68,.4);padding:8px 14px;font-size:12px;color:#fca5a5">⚠ Почта не подтверждена. <a onclick="nav(\'verify\')" style="color:#fca5a5;text-decoration:underline">Проверить</a></div>':'')+'</header>';
 
   document.getElementById('app').innerHTML=hdr+'<div class="wrap">'+c+'</div>';
   var m=document.getElementById('cmsgs');if(m)m.scrollTop=m.scrollHeight;
@@ -244,60 +243,82 @@ function render(){
 
 function pgLogin(){return'<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="asub">Площадка для учебных заданий</div><div class="card"><h2>Вход</h2><div id="aerr"></div><form onsubmit="doLogin(event)"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль" required><button class="full" type="submit">Войти</button></form><p class="hint" style="text-align:center;margin-top:12px">Нет аккаунта? <a onclick="nav(\'register\')">Зарегистрироваться</a></p></div></div></div>'}
 
-function pgReg(){return'<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="asub">Создайте аккаунт за минуту</div><div class="card"><h2>Регистрация</h2><div id="aerr"></div><form onsubmit="doReg(event)"><input name="fullName" placeholder="Имя и фамилия" required minlength="2"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль (мин. 6)" minlength="6" required><label>Роль</label><select name="role"><option value="customer">Заказчик</option><option value="executor">Исполнитель</option></select><input name="adminCode" placeholder="Код админа (необязательно)"><button class="full" type="submit">Создать аккаунт</button></form><p class="hint" style="text-align:center;margin-top:12px">Уже есть? <a onclick="nav(\'login\')">Войти</a></p></div></div></div>'}
+function pgReg(){return'<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="asub">Создайте аккаунт</div><div class="card"><h2>Регистрация</h2><div id="aerr"></div><form onsubmit="doReg(event)"><input name="fullName" placeholder="Имя и фамилия" required minlength="2"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль (мин. 6)" minlength="6" required><button class="full" type="submit">Создать аккаунт</button></form><p class="hint" style="text-align:center;margin-top:12px">Уже есть? <a onclick="nav(\'login\')">Войти</a></p><div class="inf" style="margin-top:12px">После регистрации придёт письмо на указанный email. Пока не откроете ссылку в письме — в приложение не пустит.</div></div></div></div>'}
 
-function pgHome(){
-  var f=route.params.f||{};
-  var lots=Object.keys(D.lots).map(function(k){return D.lots[k]}).filter(function(l){return l.status==='active'}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
-  return'<h1>Лоты исполнителей</h1><p class="hint" style="margin-top:-10px;margin-bottom:12px">Выберите лот → напишите исполнителю → договоритесь → сделка через эскроу</p><div class="fil"><select id="f-c"><option value="">Все категории</option>'+CATS.map(function(c){return'<option value="'+esc(c)+'"'+(f.c===c?' selected':'')+'>'+esc(c)+'</option>'}).join('')+'</select><input id="f-mn" type="number" placeholder="Мин ₽"><input id="f-mx" type="number" placeholder="Макс ₽"><button class="sm" onclick="applyF()">Найти</button></div><div id="lots">'+renderLots(lots)+'</div>';
+function pgVerify(){
+  var u=me();
+  var email=(u&&u.email)||(FU&&FU.email)||'';
+  return'<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="card"><h2>Подтвердите почту</h2><p class="hint" style="margin-bottom:14px">Мы отправили письмо на <b style="color:var(--t)">'+esc(email)+'</b>. Откройте его и нажмите на ссылку подтверждения.</p><button class="full ok" onclick="checkVerify()">Я подтвердил — проверить</button><button class="sec full" style="margin-top:8px" onclick="resendVerify()">Отправить письмо заново</button><button class="sec full" style="margin-top:8px" onclick="logout()">Выйти</button><div class="inf" style="margin-top:14px"><b>Письма нет?</b><br>1. Проверьте папки «Спам», «Промоакции», «Нежелательные»<br>2. Подождите 1–2 минуты<br>3. Если почта <b>iCloud</b> — письма от Firebase часто блокируются. Попробуйте Gmail.<br>4. Нажмите «Отправить письмо заново»</div></div></div></div>';
 }
 
-function renderLots(lots){
-  if(!lots.length)return'<div class="empty"><div class="empty-icon">📭</div>Лотов пока нет</div>';
-  return'<div class="grid">'+lots.map(function(l){
-    var e=D.users[l.executorId]||{};
-    return'<div class="item" onclick="nav(\'lot\',{id:\''+l.id+'\'})"><div class="cat">'+esc(l.category)+'</div><h3>'+esc(l.title)+'</h3><p>'+esc((l.description||'').slice(0,110))+'</p><div class="meta"><span class="price">'+money(l.price)+'</span><span class="st st-active">Активен</span></div><div class="hint" style="margin-top:8px">'+esc(e.fullName||'—')+' '+stHtml(e.rating,e.ratingCount)+'</div></div>';
+function pgHome(){
+  var o=Object.keys(D.orders).map(function(k){return D.orders[k]}).filter(function(x){return x.status==='open'}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
+  var total=Object.keys(D.orders).length;
+  return'<h1>Заявки</h1><p class="hint" style="margin-top:-10px;margin-bottom:12px">Всего: '+total+' · Открытых: '+o.length+'</p><div class="fil"><select id="f-c"><option value="">Все категории</option>'+CATS.map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('')+'</select><input id="f-mn" type="number" placeholder="Мин ₽"><input id="f-mx" type="number" placeholder="Макс ₽"><button class="sm" onclick="applyF()">Найти</button></div><div id="lots">'+renderOrders(o)+'</div>';
+}
+function renderOrders(list){
+  if(!list.length)return'<div class="empty"><div class="empty-icon">📭</div>Открытых заявок нет'+(me()?'<br><br><button class="ok sm" onclick="nav(\'create\')">+ Создать заявку</button>':'')+'</div>';
+  return'<div class="grid">'+list.map(function(o){
+    var c=D.users[o.customerId]||{};
+    return'<div class="item" onclick="nav(\'order\',{id:\''+o.id+'\'})"><div class="cat">'+esc(o.category)+'</div><h3>'+esc(o.title)+'</h3><p>'+esc((o.description||'').slice(0,110))+'</p><div class="meta"><span class="price">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div><div class="hint" style="margin-top:8px">Заказчик: '+esc(c.fullName||'—')+'</div></div>';
   }).join('')+'</div>';
 }
 
-function stHtml(r,c){
-  if(!c)return'<span class="stars" style="color:var(--t3)">нет оценок</span>';
-  var f=Math.round(r);
-  return'<span class="stars">'+'★'.repeat(f)+'☆'.repeat(5-f)+'</span> <span style="color:var(--t2);font-size:11px">'+r.toFixed(1)+' ('+c+')</span>';
-}
-
-function pgLot(p){
-  var l=D.lots[p.id];
-  if(!l)return'<div class="card"><h2>Лот не найден</h2></div>';
-  var e=D.users[l.executorId]||{};
-  var mine=l.executorId===SID;
-  var canChat=SID&&!mine&&l.status==='active';
-  return'<div class="card"><div class="cat">'+esc(l.category)+'</div><h2 style="margin-top:6px">'+esc(l.title)+'</h2><p style="color:var(--t2);margin:14px 0;line-height:1.6;white-space:pre-wrap">'+esc(l.description)+'</p><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="price" style="font-size:26px">'+money(l.price)+'</span><span class="st st-'+l.status+'">'+(l.status==='active'?'Активен':'Закрыт')+'</span></div><div style="display:flex;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><div class="av" style="width:44px;height:44px;font-size:15px">'+esc(ini(e.fullName))+'</div><div><div style="font-weight:700">'+esc(e.fullName||'—')+' <span class="pid">'+esc(e.publicId||'')+'</span></div><div>'+stHtml(e.rating,e.ratingCount)+'</div></div></div>'+(canChat?'<button class="full" style="margin-top:14px" onclick="startChat(\''+l.id+'\')">💬 Написать исполнителю</button>':'')+(mine?'<button class="full dgr" style="margin-top:14px" onclick="closeLot(\''+l.id+'\')">Закрыть лот</button>':'')+(!SID?'<div class="inf" style="margin-top:14px">Войдите, чтобы написать.</div>':'')+'</div>';
-}
-
-function pgCreateLot(){
+function pgCreate(){
   if(!SID)return pgLogin();
   var u=me();if(!u)return'';
-  if(u.role==='customer')return'<div class="card"><h2>Только для исполнителей</h2></div>';
-  return'<div class="card"><h2>Создать лот</h2><div class="inf">Заказчики найдут лот и напишут вам.</div><div id="cerr"></div><form onsubmit="doCreateLot(event)"><label>Что вы делаете</label><input name="title" placeholder="Решу контрольную по алгебре" required minlength="3"><label>Категория</label><select name="category" id="cs" onchange="updHint()" required>'+CATS.map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('')+'</select><div class="hint" id="ch" style="margin-top:-4px;margin-bottom:12px">'+esc(HINTS[CATS[0]])+'</div><label>Описание</label><textarea name="description" rows="5" placeholder="Что сделаете, сроки" required minlength="10"></textarea><label>Цена от, ₽</label><input name="price" type="number" min="10" step="10" value="300" required><button class="full" type="submit">Опубликовать</button></form></div>';
+  return'<div class="card"><h2>Создать заявку</h2><div class="inf">Опишите, что нужно. Исполнители откликнутся. Деньги заморозятся только после того, как выберете исполнителя.</div><div id="cerr"></div><form onsubmit="doCreate(event)"><label>Что нужно сделать</label><input name="title" placeholder="Решить контрольную по алгебре" required minlength="3"><label>Категория</label><select name="category" id="cs" onchange="updHint()" required>'+CATS.map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('')+'</select><div class="hint" id="ch" style="margin-top:-4px;margin-bottom:12px">'+esc(HINTS[CATS[0]])+'</div><label>Описание</label><textarea name="description" rows="5" placeholder="Что именно, объём, сроки" required minlength="10"></textarea><label>Оплата, ₽</label><input name="price" type="number" min="10" step="10" value="300" required><div class="card" style="background:var(--c2);padding:12px;margin-bottom:12px;font-size:12px;color:var(--t2)">Баланс: <b style="color:var(--t)">'+(unl(u)?'∞':money(u.balance||0))+'</b><br>Комиссия: <b style="color:var(--a)">'+((D.settings&&D.settings.commissionRate||.1)*100).toFixed(0)+'%</b><br>Исполнитель получит: <b style="color:var(--ok)">'+money(300*(1-((D.settings&&D.settings.commissionRate)||.1)))+'</b></div><button class="full" type="submit">Создать заявку</button></form></div>';
 }
 
-function pgMyLots(){
+function pgOrder(p){
+  var o=D.orders[p.id];
+  if(!o)return'<div class="card"><h2>Заявка не найдена</h2></div>';
+  var u=me();
+  var c=D.users[o.customerId]||{},e=o.executorId?(D.users[o.executorId]||{}):null;
+  var ic=u&&u.id===o.customerId,ie=u&&u.id===o.executorId,ia=u&&u.role==='admin';
+  var steps=['open','taken','submitted','done'];
+  var ix=steps.indexOf(o.status);
+  var stepsHtml=ix>=0?'<div style="display:flex;gap:4px;margin-top:14px;background:var(--c2);padding:10px;border-radius:10px;overflow-x:auto">'+steps.map(function(s,i){return'<div style="flex:1 0 auto;text-align:center;font-size:9px;font-weight:600;text-transform:uppercase;color:'+(i<ix?'var(--ok)':i===ix?'var(--a)':'var(--t3)')+';min-width:70px">'+(OS[s])+'</div>'}).join('')+'</div>':'';
+  var actions='';
+  if(o.status==='open'&&u&&!ic&&!ie){
+    var myResp=Object.keys(D.chats).map(function(k){return D.chats[k]}).find(function(ch){return ch.orderId===o.id&&ch.executorId===u.id});
+    actions+=myResp?'<div class="suc" style="margin-top:14px">✓ Вы откликнулись. Ожидайте решения заказчика.</div>':'<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Откликнуться</h3><textarea id="resp-msg" rows="3" placeholder="Почему подходите, сроки"></textarea><label>Ваша цена, ₽</label><input id="resp-price" type="number" value="'+o.price+'" min="10" step="10"><button class="full" onclick="doRespond(\''+o.id+'\')">Отправить отклик</button></div>';
+  }
+  if(ic&&o.status==='open'){
+    var resps=Object.keys(D.chats).map(function(k){return D.chats[k]}).filter(function(ch){return ch.orderId===o.id});
+    if(resps.length){
+      actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Отклики ('+resps.length+')</h3>'+resps.map(function(ch){var ex=D.users[ch.executorId]||{};return'<div class="proposal" style="padding:12px;background:var(--c2);border-radius:10px;margin-bottom:8px;border-left:3px solid var(--a)"><b>'+esc(ex.fullName||'Аноним')+'</b> <span class="pid">'+esc(ex.publicId||'')+'</span><div style="margin:4px 0">'+(ex.ratingCount?stHtml(ex.rating,ex.ratingCount):'')+'</div><div style="font-size:13px;color:var(--t2);margin:6px 0">'+esc(ch.lastMsg||'')+'</div><button class="sm ok" onclick="chooseExec(\''+o.id+'\',\''+ch.executorId+'\',\''+ch.id+'\')">Выбрать исполнителем</button></div>'}).join('')+'</div>';
+    }else{
+      actions+='<div class="hint" style="margin-top:16px">Пока нет откликов. Ждите.</div>';
+    }
+  }
+  if(ic&&o.status==='taken'){
+    actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><p class="hint" style="margin-bottom:10px">Исполнитель работает. После отправки результата подтвердите выполнение.</p><button class="sec full" onclick="openChat(\''+o.id+'\',\''+o.executorId+'\',\''+o.customerId+'\')">💬 Чат с исполнителем</button></div>';
+  }
+  if(ie&&o.status==='taken'){
+    actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Отправить результат</h3><textarea id="res-t" rows="5" placeholder="Опишите или вставьте текст"></textarea><button class="full ok" onclick="submitResult(\''+o.id+'\')">Отправить</button></div>';
+  }
+  if(o.resultText)actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Результат</h3><pre style="background:var(--bg);padding:12px;border-radius:10px;white-space:pre-wrap;font-size:13px">'+esc(o.resultText)+'</pre></div>';
+  if(ic&&o.status==='submitted'){
+    actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><p class="hint" style="margin-bottom:10px">Исполнителю <b style="color:var(--ok)">'+money(o.price*(1-o.commissionRate))+'</b>, платформе <b style="color:var(--a)">'+money(o.price*o.commissionRate)+'</b>.</p><button class="full ok" onclick="confirmDone(\''+o.id+'\')">Подтвердить и выплатить</button></div>';
+  }
+  if(ic&&(o.status==='open'||o.status==='taken'))actions+='<div style="margin-top:16px"><button class="full dgr" onclick="cancelOrder(\''+o.id+'\')">Отменить</button></div>';
+  if((ic||ie)&&['taken','submitted'].indexOf(o.status)>=0)actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Открыть спор</h3><textarea id="disp-r" rows="3" placeholder="Опишите проблему"></textarea><button class="full dgr" onclick="doDispute(\''+o.id+'\')">Открыть спор</button></div>';
+  return'<div class="card"><div class="cat">'+esc(o.category)+'</div><h2 style="margin-top:6px">'+esc(o.title)+'</h2><p style="color:var(--t2);margin:14px 0;line-height:1.6;white-space:pre-wrap">'+esc(o.description)+'</p><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="price" style="font-size:26px">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div><div class="hint" style="margin-top:10px">Заказчик: <b style="color:var(--t)">'+esc(c.fullName||'—')+'</b>'+(e?' · Исполнитель: <b style="color:var(--t)">'+esc(e.fullName)+'</b>':'')+'</div>'+stepsHtml+actions+'</div>';
+}
+
+function pgMyOrders(){
   var u=me();if(!u)return pgLogin();
-  var lots=Object.keys(D.lots).map(function(k){return D.lots[k]}).filter(function(l){return l.executorId===SID}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
-  return'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h1 style="margin:0">Мои лоты</h1><button class="sm" onclick="nav(\'create-lot\')">+ Создать</button></div>'+(!lots.length?'<div class="empty"><div class="empty-icon">📦</div>Лотов пока нет</div>':'<div class="grid">'+lots.map(function(l){return'<div class="item" onclick="nav(\'lot\',{id:\''+l.id+'\'})"><div class="cat">'+esc(l.category)+'</div><h3>'+esc(l.title)+'</h3><div class="meta" style="margin-top:8px"><span class="price">'+money(l.price)+'</span><span class="st st-'+l.status+'">'+(l.status==='active'?'Активен':'Закрыт')+'</span></div></div>'}).join('')+'</div>');
+  var list=Object.keys(D.orders).map(function(k){return D.orders[k]}).filter(function(o){return o.customerId===SID||o.executorId===SID}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
+  if(!list.length)return'<h1>Мои</h1><div class="empty"><div class="empty-icon">📋</div>Заявок нет</div>';
+  return'<h1>Мои заявки</h1><div class="grid">'+list.map(function(o){var ic=o.customerId===SID;var oth=D.users[ic?o.executorId:o.customerId]||{};return'<div class="item" onclick="nav(\'order\',{id:\''+o.id+'\'})"><div class="cat">'+(ic?'Вы заказчик':'Вы исполнитель')+'</div><h3>'+esc(o.title)+'</h3><div class="meta"><span class="price">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div><div class="hint" style="margin-top:6px">'+(ic?'Исполнитель':'Заказчик')+': '+esc(oth.fullName||'—')+'</div></div>'}).join('')+'</div>';
 }
 
 function pgChats(){
   if(!SID)return pgLogin();
   var chs=Object.keys(D.chats).map(function(k){return D.chats[k]}).filter(function(c){return c.customerId===SID||c.executorId===SID}).sort(function(a,b){return (b.lastAt||0)-(a.lastAt||0)});
   if(!chs.length)return'<h1>Чаты</h1><div class="empty"><div class="empty-icon">💬</div>Чатов пока нет</div>';
-  return'<h1>Чаты</h1>'+chs.map(function(c){
-    var oid=c.customerId===SID?c.executorId:c.customerId;
-    var o=D.users[oid]||{};
-    var un=(c.customerId===SID&&c.cU)||(c.executorId===SID&&c.eU);
-    return'<div class="citem '+(un?'un':'')+'" onclick="nav(\'chat\',{id:\''+c.id+'\'})"><div class="citem-h"><div style="display:flex;align-items:center;gap:10px"><div class="av">'+esc(ini(o.fullName))+'</div><div><div class="citem-n">'+esc(o.fullName||'—')+'</div><div style="font-size:11px;color:var(--t2)"><span class="dot '+(onl(o)?'on':'')+'"></span>'+(onl(o)?'онлайн':'офлайн')+'</div></div></div>'+(un?'<span class="bdg new">NEW</span>':'')+'</div><div class="citem-p">'+esc(c.lastMsg||'Нет сообщений')+'</div><div style="font-size:10px;color:var(--t3);margin-top:4px">'+(c.lastAt?dt(c.lastAt):'')+'</div></div>';
-  }).join('');
+  return'<h1>Чаты</h1>'+chs.map(function(c){var oid=c.customerId===SID?c.executorId:c.customerId;var o=D.users[oid]||{};var un=(c.customerId===SID&&c.cU)||(c.executorId===SID&&c.eU);return'<div class="citem '+(un?'un':'')+'" onclick="nav(\'chat\',{id:\''+c.id+'\'})"><div class="citem-h"><div style="display:flex;align-items:center;gap:10px"><div class="av">'+esc(ini(o.fullName))+'</div><div><div class="citem-n">'+esc(o.fullName||'—')+'</div><div style="font-size:11px;color:var(--t2)"><span class="dot '+(onl(o)?'on':'')+'"></span>'+(onl(o)?'онлайн':'офлайн')+'</div></div></div>'+(un?'<span class="bdg new">NEW</span>':'')+'</div><div class="citem-p">'+esc(c.lastMsg||'Нет сообщений')+'</div><div style="font-size:10px;color:var(--t3);margin-top:4px">'+(c.lastAt?dt(c.lastAt):'')+'</div></div>'}).join('');
 }
 
 function pgChat(p){
@@ -307,46 +328,8 @@ function pgChat(p){
   var oid=c.customerId===SID?c.executorId:c.customerId;
   var o=D.users[oid]||{};
   var ms=Object.keys(D.msgs[p.id]||{}).map(function(k){return D.msgs[p.id][k]}).sort(function(a,b){return (a.createdAt||0)-(b.createdAt||0)});
-  var active=Object.keys(D.deals).map(function(k){return D.deals[k]}).filter(function(d){return d.chatId===p.id&&['paid_out','cancelled','refunded'].indexOf(d.status)<0});
   var msgsHtml=ms.length?ms.map(function(m){var s=D.users[m.senderId]||{};return'<div class="msg '+(m.senderId===SID?'mine':'')+'"><div class="who">'+esc(s.fullName||'—')+'</div><p>'+esc(m.body)+'</p><small>'+dt(m.createdAt)+'</small></div>'}).join(''):'<div class="empty" style="padding:18px">Нет сообщений</div>';
-  return'<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div class="av" style="width:44px;height:44px;font-size:15px">'+esc(ini(o.fullName))+'</div><div style="flex:1"><div style="font-weight:700">'+esc(o.fullName||'—')+' <span class="pid">'+esc(o.publicId||'')+'</span></div><div style="font-size:12px"><span class="dot '+(onl(o)?'on':'')+'"></span>'+(onl(o)?'онлайн':'офлайн')+'</div></div></div><div class="msgs" id="cmsgs">'+msgsHtml+'</div><form class="cform" onsubmit="sendMsg(event,\''+p.id+'\')"><input id="cinp" placeholder="Написать..."><button type="submit">→</button></form>'+(active.length?'<div class="inf" style="margin-top:12px">В чате уже '+active.length+' активная сделка.</div>':'<button class="full ok" style="margin-top:12px" onclick="showDF(\''+p.id+'\')">💰 Создать сделку</button>')+'</div><div class="card" id="df" style="display:none"><h3>Новая сделка</h3><div id="derr"></div><label>Что делаем</label><input id="d-title" placeholder="Контрольная"><label>Сумма, ₽</label><input id="d-price" type="number" min="10" step="10" value="300"><div class="hint">Деньги заморозятся. Комиссия '+((D.settings&&D.settings.commissionRate||0.1)*100).toFixed(0)+'%.</div><button class="full ok" style="margin-top:10px" onclick="doCreateDeal(\''+p.id+'\',\''+c.customerId+'\',\''+c.executorId+'\')">Создать</button></div>';
-}
-
-function pgDeals(){
-  if(!SID)return pgLogin();
-  var list=Object.keys(D.deals).map(function(k){return D.deals[k]}).filter(function(d){return d.customerId===SID||d.executorId===SID}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
-  if(!list.length)return'<h1>Сделки</h1><div class="empty"><div class="empty-icon">📋</div>Сделок пока нет</div>';
-  return'<h1>Сделки</h1><div class="grid">'+list.map(function(d){
-    var ic=d.customerId===SID;
-    var o=D.users[ic?d.executorId:d.customerId]||{};
-    return'<div class="item" onclick="nav(\'deal\',{id:\''+d.id+'\'})"><div class="cat">'+(ic?'Вы заказчик':'Вы исполнитель')+'</div><h3>'+esc(d.title)+'</h3><div class="meta"><span class="price">'+money(d.price)+'</span><span class="st st-'+d.status+'">'+(DS[d.status]||d.status)+'</span></div><div class="hint" style="margin-top:6px">'+(ic?'Исполнитель':'Заказчик')+': '+esc(o.fullName||'—')+'</div></div>';
-  }).join('')+'</div>';
-}
-
-function pgDeal(p){
-  var d=D.deals[p.id];
-  if(!d)return'<div class="card"><h2>Сделка не найдена</h2></div>';
-  if(!SID)return pgLogin();
-  var ic=d.customerId===SID,ie=d.executorId===SID,ia=me()&&me().role==='admin';
-  if(!ic&&!ie&&!ia)return'<div class="card"><h2>Нет доступа</h2></div>';
-  var c=D.users[d.customerId]||{},e=D.users[d.executorId]||{};
-  var myRev=Object.keys(D.revs).map(function(k){return D.revs[k]}).find(function(r){return r.dealId===d.id&&r.fromId===SID});
-  var canPay=ic&&d.status==='awaiting_payment'&&(unl(me())||(me().balance||0)>=d.price);
-  var steps=['awaiting_payment','in_progress','result_submitted','paid_out'];
-  var ix=steps.indexOf(d.status);
-  var stepsHtml=ix>=0?'<div style="display:flex;gap:4px;margin-top:14px;background:var(--c2);padding:10px;border-radius:10px;overflow-x:auto">'+steps.map(function(s,i){return'<div style="flex:1 0 auto;text-align:center;font-size:9px;font-weight:600;text-transform:uppercase;color:'+(i<ix?'var(--ok)':i===ix?'var(--a)':'var(--t3)')+';min-width:70px">'+(DS[s])+'</div>'}).join('')+'</div>':'';
-  var actions='';
-  if(ic&&d.status==='awaiting_payment'){
-    actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><p class="hint" style="margin-bottom:10px">Оплатите '+money(d.price)+', чтобы начать.</p>'+(canPay?'<button class="full ok" onclick="payDeal(\''+d.id+'\')">Оплатить и начать</button>':'<div class="err">Недостаточно средств. Нужно '+money(d.price)+'.</div><button class="full" onclick="nav(\'wallet\',{tab:\'dep\'})">Пополнить</button>')+'<button class="sec full" style="margin-top:6px" onclick="cancelDeal(\''+d.id+'\')">Отменить</button></div>';
-  }
-  if(ie&&d.status==='awaiting_payment')actions+='<div class="wrn" style="margin-top:14px">Заказчик пока не оплатил.</div>';
-  if(ie&&d.status==='in_progress')actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Результат</h3><textarea id="res-t" rows="5" placeholder="Решение, текст или ссылка"></textarea><button class="full" onclick="submitRes(\''+d.id+'\')">Отправить</button></div>';
-  if(d.resultText)actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Результат</h3><pre style="background:var(--bg);padding:12px;border-radius:10px;white-space:pre-wrap;font-size:13px">'+esc(d.resultText)+'</pre></div>';
-  if(ic&&d.status==='result_submitted')actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><p class="hint" style="margin-bottom:10px">Исполнителю <b style="color:var(--ok)">'+money(d.price*(1-d.commissionRate))+'</b>, платформе <b style="color:var(--a)">'+money(d.price*d.commissionRate)+'</b>.</p><button class="full ok" onclick="confirmDeal(\''+d.id+'\')">Подтвердить и выплатить</button></div>';
-  if(ic&&d.status==='paid_out'&&!myRev)actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Оцените исполнителя</h3><div style="display:flex;gap:6px">'+[1,2,3,4,5].map(function(n){return'<button class="sec sm" style="flex:1;font-size:22px;min-height:52px" onclick="doReview(\''+d.id+'\',\''+d.executorId+'\','+n+')">★</button>'}).join('')+'</div></div>';
-  if(myRev)actions+='<div class="suc" style="margin-top:14px">Ваша оценка: <span class="stars">'+'★'.repeat(myRev.stars)+'☆'.repeat(5-myRev.stars)+'</span></div>';
-  if((ic||ie)&&['in_progress','result_submitted'].indexOf(d.status)>=0)actions+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Открыть спор</h3><textarea id="dr" rows="3" placeholder="Опишите проблему"></textarea><button class="full dgr" onclick="doDispute(\''+d.id+'\')">Открыть спор</button></div>';
-  return'<div class="card"><div class="cat">Сделка</div><h2 style="margin-top:6px">'+esc(d.title)+'</h2><div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:8px"><span class="price" style="font-size:26px">'+money(d.price)+'</span><span class="st st-'+d.status+'">'+(DS[d.status]||d.status)+'</span></div><div class="hint" style="margin-top:10px">Заказчик: <b style="color:var(--t)">'+esc(c.fullName||'—')+'</b>'+(e.fullName?' · Исполнитель: <b style="color:var(--t)">'+esc(e.fullName)+'</b>':'')+'</div>'+stepsHtml+actions+'<button class="sec full" style="margin-top:14px" onclick="nav(\'chat\',{id:\''+d.chatId+'\'})">💬 Открыть чат</button></div>';
+  return'<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div class="av" style="width:44px;height:44px;font-size:15px">'+esc(ini(o.fullName))+'</div><div style="flex:1"><div style="font-weight:700">'+esc(o.fullName||'—')+' <span class="pid">'+esc(o.publicId||'')+'</span></div><div style="font-size:12px"><span class="dot '+(onl(o)?'on':'')+'"></span>'+(onl(o)?'онлайн':'офлайн')+'</div></div></div><div class="msgs" id="cmsgs">'+msgsHtml+'</div><form class="cform" onsubmit="sendMsg(event,\''+p.id+'\')"><input id="cinp" placeholder="Написать..."><button type="submit">→</button></form></div>';
 }
 
 function pgWallet(p){
@@ -359,18 +342,16 @@ function pgWallet(p){
   var s=D.settings||{};
   var head='<h1>Кошелёк</h1><div class="hero"><div style="font-size:12px;color:var(--t2);margin-bottom:4px">Доступно</div><div class="bal">'+(unl(u)?'∞':(u.balance||0).toFixed(2))+' <span>₽</span></div><div style="display:flex;gap:20px;margin-top:14px"><div style="font-size:11px;color:var(--t2)">В сделках<b style="display:block;color:var(--t);font-size:14px;margin-top:2px">'+(unl(u)?'∞':money(u.heldBalance||0))+'</b></div><div style="font-size:11px;color:var(--t2)">Заработано<b style="display:block;color:var(--t);font-size:14px;margin-top:2px">'+(unl(u)?'∞':money(u.totalEarned||0))+'</b></div></div></div><div class="wacts"><button onclick="nav(\'wallet\',{tab:\'dep\'})">＋ Пополнить</button><button class="sec" onclick="nav(\'wallet\',{tab:\'wd\'})">↓ Вывести</button></div><div class="tabs"><div class="tab '+(t==='ov'?'on':'')+'" onclick="nav(\'wallet\',{tab:\'ov\'})">История</div><div class="tab '+(t==='dep'?'on':'')+'" onclick="nav(\'wallet\',{tab:\'dep\'})">Пополн.</div><div class="tab '+(t==='wd'?'on':'')+'" onclick="nav(\'wallet\',{tab:\'wd\'})">Выводы</div></div>';
   var body='';
-  if(t==='ov'){
-    body=txs.length?'<div class="card"><div class="tw"><table><thead><tr><th>Дата</th><th>Тип</th><th>Сумма</th></tr></thead><tbody>'+txs.slice(0,100).map(function(x){return'<tr><td>'+dt(x.createdAt)+'</td><td>'+(TX[x.type]||x.type)+'</td><td class="'+(x.amount>=0?'pos':'neg')+'">'+(x.amount>=0?'+':'')+money(x.amount)+'</td></tr>'}).join('')+'</tbody></table></div></div>':'<div class="empty">Операций нет</div>';
-  }
+  if(t==='ov')body=txs.length?'<div class="card"><div class="tw"><table><thead><tr><th>Дата</th><th>Тип</th><th>Сумма</th></tr></thead><tbody>'+txs.slice(0,100).map(function(x){return'<tr><td>'+dt(x.createdAt)+'</td><td>'+(TX[x.type]||x.type)+'</td><td class="'+(x.amount>=0?'pos':'neg')+'">'+(x.amount>=0?'+':'')+money(x.amount)+'</td></tr>'}).join('')+'</tbody></table></div></div>':'<div class="empty">Операций нет</div>';
   if(t==='dep'){
-    if(unl(u)){body='<div class="card"><div class="suc">У вас безлимитный баланс.</div></div>'}
+    if(unl(u))body='<div class="card"><div class="suc">У вас безлимитный баланс.</div></div>';
     else{
       var has=s.cardNumber&&s.cardNumber.trim();
       body='<div class="card"><h3>Пополнение</h3><div class="idbig"><div class="lbl">Ваш ID для зачисления</div><div class="val">'+esc(u.publicId)+'</div><button class="sm" onclick="copy(\''+esc(u.publicId)+'\')">📋 Скопировать ID</button></div>'+(has?'<p class="hint" style="margin-bottom:12px">Переведите на карту. В комментарии укажите ваш ID.</p><div style="background:linear-gradient(135deg,#2a2a3a,#1a1a24);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:14px"><div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:6px">Карта для перевода</div><div style="font-family:ui-monospace,monospace;font-size:17px;font-weight:700;letter-spacing:2px;margin-bottom:10px;word-break:break-all">'+esc(s.cardNumber)+'</div>'+(s.cardHolder?'<div style="font-size:12px;color:var(--t2);margin-bottom:4px">Получатель: <b style="color:var(--t)">'+esc(s.cardHolder)+'</b></div>':'')+(s.bankName?'<div style="font-size:12px;color:var(--t2)">Банк: '+esc(s.bankName)+'</div>':'')+'</div><label>Сумма, ₽</label><input id="dep-a" type="number" min="10" step="10" value="300"><label>Комментарий</label><input id="dep-c" value="ID '+esc(u.publicId)+'"><button class="full" onclick="doDep()">Я перевёл — отправить</button>':'<div class="wrn">Приём платежей ещё не настроен админом.</div>')+'</div>'+(deps.length?'<div class="card"><h3>Мои заявки</h3><div class="tw"><table><thead><tr><th>Дата</th><th>Сумма</th><th>Статус</th></tr></thead><tbody>'+deps.map(function(x){return'<tr><td>'+dt(x.createdAt)+'</td><td>'+money(x.amount)+'</td><td><span class="st st-'+x.status+'">'+(x.status==='pending'?'Ожидает':x.status==='approved'?'Зачислено':'Отклонено')+'</span></td></tr>'}).join('')+'</tbody></table></div></div>':'');
     }
   }
   if(t==='wd'){
-    if(unl(u)){body='<div class="card"><div class="suc">У вас безлимитный баланс.</div></div>'}
+    if(unl(u))body='<div class="card"><div class="suc">У вас безлимитный баланс.</div></div>';
     else{
       var mw=s.minWithdraw||300;
       body='<div class="card"><h3>Вывод</h3><p class="hint" style="margin-bottom:14px">Минимум '+money(mw)+'.</p><label>Сумма, ₽</label><input id="wd-a" type="number" min="'+mw+'" step="10" value="'+mw+'"><label>Способ</label><select id="wd-s"><option>Карта банка</option><option>СБП</option><option>ЮMoney</option><option>Другое</option></select><label>Реквизиты</label><input id="wd-d" placeholder="2200 7000 0000 0000"><button class="full" onclick="doWd()">Создать заявку</button><p class="hint">Доступно: <b style="color:var(--t)">'+money(u.balance||0)+'</b>.</p></div>'+(wds.length?'<div class="card"><h3>Мои выводы</h3><div class="tw"><table><thead><tr><th>Дата</th><th>Сумма</th><th>Статус</th></tr></thead><tbody>'+wds.map(function(x){return'<tr><td>'+dt(x.createdAt)+'</td><td>'+money(x.amount)+'</td><td><span class="st st-'+x.status+'">'+(x.status==='pending'?'В обработке':x.status==='completed'?'Выполнено':'Отклонено')+'</span></td></tr>'}).join('')+'</tbody></table></div></div>':'');
@@ -395,68 +376,151 @@ function pgAdmin(p){
   var tabs='<div class="tabs"><div class="tab '+(t==='stats'?'on':'')+'" onclick="nav(\'admin\',{tab:\'stats\'})">Обзор</div><div class="tab '+(t==='credit'?'on':'')+'" onclick="nav(\'admin\',{tab:\'credit\'})">💰 Зачислить</div><div class="tab '+(t==='deps'?'on':'')+'" onclick="nav(\'admin\',{tab:\'deps\'})">Пополн.'+(pd?' ('+pd+')':'')+'</div><div class="tab '+(t==='wds'?'on':'')+'" onclick="nav(\'admin\',{tab:\'wds\'})">Выводы'+(pw?' ('+pw+')':'')+'</div><div class="tab '+(t==='disps'?'on':'')+'" onclick="nav(\'admin\',{tab:\'disps\'})">Споры'+(pdi?' ('+pdi+')':'')+'</div><div class="tab '+(t==='users'?'on':'')+'" onclick="nav(\'admin\',{tab:\'users\'})">Юзеры'+(newU.length?' ('+newU.length+')':'')+'</div><div class="tab '+(t==='settings'?'on':'')+'" onclick="nav(\'admin\',{tab:\'settings\'})">Настройки</div></div>';
   var hdr='<h1>Админ-панель</h1>'+(newU.length?'<div class="wrn"><b>Новые регистрации ('+newU.length+')</b></div>':'')+tabs;
   var body='';
-  if(t==='stats'){
-    body='<div class="stats"><div class="sbox"><small>Онлайн</small><div class="v" style="color:var(--ok)">'+onlN+'</div></div><div class="sbox"><small>Юзеров</small><div class="v">'+users.length+'</div></div><div class="sbox"><small>Лотов</small><div class="v">'+Object.keys(D.lots).length+'</div></div><div class="sbox"><small>Сделок</small><div class="v">'+Object.keys(D.deals).length+'</div></div></div>';
-  }
-  if(t==='credit'){
-    body='<div class="card"><h3>Зачислить по ID</h3><label>ID</label><input id="mc-i" placeholder="12345678" inputmode="numeric"><label>Сумма, ₽</label><input id="mc-a" type="number" min="1" step="10" value="300"><label>Комментарий</label><input id="mc-n" placeholder="За что"><button class="full" onclick="adminCredit()">💰 Зачислить</button><div id="mcr"></div></div>';
-  }
-  if(t==='deps'){
-    body=deps.length?deps.map(function(x){var uu=D.users[x.userId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(uu.fullName||'—')+'</b> <span class="pid">'+esc(uu.publicId||'')+'</span><div class="hint">'+esc(uu.email||'')+'</div></div><span class="st st-'+x.status+'">'+(x.status==='pending'?'Ожидает':x.status==='approved'?'Зачислено':'Отклонено')+'</span></div><div style="margin-top:10px"><span class="price">'+money(x.amount)+'</span></div>'+(x.comment?'<div class="hint">Комментарий: '+esc(x.comment)+'</div>':'')+'<div class="hint">'+dt(x.createdAt)+'</div>'+(x.status==='pending'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm ok" onclick="adminDep(\''+x.id+'\',\'ok\')">Зачислить</button><button class="sm dgr" onclick="adminDep(\''+x.id+'\',\'no\')">Отклонить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Заявок нет</div>';
-  }
-  if(t==='wds'){
-    body=wds.length?wds.map(function(x){var uu=D.users[x.userId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(uu.fullName||'—')+'</b> <span class="pid">'+esc(uu.publicId||'')+'</span><div class="hint">'+esc(uu.email||'')+'</div></div><span class="st st-'+x.status+'">'+(x.status==='pending'?'В обработке':x.status==='completed'?'Выполнено':'Отклонено')+'</span></div><div style="margin-top:10px"><span class="price">'+money(x.amount)+'</span></div>'+(x.service?'<div class="hint">Способ: <b style="color:var(--t)">'+esc(x.service)+'</b></div>':'')+'<div class="hint">Реквизиты: <b style="color:var(--t)">'+esc(x.dest)+'</b></div><div class="hint">'+dt(x.createdAt)+'</div>'+(x.status==='pending'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm ok" onclick="adminWd(\''+x.id+'\',\'ok\')">✓ Выполнено</button><button class="sm dgr" onclick="adminWd(\''+x.id+'\',\'no\')">Отклонить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Заявок нет</div>';
-  }
-  if(t==='disps'){
-    body=disps.length?disps.map(function(x){var deal=D.deals[x.dealId]||{},init=D.users[x.initiatorId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(deal.title||'—')+'</b><div class="hint">'+money(deal.price)+'</div></div><span class="st st-'+(x.status==='open'?'disputed':'paid_out')+'">'+(x.status==='open'?'Открыт':'Решён')+'</span></div><div class="wrn" style="margin-top:10px"><b>От '+esc(init.fullName||'—')+':</b> '+esc(x.reason)+'</div>'+(x.status==='open'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm dgr" onclick="adminDisp(\''+x.id+'\',\'refund\')">Вернуть</button><button class="sm ok" onclick="adminDisp(\''+x.id+'\',\'payout\')">Выплатить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Споров нет</div>';
-  }
-  if(t==='users'){
-    body=users.map(function(arr){
-      var id=arr[0],uu=arr[1];
-      var bal=unl(uu)?'∞':money(uu.balance||0);
-      var held=unl(uu)?'∞':money(uu.heldBalance||0);
-      return'<div class="card" style="'+(uu.isNew?'border-color:var(--dn)':'')+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="display:flex;gap:10px;align-items:center"><div class="av" style="width:38px;height:38px;font-size:13px">'+esc(ini(uu.fullName))+'</div><div><div style="font-weight:700;font-size:15px"><span class="dot '+(onl(uu)?'on':'')+'"></span>'+esc(uu.fullName||'—')+' '+(uu.role==='admin'?'<span class="bdg adm">ADMIN</span>':'')+(uu.isNew?' <span class="bdg new">NEW</span>':'')+'</div><div style="font-size:11px;color:var(--t2)">'+(uu.role==='executor'?'Исполнитель':'Заказчик')+'</div></div></div></div><div style="font-size:12px;color:var(--t2);line-height:1.7">ID: <span class="pid">'+esc(uu.publicId||'—')+'</span><br>Email: <b style="color:var(--t)">'+esc(uu.email||'—')+'</b><br>IP: <code style="background:var(--bg);padding:2px 6px;border-radius:5px;font-size:11px">'+esc(uu.ip||'—')+'</code><br>Баланс: <b style="color:var(--a)">'+bal+'</b> · В сделках: '+held+'<br>Рейтинг: '+stHtml(uu.rating,uu.ratingCount)+'<br>Последний вход: '+dt(uu.lastSeen||uu.createdAt)+'</div><div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><button class="sm ok" onclick="adminQuick(\''+esc(uu.publicId)+'\')">💰 Зачислить</button><button class="sm sec" onclick="copy(\''+esc(uu.publicId)+'\')">📋 ID</button><button class="sm '+(uu.blocked?'':'dgr')+'" onclick="adminBlock(\''+id+'\')">'+(uu.blocked?'Разблок.':'Блок.')+'</button></div></div>';
-    }).join('');
-  }
-  if(t==='settings'){
-    var s=D.settings||{};
-    body='<div class="card"><h3>Реквизиты для приёма платежей</h3><label>Номер карты / телефон СБП</label><input id="s-card" value="'+esc(s.cardNumber||'')+'" placeholder="2200 7000 0000 0000"><label>Имя получателя</label><input id="s-holder" value="'+esc(s.cardHolder||'')+'" placeholder="Иванов Иван"><label>Банк</label><input id="s-bank" value="'+esc(s.bankName||'')+'" placeholder="Т-Банк"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Комиссия</h3><label>% с каждой сделки</label><input id="s-comm" type="number" min="0" max="50" value="'+((s.commissionRate||.1)*100).toFixed(0)+'"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Лимиты</h3><label>Мин. пополнение, ₽</label><input id="s-md" type="number" value="'+(s.minDeposit||100)+'"><label>Мин. вывод, ₽</label><input id="s-mw" type="number" value="'+(s.minWithdraw||300)+'"><button class="full" style="margin-top:12px" onclick="adminSave()">Сохранить</button><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Новые регистрации</h3><button class="sec full" onclick="adminMark()">Отметить прочитанными</button></div>';
-  }
+  if(t==='stats')body='<div class="stats"><div class="sbox"><small>Онлайн</small><div class="v" style="color:var(--ok)">'+onlN+'</div></div><div class="sbox"><small>Юзеров</small><div class="v">'+users.length+'</div></div><div class="sbox"><small>Заявок</small><div class="v">'+Object.keys(D.orders).length+'</div></div><div class="sbox"><small>Сделок в работе</small><div class="v">'+Object.keys(D.orders).filter(function(k){return D.orders[k].status==='taken'||D.orders[k].status==='submitted'}).length+'</div></div></div>';
+  if(t==='credit')body='<div class="card"><h3>Зачислить по ID</h3><label>ID</label><input id="mc-i" placeholder="12345678" inputmode="numeric"><label>Сумма, ₽</label><input id="mc-a" type="number" min="1" step="10" value="300"><label>Комментарий</label><input id="mc-n" placeholder="За что"><button class="full" onclick="adminCredit()">💰 Зачислить</button><div id="mcr"></div></div>';
+  if(t==='deps')body=deps.length?deps.map(function(x){var uu=D.users[x.userId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(uu.fullName||'—')+'</b> <span class="pid">'+esc(uu.publicId||'')+'</span><div class="hint">'+esc(uu.email||'')+'</div></div><span class="st st-'+x.status+'">'+(x.status==='pending'?'Ожидает':x.status==='approved'?'Зачислено':'Отклонено')+'</span></div><div style="margin-top:10px"><span class="price">'+money(x.amount)+'</span></div>'+(x.comment?'<div class="hint">Комментарий: '+esc(x.comment)+'</div>':'')+'<div class="hint">'+dt(x.createdAt)+'</div>'+(x.status==='pending'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm ok" onclick="adminDep(\''+x.id+'\',\'ok\')">Зачислить</button><button class="sm dgr" onclick="adminDep(\''+x.id+'\',\'no\')">Отклонить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Заявок нет</div>';
+  if(t==='wds')body=wds.length?wds.map(function(x){var uu=D.users[x.userId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(uu.fullName||'—')+'</b> <span class="pid">'+esc(uu.publicId||'')+'</span><div class="hint">'+esc(uu.email||'')+'</div></div><span class="st st-'+x.status+'">'+(x.status==='pending'?'В обработке':x.status==='completed'?'Выполнено':'Отклонено')+'</span></div><div style="margin-top:10px"><span class="price">'+money(x.amount)+'</span></div>'+(x.service?'<div class="hint">Способ: <b style="color:var(--t)">'+esc(x.service)+'</b></div>':'')+'<div class="hint">Реквизиты: <b style="color:var(--t)">'+esc(x.dest)+'</b></div><div class="hint">'+dt(x.createdAt)+'</div>'+(x.status==='pending'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm ok" onclick="adminWd(\''+x.id+'\',\'ok\')">✓ Выполнено</button><button class="sm dgr" onclick="adminWd(\''+x.id+'\',\'no\')">Отклонить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Заявок нет</div>';
+  if(t==='disps')body=disps.length?disps.map(function(x){var ord=D.orders[x.orderId]||{},init=D.users[x.initiatorId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(ord.title||'—')+'</b><div class="hint">'+money(ord.price)+'</div></div><span class="st st-'+(x.status==='open'?'disputed':'done')+'">'+(x.status==='open'?'Открыт':'Решён')+'</span></div><div class="wrn" style="margin-top:10px"><b>От '+esc(init.fullName||'—')+':</b> '+esc(x.reason)+'</div>'+(x.status==='open'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm dgr" onclick="adminDisp(\''+x.id+'\',\'refund\')">Вернуть</button><button class="sm ok" onclick="adminDisp(\''+x.id+'\',\'payout\')">Выплатить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Споров нет</div>';
+  if(t==='users')body=users.map(function(arr){var id=arr[0],uu=arr[1];var bal=unl(uu)?'∞':money(uu.balance||0);var held=unl(uu)?'∞':money(uu.heldBalance||0);return'<div class="card" style="'+(uu.isNew?'border-color:var(--dn)':'')+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="display:flex;gap:10px;align-items:center"><div class="av" style="width:38px;height:38px;font-size:13px">'+esc(ini(uu.fullName))+'</div><div><div style="font-weight:700;font-size:15px"><span class="dot '+(onl(uu)?'on':'')+'"></span>'+esc(uu.fullName||'—')+' '+(uu.role==='admin'?'<span class="bdg adm">ADMIN</span>':'')+(uu.isNew?' <span class="bdg new">NEW</span>':'')+'</div><div style="font-size:11px;color:var(--t2)">'+esc(uu.email||'')+' · '+(uu.emailVerified?'✓':'⚠')+'</div></div></div></div><div style="font-size:12px;color:var(--t2);line-height:1.7">ID: <span class="pid">'+esc(uu.publicId||'—')+'</span><br>IP: <code style="background:var(--bg);padding:2px 6px;border-radius:5px;font-size:11px">'+esc(uu.ip||'—')+'</code><br>Баланс: <b style="color:var(--a)">'+bal+'</b> · В сделках: '+held+'<br>Рейтинг: '+stHtml(uu.rating,uu.ratingCount)+'<br>Последний вход: '+dt(uu.lastSeen||uu.createdAt)+'</div><div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><button class="sm ok" onclick="adminQuick(\''+esc(uu.publicId)+'\')">💰 Зачислить</button><button class="sm sec" onclick="copy(\''+esc(uu.publicId)+'\')">📋 ID</button><button class="sm '+(uu.blocked?'':'dgr')+'" onclick="adminBlock(\''+id+'\')">'+(uu.blocked?'Разблок.':'Блок.')+'</button></div></div>'}).join('');
+  if(t==='settings'){var s=D.settings||{};body='<div class="card"><h3>Реквизиты для приёма платежей</h3><label>Номер карты / телефон СБП</label><input id="s-card" value="'+esc(s.cardNumber||'')+'" placeholder="2200 7000 0000 0000"><label>Имя получателя</label><input id="s-holder" value="'+esc(s.cardHolder||'')+'" placeholder="Иванов Иван"><label>Банк</label><input id="s-bank" value="'+esc(s.bankName||'')+'" placeholder="Т-Банк"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Комиссия</h3><label>% с каждой сделки</label><input id="s-comm" type="number" min="0" max="50" value="'+((s.commissionRate||.1)*100).toFixed(0)+'"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Лимиты</h3><label>Мин. пополнение, ₽</label><input id="s-md" type="number" value="'+(s.minDeposit||100)+'"><label>Мин. вывод, ₽</label><input id="s-mw" type="number" value="'+(s.minWithdraw||300)+'"><button class="full" style="margin-top:12px" onclick="adminSave()">Сохранить</button><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Новые регистрации</h3><button class="sec full" onclick="adminMark()">Отметить прочитанными</button></div>';}
   return hdr+body;
 }
 
-// HANDLERS
-window.doLogin=function(e){e.preventDefault();var fd=new FormData(e.target);auth.signInWithEmailAndPassword(fd.get('email').trim().toLowerCase(),fd.get('password')).then(function(){toast('Добро пожаловать','success')}).catch(function(err){document.getElementById('aerr').innerHTML='<div class="err">'+err.message+'</div>'})};
+function stHtml(r,c){if(!c)return'';var f=Math.round(r);return'<span class="stars">'+'★'.repeat(f)+'☆'.repeat(5-f)+'</span> <span style="color:var(--t2);font-size:11px">'+r.toFixed(1)+' ('+c+')</span>'}
+
+// ==================== HANDLERS ====================
+window.doLogin=function(e){e.preventDefault();var fd=new FormData(e.target);auth.signInWithEmailAndPassword(fd.get('email').trim().toLowerCase(),fd.get('password')).then(function(cred){
+  if(!cred.user.emailVerified){route={name:'verify',params:{}};render();}
+  else{toast('Добро пожаловать','success');}
+}).catch(function(err){document.getElementById('aerr').innerHTML='<div class="err">'+err.message+'</div>'})};
+
 window.doReg=function(e){
-  e.preventDefault();var fd=new FormData(e.target);
-  var email=fd.get('email').trim().toLowerCase(),pw=fd.get('password'),name=fd.get('fullName').trim(),role=fd.get('role'),ac=(fd.get('adminCode')||'').trim();
+  e.preventDefault();
+  var fd=new FormData(e.target);
+  var email=fd.get('email').trim().toLowerCase();
+  var pw=fd.get('password');
+  var name=fd.get('fullName').trim();
   if(pw.length<6){document.getElementById('aerr').innerHTML='<div class="err">Пароль слишком короткий</div>';return}
   auth.createUserWithEmailAndPassword(email,pw).then(function(cred){
     var uid_=cred.user.uid;
     var pid=genPid();
-    var isAdmin=ac===ADMIN_CODE;
-    var user={id:uid_,publicId:pid,email:email,fullName:name,role:isAdmin?'admin':role,balance:0,heldBalance:0,totalEarned:0,blocked:false,isUnlimited:isAdmin,ip:'—',deviceId:fp(),lastSeen:Date.now(),rating:0,ratingCount:0,isNew:!isAdmin,createdAt:Date.now()};
+    var isAdmin=(email===ADMIN_EMAIL);
+    var user={id:uid_,publicId:pid,email:email,fullName:name,role:isAdmin?'admin':'customer',balance:0,heldBalance:0,totalEarned:0,blocked:false,isUnlimited:isAdmin,ip:'—',deviceId:fp(),lastSeen:Date.now(),rating:0,ratingCount:0,emailVerified:false,isNew:!isAdmin,createdAt:Date.now()};
     DB.child('users/'+uid_).set(user).then(function(){
-      cred.user.sendEmailVerification().catch(function(){});
-      toast('Аккаунт создан!','success');
-      nav('home');
+      cred.user.sendEmailVerification().then(function(){
+        toast('Письмо отправлено на '+email,'success');
+        route={name:'verify',params:{}};
+        render();
+      }).catch(function(err){
+        alert('Не удалось отправить письмо: '+err.message);
+        route={name:'verify',params:{}};
+        render();
+      });
     });
   }).catch(function(err){document.getElementById('aerr').innerHTML='<div class="err">'+err.message+'</div>'});
 };
+
+window.checkVerify=function(){
+  if(!FU){nav('login');return}
+  FU.reload().then(function(){
+    if(FU.emailVerified){
+      DB.child('users/'+FU.uid+'/emailVerified').set(true);
+      toast('Почта подтверждена!','success');
+      route={name:'home',params:{}};
+      render();
+    }else{
+      alert('Почта ещё не подтверждена.\n\n1. Откройте письмо (проверьте «Спам»)\n2. Нажмите ссылку в нём\n3. Вернитесь и нажмите «Проверить» снова');
+    }
+  });
+};
+
+window.resendVerify=function(){
+  if(!FU)return;
+  FU.sendEmailVerification().then(function(){
+    alert('Письмо отправлено заново на '+FU.email+'.\n\nПроверьте «Входящие», «Спам» и «Промоакции».\nОбычно приходит за 10–60 секунд.');
+  }).catch(function(err){alert('Ошибка: '+err.message)});
+};
+
 window.logout=function(){auth.signOut().then(function(){SID=null;FU=null;localStorage.removeItem('gm_sid');route={name:'login',params:{}};render()})};
-window.doCreateLot=function(e){e.preventDefault();var fd=new FormData(e.target);var u=me();if(!u)return;var id=uid();DB.child('lots/'+id).set({id:id,executorId:u.id,title:fd.get('title').trim(),category:fd.get('category'),description:fd.get('description').trim(),price:Number(fd.get('price')),status:'active',createdAt:Date.now()}).then(function(){toast('Лот создан','success');nav('mylots')})};
-window.closeLot=function(id){if(!confirm('Закрыть лот?'))return;DB.child('lots/'+id+'/status').set('closed').then(function(){toast('Лот закрыт');render()})};
-window.startChat=function(lotId){
-  if(!SID)return;var l=D.lots[lotId];if(!l)return;
-  var exist=null;
-  Object.keys(D.chats).forEach(function(k){var c=D.chats[k];if(c.lotId===lotId&&c.customerId===SID&&c.executorId===l.executorId)exist=c});
+
+window.doCreate=function(e){
+  e.preventDefault();
+  var fd=new FormData(e.target);
+  var u=me();if(!u)return;
+  var id=uid();
+  DB.child('orders/'+id).set({id:id,customerId:u.id,executorId:null,title:fd.get('title').trim(),category:fd.get('category'),description:fd.get('description').trim(),price:Number(fd.get('price')),commissionRate:(D.settings&&D.settings.commissionRate)||0.1,status:'open',resultText:null,createdAt:Date.now(),updatedAt:Date.now()}).then(function(){
+    toast('Заявка создана','success');nav('order',{id:id});
+  });
+};
+
+window.doRespond=function(orderId){
+  var u=me();if(!u)return;
+  var o=D.orders[orderId];if(!o)return;
+  var msg=document.getElementById('resp-msg').value.trim();
+  var price=Number(document.getElementById('resp-price').value)||o.price;
+  if(!msg){toast('Напишите сообщение','error');return}
+  if(o.customerId===u.id){toast('Это ваша заявка','error');return}
+  var chatId=uid();
+  DB.child('chats/'+chatId).set({id:chatId,orderId:orderId,customerId:o.customerId,executorId:u.id,lastAt:Date.now(),lastMsg:msg.slice(0,60),respPrice:price}).then(function(){
+    var mid=uid();
+    DB.child('msgs/'+chatId+'/'+mid).set({id:mid,chatId:chatId,senderId:u.id,body:msg,createdAt:Date.now()});
+    toast('Отклик отправлен','success');
+    render();
+  });
+};
+
+window.chooseExec=function(orderId,execId,chatId){
+  var u=me();if(!u)return;
+  var o=D.orders[orderId];if(!o||o.customerId!==u.id)return;
+  if(!confirm('Выбрать этого исполнителя? После этого заявка перейдёт в работу.'))return;
+  DB.child('orders/'+orderId).update({executorId:execId,status:'taken',updatedAt:Date.now()}).then(function(){
+    toast('Исполнитель выбран','success');render();
+  });
+};
+
+window.submitResult=function(orderId){
+  var u=me();if(!u)return;
+  var o=D.orders[orderId];if(!o||o.executorId!==u.id)return;
+  var t=document.getElementById('res-t').value.trim();
+  if(!t){toast('Введите результат','error');return}
+  DB.child('orders/'+orderId).update({resultText:t,status:'submitted',updatedAt:Date.now()}).then(function(){toast('Отправлено','success');render()});
+};
+
+window.confirmDone=function(orderId){
+  if(!confirm('Подтвердить? Деньги уйдут исполнителю.'))return;
+  var o=D.orders[orderId];if(!o)return;
+  payout(orderId);
+  DB.child('orders/'+orderId).update({status:'done',updatedAt:Date.now()}).then(function(){toast('Выплата произведена','success');render()});
+};
+
+window.cancelOrder=function(orderId){
+  if(!confirm('Отменить заявку?'))return;
+  var o=D.orders[orderId];if(!o)return;
+  if(o.status==='taken'||o.status==='submitted')refund(orderId);
+  DB.child('orders/'+orderId).update({status:'cancelled',updatedAt:Date.now()}).then(function(){toast('Отменено');render()});
+};
+
+window.doDispute=function(orderId){
+  var r=document.getElementById('disp-r').value.trim();
+  if(r.length<5){toast('Опишите проблему','error');return}
+  var id=uid();
+  DB.child('disps/'+id).set({id:id,orderId:orderId,initiatorId:SID,reason:r,status:'open',createdAt:Date.now()}).then(function(){
+    DB.child('orders/'+orderId+'/status').set('disputed');
+    toast('Спор открыт','success');render();
+  });
+};
+
+window.openChat=function(orderId,execId,custId){
+  var exist=Object.keys(D.chats).map(function(k){return D.chats[k]}).find(function(c){return c.orderId===orderId&&c.executorId===execId});
   if(exist){nav('chat',{id:exist.id});return}
   var id=uid();
-  DB.child('chats/'+id).set({id:id,lotId:lotId,customerId:SID,executorId:l.executorId,lastAt:Date.now(),lastMsg:'Чат создан'}).then(function(){nav('chat',{id:id})});
+  DB.child('chats/'+id).set({id:id,orderId:orderId,customerId:custId,executorId:execId,lastAt:Date.now(),lastMsg:'Чат создан'}).then(function(){nav('chat',{id:id})});
 };
+
 window.sendMsg=function(e,chatId){
   e.preventDefault();
-  var inp=document.getElementById('cinp');var body=inp.value.trim();if(!body)return;
+  var inp=document.getElementById('cinp');
+  var body=inp.value.trim();if(!body)return;
   var id=uid();
   DB.child('msgs/'+chatId+'/'+id).set({id:id,chatId:chatId,senderId:SID,body:body,createdAt:Date.now()}).then(function(){
     var c=D.chats[chatId]||{};
@@ -466,56 +530,7 @@ window.sendMsg=function(e,chatId){
     inp.value='';
   });
 };
-window.showDF=function(id){var e=document.getElementById('df');if(e){e.style.display='block';e.scrollIntoView({behavior:'smooth'})}};
-window.doCreateDeal=function(chatId,custId,execId){
-  var u=me();if(!u)return;
-  var title=document.getElementById('d-title').value.trim();
-  var price=Number(document.getElementById('d-price').value);
-  if(!title||!price||price<10){document.getElementById('derr').innerHTML='<div class="err">Заполните</div>';return}
-  var id=uid();
-  DB.child('deals/'+id).set({id:id,chatId:chatId,customerId:custId,executorId:execId,title:title,price:price,commissionRate:(D.settings&&D.settings.commissionRate)||0.1,status:'awaiting_payment',createdAt:Date.now()}).then(function(){toast('Сделка создана','success');nav('deal',{id:id})});
-};
-window.payDeal=function(id){
-  var d=D.deals[id];var u=me();if(!d||!u)return;
-  var r=holdFunds(u.id,id,d.price);
-  if(!r.ok){toast(r.error,'error');return}
-  DB.child('deals/'+id).update({status:'in_progress'}).then(function(){toast('Оплачено','success');render()});
-};
-window.cancelDeal=function(id){
-  if(!confirm('Отменить?'))return;
-  var d=D.deals[id];if(!d)return;
-  if(['in_progress','result_submitted'].indexOf(d.status)>=0)refund(id);
-  DB.child('deals/'+id).update({status:'cancelled'}).then(function(){toast('Отменено');render()});
-};
-window.submitRes=function(id){
-  var t=document.getElementById('res-t').value.trim();
-  if(!t){toast('Введите результат','error');return}
-  DB.child('deals/'+id).update({resultText:t,status:'result_submitted'}).then(function(){toast('Отправлено','success');render()});
-};
-window.confirmDeal=function(id){
-  if(!confirm('Подтвердить?'))return;
-  var d=D.deals[id];if(!d)return;
-  release(id);
-  DB.child('deals/'+id).update({status:'paid_out'}).then(function(){toast('Оплата переведена','success');render()});
-};
-window.doReview=function(dealId,toId,starsCount){
-  var u=me();if(!u)return;
-  var id=uid();
-  DB.child('revs/'+id).set({id:id,dealId:dealId,fromId:SID,toId:toId,stars:starsCount,createdAt:Date.now()}).then(function(){
-    var t=D.users[toId];
-    if(t){var cnt=(t.ratingCount||0)+1;var nr=((t.rating||0)*(t.ratingCount||0)+starsCount)/cnt;DB.child('users/'+toId).update({rating:nr,ratingCount:cnt})}
-    toast('Спасибо','success');render();
-  });
-};
-window.doDispute=function(dealId){
-  var r=document.getElementById('dr').value.trim();
-  if(r.length<5){toast('Опишите','error');return}
-  var id=uid();
-  DB.child('disps/'+id).set({id:id,dealId:dealId,initiatorId:SID,reason:r,status:'open',createdAt:Date.now()}).then(function(){
-    DB.child('deals/'+dealId+'/status').set('disputed');
-    toast('Спор открыт','success');render();
-  });
-};
+
 window.doDep=function(){
   var u=me();if(!u)return;
   var amt=Number(document.getElementById('dep-a').value);
@@ -524,6 +539,7 @@ window.doDep=function(){
   var id=uid();
   DB.child('deps/'+id).set({id:id,userId:SID,publicId:u.publicId,amount:amt,comment:cmt,status:'pending',createdAt:Date.now()}).then(function(){toast('Заявка отправлена','success');nav('wallet',{tab:'dep'})});
 };
+
 window.doWd=function(){
   var u=me();if(!u)return;
   var amt=Number(document.getElementById('wd-a').value);
@@ -540,6 +556,7 @@ window.doWd=function(){
     toast('Заявка создана','success');nav('wallet',{tab:'wd'});
   });
 };
+
 window.adminCredit=function(){
   var pid=document.getElementById('mc-i').value.trim();
   var amt=Number(document.getElementById('mc-a').value);
@@ -556,85 +573,15 @@ window.adminCredit=function(){
     document.getElementById('mc-i').value='';
   });
 };
-window.adminQuick=function(pid){
-  var res=uByPid(String(pid));
-  if(!res){toast('Не найден','error');return}
-  var id=res[0],uu=res[1];
-  var s=prompt('Зачислить '+uu.fullName+'\nБаланс: '+money(uu.balance||0)+'\n\nСумма в ₽:','300');
-  if(s===null)return;
-  var amt=Number(s);if(!amt||amt<=0)return;
-  var nb=(uu.balance||0)+amt;
-  DB.child('users/'+id+'/balance').set(nb).then(function(){
-    var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:id,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});
-    toast('Зачислено '+money(amt),'success');render();
-  });
-};
-window.adminDep=function(id,act){
-  var d=D.deps[id];if(!d||d.status!=='pending')return;
-  if(act==='ok'){
-    var uu=D.users[d.userId];if(!uu)return;
-    var nb=(uu.balance||0)+d.amount;
-    DB.child('users/'+d.userId+'/balance').set(nb).then(function(){
-      var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:d.userId,type:'deposit',amount:d.amount,balanceAfter:nb,createdAt:Date.now()});
-      DB.child('deps/'+id+'/status').set('approved');
-      toast('Зачислено','success');render();
-    });
-  }else{
-    DB.child('deps/'+id+'/status').set('rejected').then(function(){toast('Отклонено');render()});
-  }
-};
-window.adminWd=function(id,act){
-  var w=D.wds[id];if(!w||w.status!=='pending')return;
-  if(act==='ok'){
-    DB.child('wds/'+id+'/status').set('completed').then(function(){toast('Готово');render()});
-  }else{
-    var uu=D.users[w.userId];
-    if(uu){
-      var nb=(uu.balance||0)+w.amount;
-      DB.child('users/'+w.userId+'/balance').set(nb);
-      var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:w.userId,type:'refund',amount:w.amount,balanceAfter:nb,createdAt:Date.now()});
-    }
-    DB.child('wds/'+id+'/status').set('rejected').then(function(){toast('Возвращено');render()});
-  }
-};
-window.adminDisp=function(id,res){
-  var d=D.disps[id];if(!d||d.status!=='open')return;
-  var deal=D.deals[d.dealId];if(!deal)return;
-  if(res==='refund'){refund(d.dealId);DB.child('deals/'+d.dealId+'/status').set('refunded')}
-  else{release(d.dealId);DB.child('deals/'+d.dealId+'/status').set('paid_out')}
-  DB.child('disps/'+id).update({status:'resolved',resolution:res}).then(function(){toast('Спор решён');render()});
-};
-window.adminBlock=function(id){
-  var uu=D.users[id];if(!uu)return;
-  DB.child('users/'+id+'/blocked').set(!uu.blocked).then(function(){toast(uu.blocked?'Разблокирован':'Заблокирован','success');render()});
-};
-window.adminSave=function(){
-  DB.child('settings').update({
-    cardNumber:document.getElementById('s-card').value.trim(),
-    cardHolder:document.getElementById('s-holder').value.trim(),
-    bankName:document.getElementById('s-bank').value.trim(),
-    commissionRate:Number(document.getElementById('s-comm').value)/100,
-    minDeposit:Number(document.getElementById('s-md').value)||100,
-    minWithdraw:Number(document.getElementById('s-mw').value)||300
-  }).then(function(){toast('Сохранено','success')});
-};
-window.adminMark=function(){
-  Object.keys(D.users).forEach(function(id){if(D.users[id].isNew)DB.child('users/'+id+'/isNew').set(false)});
-  toast('Все прочитаны','success');render();
-};
-window.applyF=function(){
-  var c=document.getElementById('f-c').value;
-  var mn=Number(document.getElementById('f-mn').value)||0;
-  var mx=Number(document.getElementById('f-mx').value)||Infinity;
-  var lots=Object.keys(D.lots).map(function(k){return D.lots[k]}).filter(function(l){return l.status==='active'});
-  if(c)lots=lots.filter(function(l){return l.category===c});
-  lots=lots.filter(function(l){return l.price>=mn&&l.price<=mx});
-  document.getElementById('lots').innerHTML=renderLots(lots.sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)}));
-};
-window.updHint=function(){
-  var s=document.getElementById('cs').value;
-  document.getElementById('ch').textContent=HINTS[s]||'';
-};
+window.adminQuick=function(pid){var res=uByPid(String(pid));if(!res){toast('Не найден','error');return}var id=res[0],uu=res[1];var s=prompt('Зачислить '+uu.fullName+'\nБаланс: '+money(uu.balance||0)+'\n\nСумма в ₽:','300');if(s===null)return;var amt=Number(s);if(!amt||amt<=0)return;var nb=(uu.balance||0)+amt;DB.child('users/'+id+'/balance').set(nb).then(function(){var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:id,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});toast('Зачислено '+money(amt),'success');render()})};
+window.adminDep=function(id,act){var d=D.deps[id];if(!d||d.status!=='pending')return;if(act==='ok'){var uu=D.users[d.userId];if(!uu)return;var nb=(uu.balance||0)+d.amount;DB.child('users/'+d.userId+'/balance').set(nb).then(function(){var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:d.userId,type:'deposit',amount:d.amount,balanceAfter:nb,createdAt:Date.now()});DB.child('deps/'+id+'/status').set('approved');toast('Зачислено','success');render()})}else{DB.child('deps/'+id+'/status').set('rejected').then(function(){toast('Отклонено');render()})}};
+window.adminWd=function(id,act){var w=D.wds[id];if(!w||w.status!=='pending')return;if(act==='ok'){DB.child('wds/'+id+'/status').set('completed').then(function(){toast('Готово');render()})}else{var uu=D.users[w.userId];if(uu){var nb=(uu.balance||0)+w.amount;DB.child('users/'+w.userId+'/balance').set(nb);var tid=uid();DB.child('txs/'+tid).set({id:tid,userId:w.userId,type:'refund',amount:w.amount,balanceAfter:nb,createdAt:Date.now()})}DB.child('wds/'+id+'/status').set('rejected').then(function(){toast('Возвращено');render()})}};
+window.adminDisp=function(id,res){var d=D.disps[id];if(!d||d.status!=='open')return;var o=D.orders[d.orderId];if(!o)return;if(res==='refund'){refund(d.orderId);DB.child('orders/'+d.orderId+'/status').set('cancelled')}else{payout(d.orderId);DB.child('orders/'+d.orderId+'/status').set('done')}DB.child('disps/'+id).update({status:'resolved',resolution:res}).then(function(){toast('Спор решён');render()})};
+window.adminBlock=function(id){var uu=D.users[id];if(!uu)return;DB.child('users/'+id+'/blocked').set(!uu.blocked).then(function(){toast(uu.blocked?'Разблокирован':'Заблокирован','success');render()})};
+window.adminSave=function(){DB.child('settings').update({cardNumber:document.getElementById('s-card').value.trim(),cardHolder:document.getElementById('s-holder').value.trim(),bankName:document.getElementById('s-bank').value.trim(),commissionRate:Number(document.getElementById('s-comm').value)/100,minDeposit:Number(document.getElementById('s-md').value)||100,minWithdraw:Number(document.getElementById('s-mw').value)||300}).then(function(){toast('Сохранено','success')})};
+window.adminMark=function(){Object.keys(D.users).forEach(function(id){if(D.users[id].isNew)DB.child('users/'+id+'/isNew').set(false)});toast('Все прочитаны','success');render()};
+window.applyF=function(){var c=document.getElementById('f-c').value;var mn=Number(document.getElementById('f-mn').value)||0;var mx=Number(document.getElementById('f-mx').value)||Infinity;var list=Object.keys(D.orders).map(function(k){return D.orders[k]}).filter(function(o){return o.status==='open'});if(c)list=list.filter(function(o){return o.category===c});list=list.filter(function(o){return o.price>=mn&&o.price<=mx});document.getElementById('lots').innerHTML=renderOrders(list.sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)}))};
+window.updHint=function(){var s=document.getElementById('cs').value;document.getElementById('ch').textContent=HINTS[s]||''};
 
 render();
 </script>
