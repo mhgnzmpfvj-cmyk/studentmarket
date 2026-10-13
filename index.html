@@ -7,11 +7,11 @@
 <title>Ghost Market</title>
 <style>
 :root{--bg:#0a0a0f;--c:#16161f;--c2:#1e1e2a;--b:#26262f;--t:#ededf2;--t2:#8b8b98;--t3:#5c5c68;--a:#ffd60a;--ok:#22c55e;--dn:#ef4444;--in:#5b8cff;--sh:0 1px 3px rgba(0,0,0,.06)}
-[data-theme="light"]{--bg:#f5f6fa;--c:#fff;--c2:#f0f1f5;--b:#e5e7eb;--t:#111827;--t2:#6b7280;--t3:#9ca3af;--a:#f5b800;--ok:#16a34a;--dn:#dc2626;--in:#2563eb;--sh:0 1px 3px rgba(0,0,0,.08)}
+[data-theme="light"]{--bg:#f5f6fa;--c:#fff;--c2:#f0f1f5;--b:#e5e7eb;--t:#111827;--t2:#6b7280;--t3:#9ca3af;--a:#f5b800;--ok:#16a34a;--dn:#dc2626;--in:#2563eb}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5;overflow-x:hidden;min-height:100vh;transition:background-color .25s,color .2s}
 a{color:var(--in);cursor:pointer;text-decoration:none}
-input,textarea,select{width:100%;padding:13px 15px;background:var(--c2);border:1px solid var(--b);border-radius:11px;color:var(--t);font-family:inherit;font-size:15px;margin-bottom:10px;-webkit-appearance:none;transition:border-color .15s}
+input,textarea,select{width:100%;padding:13px 15px;background:var(--c2);border:1px solid var(--b);border-radius:11px;color:var(--t);font-family:inherit;font-size:15px;margin-bottom:10px;-webkit-appearance:none}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--a)}
 input::placeholder,textarea::placeholder{color:var(--t3)}
 textarea{resize:vertical;min-height:80px}
@@ -29,7 +29,7 @@ button.full{width:100%}
 .logo{font-weight:800;font-size:18px;letter-spacing:-.5px;cursor:pointer;white-space:nowrap}
 .logo span{color:var(--a)}
 .chip{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);flex-wrap:wrap}
-.av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--a),#ff8a00);color:#000;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--a),#ff8a00);color:#000;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;overflow:hidden;background-size:cover;background-position:center}
 nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
 nav a{color:var(--t2);font-size:13px;font-weight:500;padding:7px 11px;border-radius:9px;white-space:nowrap;position:relative}
@@ -52,7 +52,6 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 @media(min-width:600px){.grid{grid-template-columns:repeat(2,1fr)}}
 .item{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:14px;cursor:pointer;transition:transform .15s,border-color .15s}
 .item:active{transform:scale(.98)}
-.item:hover{border-color:var(--a)}
 .cat{color:var(--a);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .item h3{font-size:15px;margin:5px 0 8px;line-height:1.3}
 .item p{color:var(--t2);font-size:12px;margin-bottom:10px;line-height:1.5}
@@ -89,7 +88,8 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 .msg small{color:var(--t3);font-size:9px}
 .msg img,.msg video{max-width:100%;border-radius:8px;margin-top:6px;display:block}
 .msg audio{width:100%;margin-top:6px}
-.msg .file-link{display:inline-flex;align-items:center;gap:6px;background:var(--bg);padding:8px 12px;border-radius:8px;margin-top:6px;font-size:13px;color:var(--t)}
+.file-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);padding:10px 14px;border-radius:8px;margin-top:6px;font-size:13px;color:var(--t);cursor:pointer;border:1px solid var(--b);font-weight:600}
+.file-btn:active{opacity:.7}
 .cform{display:flex;gap:6px;align-items:center}
 .cform input[type=text]{margin:0;flex:1}
 .cform .icon-btn{background:var(--c2);border:1px solid var(--b);color:var(--t);padding:0;min-height:44px;min-width:44px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center}
@@ -121,8 +121,7 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 .sbox{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:13px;box-shadow:var(--sh)}
 .sbox small{color:var(--t2);font-size:11px;display:block;margin-bottom:4px}
 .sbox .v{font-size:20px;font-weight:800}
-.citem{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:transform .15s,border-color .15s}
-.citem:active{transform:scale(.98)}
+.citem{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer}
 .citem.un{border-color:var(--a);background:rgba(255,214,10,.04)}
 .citem-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
 .citem-n{font-weight:700;font-size:14px}
@@ -140,6 +139,7 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 .notif-b{font-size:13px;color:var(--t2);line-height:1.5}
 .notif-date{font-size:10px;color:var(--t3);margin-top:6px}
 .notif-dot{width:8px;height:8px;border-radius:50%;background:var(--a);flex-shrink:0}
+.notif-count{background:var(--dn);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
 .agree-box{background:var(--c2);border:1px solid var(--b);border-radius:10px;padding:12px;max-height:160px;overflow-y:auto;font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap}
 .agree-check{display:flex;align-items:center;gap:12px;margin:12px 0;font-size:13px;color:var(--t2);cursor:pointer;padding:8px 0;user-select:none}
 .agree-check input[type=checkbox]{width:24px;height:24px;min-width:24px;margin:0;-webkit-appearance:checkbox;appearance:checkbox;cursor:pointer;flex-shrink:0}
@@ -149,13 +149,23 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 .rec-bar{background:var(--dn);color:#fff;padding:10px 14px;border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;font-size:13px;gap:10px}
 .theme-btn{background:var(--c2);border:1px solid var(--b);color:var(--t);padding:0;min-height:32px;min-width:32px;border-radius:50%;font-size:15px;display:flex;align-items:center;justify-content:center}
 .profile-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}
-.profile-av{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--a),#ff8a00);color:#000;font-weight:900;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.profile-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--a),#ff8a00);color:#000;font-weight:900;font-size:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;overflow:hidden;background-size:cover;background-position:center;position:relative}
+.profile-av .edit-overlay{position:absolute;bottom:0;right:0;background:var(--a);color:#000;width:26px;height:26px;border-radius:50%;font-size:13px;display:flex;align-items:center;justify-content:center;border:2px solid var(--c)}
 .profile-name{font-size:20px;font-weight:800;margin-bottom:4px}
 .review{background:var(--c2);border-radius:10px;padding:10px 12px;margin-bottom:8px;border-left:3px solid var(--a)}
 .review-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
 .review-name{font-weight:700;font-size:13px}
 .review-t{font-size:13px;color:var(--t2);line-height:1.5}
 .review-date{font-size:10px;color:var(--t3);margin-top:4px}
+.update-banner{background:linear-gradient(135deg,rgba(91,140,255,.2),rgba(91,140,255,.08));border:1px solid rgba(91,140,255,.4);border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.update-banner .txt{font-size:13px;color:#2563eb;font-weight:600}
+[data-theme="dark"] .update-banner .txt{color:#93b0ff}
+.avatar-pick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.avatar-pick .item-av{width:56px;height:56px;border-radius:50%;cursor:pointer;border:2px solid transparent;background-size:cover;background-position:center}
+.avatar-pick .item-av.active{border-color:var(--a)}
+.tg-row{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--t2);margin-bottom:8px}
+.tg-row b{color:var(--t)}
+.tg-row .tgid{font-family:ui-monospace,monospace;color:var(--a);font-weight:700}
 </style>
 </head>
 <body>
@@ -175,13 +185,16 @@ var CATS=['Домашнее задание','Реферат','Курсовая �
 var HINTS={'Домашнее задание':'Задачи, упражнения, параграфы. Пример: «Решить 10 задач по линейной алгебре»','Реферат':'Обзор темы, список литературы. Пример: «Реферат на 10 страниц про Вторую мировую»','Курсовая работа':'Полный текст с планом. Пример: «Курсовая по экономике, 30 страниц»','Презентация':'Слайды с текстом. Пример: «Презентация 15 слайдов про экологию»','Контрольная работа':'Решение варианта. Пример: «Контрольная по физике, 5 задач»','Эссе / сочинение':'200–500 слов. Пример: «Сочинение про осень, 300 слов»','Покупка и доставка (еда, напитки, в колледж)':'Купить и привезти. Пример: «Купить кофе и привезти к 3 паре»','Другое':'Опишите своими словами'};
 var TEMPLATES={'Домашнее задание':'Нужно решить: [список задач].\nДедлайн: [дата].\nФормат сдачи: фото / текст / файл.','Реферат':'Тема: [тема].\nОбъём: [страниц].\nТребования: титульный лист, содержание, список литературы.','Курсовая работа':'Тема: [тема].\nОбъём: [страниц].\nПлан работы: [пункты].','Презентация':'Тема: [тема].\nКоличество слайдов: [число].\nСтиль: минимализм / яркий / официальный.','Контрольная работа':'Вариант: [номер].\nЗадачи: [список].\nДедлайн: [дата].','Эссе / сочинение':'Тема: [тема].\nОбъём: [слов].\nСтиль: свободный.','Покупка и доставка (еда, напитки, в колледж)':'Что купить: [список].\nКуда привезти: [адрес/корпус].\nКогда: [время].','Другое':'Опишите подробно, что нужно сделать.'};
 var OS={open:'Открыт',taken:'В работе',submitted:'Результат отправлен',done:'Выполнен',cancelled:'Отменён',disputed:'Спор'};
+var APP_VERSION='1.0.0';
+var MAX_PRICE=50000;
 
-var AGREE_TEXT='ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ Ghost Market\n\n1. ОБЩИЕ ПОЛОЖЕНИЯ\nСервис Ghost Market — площадка для размещения и выполнения учебных заданий. Регистрируясь, вы подтверждаете, что вам исполнилось 14 лет и принимаете условия в полном объёме.\n\n2. ОБРАБОТКА ПЕРСОНАЛЬНЫХ ДАННЫХ (152-ФЗ)\n2.1. Вы даёте согласие на обработку: email, имени, IP-адреса, данных об устройстве, истории действий на платформе.\n2.2. Цели: идентификация, работа сервиса, предотвращение мошенничества, связь.\n2.3. Данные не передаются третьим лицам кроме случаев, предусмотренных законом.\n\n3. ФИНАНСОВЫЕ ОПЕРАЦИИ\n3.1. Эскроу: средства замораживаются до подтверждения.\n3.2. Комиссия удерживается с каждой успешной сделки.\n3.3. Пользователь сам отвечает за уплату налогов.\n\n4. ЗАПРЕЩЕНО\n4.1. Экзамены, ЕГЭ, ОГЭ, дипломные работы.\n4.2. Мошенничество, обмен вне платформы.\n\n5. ОТВЕТСТВЕННОСТЬ\nПлатформа не отвечает за качество работ пользователей. Споры — через внутренний арбитраж.\n\n6. ОТЗЫВ СОГЛАСИЯ\nСогласие можно отозвать, написав администрации.';
+var AGREE_TEXT='ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ Ghost Market\n\n1. ОБЩИЕ ПОЛОЖЕНИЯ\nСервис Ghost Market — площадка для размещения и выполнения учебных заданий. Регистрируясь, вы подтверждаете, что вам исполнилось 14 лет и принимаете условия в полном объёме.\n\n2. ОБРАБОТКА ПЕРСОНАЛЬНЫХ ДАННЫХ (152-ФЗ)\n2.1. Вы даёте согласие на обработку: email, имени, IP-адреса, данных об устройстве, истории действий.\n2.2. Цели: идентификация, работа сервиса, предотвращение мошенничества, связь.\n2.3. Данные не передаются третьим лицам кроме случаев, предусмотренных законом.\n\n3. ФИНАНСОВЫЕ ОПЕРАЦИИ\n3.1. Эскроу: средства замораживаются до подтверждения.\n3.2. Комиссия удерживается с каждой успешной сделки.\n3.3. Пользователь сам отвечает за уплату налогов.\n\n4. ЗАПРЕЩЕНО\n4.1. Экзамены, ЕГЭ, ОГЭ, дипломные работы.\n4.2. Мошенничество, обмен вне платформы.\n\n5. ОТВЕТСТВЕННОСТЬ\nПлатформа не отвечает за качество работ пользователей. Споры — через внутренний арбитраж.\n\n6. ОТЗЫВ СОГЛАСИЯ\nСогласие можно отозвать, написав администрации.';
 
 var D={users:{},orders:{},chats:{},msgs:{},txs:{},deps:{},wds:{},disps:{},revs:{},notifs:{},settings:{}};
 var FU=null,SID=localStorage.getItem('gm_sid'),route={name:'home',params:{}};
 var pendingFile=null;
 var mediaRec=null,mediaChunks=[],recTimer=null,recStart=0;
+var lastOpenedChat=null;
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -195,7 +208,7 @@ function uByPid(pid){var k=Object.keys(D.users);for(var i=0;i<k.length;i++){if(S
 function toast(m,t){var e=document.createElement('div');e.className='tst '+(t||'');e.textContent=m;document.body.appendChild(e);setTimeout(function(){e.remove()},3000)}
 function copy(t){if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){toast('Скопировано','success')}).catch(function(){fb(t)});else fb(t)}
 function fb(t){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Скопировано','success')}catch(e){toast('Ошибка','error')}a.remove()}
-function nav(n,p){route={name:n,params:p||{}};render();window.scrollTo(0,0)}
+function nav(n,p){route={name:n,params:p||{}};if(n!=='chat')lastOpenedChat=null;render();window.scrollTo(0,0)}
 function fp(){try{var s=[navigator.userAgent||'',navigator.language||'',screen.width+'x'+screen.height].join('|');var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return'DEV-'+Math.abs(h).toString(36).toUpperCase()}catch(e){return'DEV-X'}}
 function genPid(){var ids=Object.keys(D.users).map(function(k){return String(D.users[k].publicId)});var i;do{i=String(Math.floor(10000000+Math.random()*90000000))}while(ids.indexOf(i)>=0);return i}
 function fmtSize(b){if(b<1024)return b+' Б';if(b<1024*1024)return Math.round(b/1024)+' КБ';return (b/1024/1024).toFixed(1)+' МБ'}
@@ -203,21 +216,73 @@ function applyTheme(){var t=localStorage.getItem('gm_theme')||'dark';document.do
 window.toggleTheme=function(){var c=localStorage.getItem('gm_theme')||'dark';localStorage.setItem('gm_theme',c==='dark'?'light':'dark');applyTheme();render()};
 applyTheme();
 
-function notify(userId,type,title,body,link){
+// ============ ГРУППИРОВКА УВЕДОМЛЕНИЙ ============
+function notify(userId,type,title,body,link,fromId){
   if(!userId)return;
-  var id=uid();
-  DB.child('notifs/'+userId+'/'+id).set({id:id,type:type,title:title,body:body,link:link||null,read:false,createdAt:Date.now()});
+  var ref=DB.child('notifs/'+userId);
+  ref.once('value').then(function(s){
+    var arr=s.val()||{};
+    var existing=null;
+    var count=1;
+    Object.keys(arr).forEach(function(k){
+      var n=arr[k];
+      if(n.read)return;
+      if(n.type!==type)return;
+      if(fromId!==undefined&&fromId!==null){
+        if(n.fromId!==fromId)return;
+      }
+      if(!existing||(n.createdAt||0)>(existing.data.createdAt||0)){
+        existing={id:k,data:n};
+        count=(n.count||1)+1;
+      }
+    });
+    var id=existing?existing.id:uid();
+    ref.child(id).update({id:id,type:type,title:title,body:body,link:link||null,read:false,createdAt:Date.now(),fromId:fromId||null,count:count});
+  });
+  // Telegram уведомление
+  var u=D.users[userId];
+  if(u&&u.tgId&&D.settings&&D.settings.tgToken){
+    var tgText='🔔 '+title+'\n\n'+body+'\n\nGhost Market';
+    fetch('https://api.telegram.org/bot'+D.settings.tgToken+'/sendMessage?chat_id='+encodeURIComponent(u.tgId)+'&text='+encodeURIComponent(tgText)).catch(function(){});
+  }
 }
 function unreadNotif(){if(!SID||!D.notifs[SID])return 0;var a=D.notifs[SID],c=0;Object.keys(a).forEach(function(k){if(!a[k].read)c++});return c}
-function notifList(){if(!SID||!D.notifs[SID])return[];var a=D.notifs[SID];return Object.keys(a).map(function(k){return a[k]}).sort(function(x,y){return (y.createdAt||0)-(x.createdAt||0)}).slice(0,100)}
+function notifList(){
+  if(!SID||!D.notifs[SID])return[];
+  var a=D.notifs[SID];
+  return Object.keys(a).map(function(k){return a[k]}).sort(function(x,y){return (y.createdAt||0)-(x.createdAt||0)}).slice(0,100);
+}
 
 function hold(userId,oid,amt){var u=D.users[userId];if(!u)return{ok:false,error:'Нет юзера'};if(unl(u)){var t=uid();DB.child('txs/'+t).set({id:t,userId:userId,orderId:oid,type:'hold',amount:-amt,balanceAfter:0,createdAt:Date.now()});return{ok:true}}if((u.balance||0)<amt)return{ok:false,error:'Недостаточно средств'};var nb=(u.balance||0)-amt;DB.child('users/'+userId).update({balance:nb,heldBalance:(u.heldBalance||0)+amt});var t=uid();DB.child('txs/'+t).set({id:t,userId:userId,orderId:oid,type:'hold',amount:-amt,balanceAfter:nb,createdAt:Date.now()});return{ok:true}}
-function payout(orderId){var o=D.orders[orderId];if(!o||!o.executorId)return;var c=D.users[o.customerId],e=D.users[o.executorId];if(!c||!e)return;var pay=+(o.price*(1-o.commissionRate)).toFixed(2),com=+(o.price*o.commissionRate).toFixed(2);if(!unl(c))DB.child('users/'+c.id+'/heldBalance').set(Math.max(0,(c.heldBalance||0)-o.price));if(!unl(e))DB.child('users/'+e.id).update({balance:(e.balance||0)+pay,totalEarned:(e.totalEarned||0)+pay});var t1=uid();DB.child('txs/'+t1).set({id:t1,userId:e.id,orderId:orderId,type:'payout',amount:pay,createdAt:Date.now()});var t2=uid();DB.child('txs/'+t2).set({id:t2,userId:c.id,orderId:orderId,type:'commission',amount:-com,createdAt:Date.now()});notify(e.id,'payout','Заказ выполнен','Зачислено '+money(pay),'#wallet')}
-function refund(orderId){var o=D.orders[orderId];if(!o)return;var u=D.users[o.customerId];if(!u||unl(u))return;var nb=(u.balance||0)+o.price;DB.child('users/'+u.id).update({balance:nb,heldBalance:Math.max(0,(u.heldBalance||0)-o.price)});var t=uid();DB.child('txs/'+t).set({id:t,userId:u.id,orderId:orderId,type:'refund',amount:o.price,balanceAfter:nb,createdAt:Date.now()});notify(u.id,'refund','Возврат средств','Возвращено '+money(o.price),'#wallet')}
+function payout(orderId){var o=D.orders[orderId];if(!o||!o.executorId)return;var c=D.users[o.customerId],e=D.users[o.executorId];if(!c||!e)return;var pay=+(o.price*(1-o.commissionRate)).toFixed(2),com=+(o.price*o.commissionRate).toFixed(2);if(!unl(c))DB.child('users/'+c.id+'/heldBalance').set(Math.max(0,(c.heldBalance||0)-o.price));if(!unl(e))DB.child('users/'+e.id).update({balance:(e.balance||0)+pay,totalEarned:(e.totalEarned||0)+pay});var t1=uid();DB.child('txs/'+t1).set({id:t1,userId:e.id,orderId:orderId,type:'payout',amount:pay,createdAt:Date.now()});var t2=uid();DB.child('txs/'+t2).set({id:t2,userId:c.id,orderId:orderId,type:'commission',amount:-com,createdAt:Date.now()});notify(e.id,'payout','Заказ выполнен','Зачислено '+money(pay),'wallet')}
+function refund(orderId){var o=D.orders[orderId];if(!o)return;var u=D.users[o.customerId];if(!u||unl(u))return;var nb=(u.balance||0)+o.price;DB.child('users/'+u.id).update({balance:nb,heldBalance:Math.max(0,(u.heldBalance||0)-o.price)});var t=uid();DB.child('txs/'+t).set({id:t,userId:u.id,orderId:orderId,type:'refund',amount:o.price,balanceAfter:nb,createdAt:Date.now()});notify(u.id,'refund','Возврат','Возвращено '+money(o.price),'wallet')}
 
-DB.on('value',function(s){var v=s.val()||{};D={users:v.users||{},orders:v.orders||{},chats:v.chats||{},msgs:v.msgs||{},txs:v.txs||{},deps:v.deps||{},wds:v.wds||{},disps:v.disps||{},revs:v.revs||{},notifs:v.notifs||{},settings:v.settings||{}};try{localStorage.setItem('gm_cache',JSON.stringify(D))}catch(e){}render()});
+DB.on('value',function(s){
+  var v=s.val()||{};
+  D={users:v.users||{},orders:v.orders||{},chats:v.chats||{},msgs:v.msgs||{},txs:v.txs||{},deps:v.deps||{},wds:v.wds||{},disps:v.disps||{},revs:v.revs||{},notifs:v.notifs||{},settings:v.settings||{}};
+  try{localStorage.setItem('gm_cache',JSON.stringify(D))}catch(e){}
+  // Проверяем сброс непрочитанного в чате
+  if(route.name==='chat'&&route.params.id){
+    var c=D.chats[route.params.id];
+    if(c){
+      if(c.customerId===SID&&c.cU)DB.child('chats/'+route.params.id+'/cU').set(false);
+      if(c.executorId===SID&&c.eU)DB.child('chats/'+route.params.id+'/eU').set(false);
+    }
+  }
+  render();
+});
 
-auth.onAuthStateChanged(function(user){if(user){FU=user;SID=user.uid;localStorage.setItem('gm_sid',SID);DB.child('users/'+user.uid).update({lastSeen:Date.now(),deviceId:fp()});var u=D.users[user.uid];if(!u||!u.ip||u.ip==='—'){fetch('https://api.ipify.org?format=json').then(function(r){return r.json()}).then(function(d){DB.child('users/'+user.uid+'/ip').set(d.ip||'—')}).catch(function(){})}if(!user.emailVerified){route={name:'verify',params:{}}}else if(route.name==='verify'||route.name==='login'||route.name==='register'){route={name:'home',params:{}}}}else{FU=null;SID=null;localStorage.removeItem('gm_sid');route={name:'login',params:{}}}render()});
+auth.onAuthStateChanged(function(user){
+  if(user){
+    FU=user;SID=user.uid;localStorage.setItem('gm_sid',SID);
+    DB.child('users/'+user.uid).update({lastSeen:Date.now(),deviceId:fp()});
+    var u=D.users[user.uid];
+    if(!u||!u.ip||u.ip==='—'){fetch('https://api.ipify.org?format=json').then(function(r){return r.json()}).then(function(d){DB.child('users/'+user.uid+'/ip').set(d.ip||'—')}).catch(function(){})}
+    if(!user.emailVerified){route={name:'verify',params:{}}}
+    else if(route.name==='verify'||route.name==='login'||route.name==='register'){route={name:'home',params:{}}}
+  }else{FU=null;SID=null;localStorage.removeItem('gm_sid');route={name:'login',params:{}}}
+  render();
+});
 
 function render(){
   var u=me();
@@ -241,13 +306,24 @@ function render(){
   else if(route.name==='admin')c=pgAdmin(route.params);
   else c=pgHome();
 
-  var unread=0;if(u){var ck=Object.keys(D.chats);for(var i=0;i<ck.length;i++){var x=D.chats[ck[i]];if((x.customerId===SID&&x.cU)||(x.executorId===SID&&x.eU))unread++}}
+  var unread=0;
+  if(u){var ck=Object.keys(D.chats);for(var i=0;i<ck.length;i++){var x=D.chats[ck[i]];if((x.customerId===SID&&x.cU)||(x.executorId===SID&&x.eU))unread++}}
   var un=unreadNotif();
-  var nnew=0;if(u&&u.role==='admin'){var uk=Object.keys(D.users);for(var j=0;j<uk.length;j++){if(D.users[uk[j]].isNew)nnew++}}
+  var nnew=0;
+  if(u&&u.role==='admin'){var uk=Object.keys(D.users);for(var j=0;j<uk.length;j++){if(D.users[uk[j]].isNew)nnew++}}
   var th=localStorage.getItem('gm_theme')==='light'?'🌙':'☀️';
 
+  // Проверка версии
+  var showUpd=false;
+  if(u&&D.settings&&D.settings.appVersion){
+    var myV=localStorage.getItem('gm_app_v');
+    if(myV!==D.settings.appVersion){showUpd=true}
+  }
+
+  var avStyle=u&&u.avatar?('background-image:url('+u.avatar+');color:transparent'):'';
+
   var hdr=isAuth?'':'<header class="hdr"><div class="hrow"><div class="logo" onclick="nav(\'home\')">Ghost<span>Market</span></div><div class="chip">'+
-    (u?('<div class="av" onclick="nav(\'profile\')">'+esc(ini(u.fullName))+'</div><span class="pid">'+esc(u.publicId)+'</span><button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sec sm" onclick="logout()">Выйти</button>'):'<button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sm" onclick="nav(\'login\')">Войти</button>')+
+    (u?('<div class="av" style="'+avStyle+'" onclick="nav(\'profile\')">'+(u.avatar?'':esc(ini(u.fullName)))+'</div><span class="pid">'+esc(u.publicId)+'</span><button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sec sm" onclick="logout()">Выйти</button>'):'<button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sm" onclick="nav(\'login\')">Войти</button>')+
     '</div></div><nav>'+
     '<a class="'+(route.name==='home'?'on':'')+'" onclick="nav(\'home\')">Заявки</a>'+
     (u?'<a class="'+(route.name==='create'?'on':'')+'" onclick="nav(\'create\')">+ Создать</a>':'')+
@@ -256,11 +332,21 @@ function render(){
     (u?'<a class="'+(route.name==='notifs'?'on':'')+'" onclick="nav(\'notifs\')">Уведом.'+(un?'<span class="b">'+un+'</span>':'')+'</a>':'')+
     (u?'<a class="'+(route.name==='wallet'?'on':'')+'" onclick="nav(\'wallet\')">Кошелёк · '+(unl(u)?'∞':(u.balance||0).toFixed(0)+' ₽')+'</a>':'')+
     (u&&u.role==='admin'?'<a class="'+(route.name==='admin'?'on':'')+'" onclick="nav(\'admin\')">Админ'+(nnew?'<span class="b">'+nnew+'</span>':'')+'</a>':'')+
-    '</nav>'+(u&&FU&&!FU.emailVerified?'<div style="background:rgba(239,68,68,.15);border-top:1px solid rgba(239,68,68,.4);padding:8px 14px;font-size:12px;color:#fca5a5">⚠ Почта не подтверждена. <a onclick="nav(\'verify\')" style="color:#fca5a5;text-decoration:underline">Проверить</a></div>':'')+'</header>';
-  document.getElementById('app').innerHTML=hdr+'<div class="wrap">'+c+'</div>';
+    '</nav></header>';
+
+  var body='';
+  if(showUpd){
+    body='<div class="update-banner"><div class="txt">🔄 Доступна новая версия приложения</div><button class="sm" onclick="applyUpdate(\''+esc(D.settings.appVersion)+'\')">Обновить</button></div>';
+  }
+  body+=c;
+
+  document.getElementById('app').innerHTML=hdr+'<div class="wrap">'+body+'</div>';
   var m=document.getElementById('cmsgs');if(m)m.scrollTop=m.scrollHeight;
 }
 
+window.applyUpdate=function(v){localStorage.setItem('gm_app_v',v);toast('Обновляем...','success');setTimeout(function(){location.reload()},500)};
+  
+// ============ СТРАНИЦЫ ============
 function pgLogin(){return'<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="asub">Площадка для учебных заданий</div><div class="card"><h2>Вход</h2><div id="aerr"></div><form onsubmit="doLogin(event)"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль" required><button class="full" type="submit">Войти</button></form><p class="hint" style="text-align:center;margin-top:12px">Нет аккаунта? <a onclick="nav(\'register\')">Зарегистрироваться</a></p></div></div></div>'}
 
 function pgReg(){return'<div class="auth"><div class="acard"><div class="alogo">Ghost<span>Market</span></div><div class="asub">Создайте аккаунт</div><div class="card"><h2>Регистрация</h2><div id="aerr"></div><form onsubmit="doReg(event)"><input name="fullName" placeholder="Имя и фамилия" required minlength="2"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль (мин. 6)" minlength="6" required><label class="agree-check"><input type="checkbox" name="agree" required><span>Я принимаю <a onclick="event.preventDefault();nav(\'agreement\')">пользовательское соглашение</a> и даю согласие на обработку персональных данных (152-ФЗ)</span></label><button class="full" type="submit">Создать аккаунт</button></form><p class="hint" style="text-align:center;margin-top:12px">Уже есть? <a onclick="nav(\'login\')">Войти</a></p></div></div></div>'}
@@ -286,7 +372,7 @@ function renderOrders(list){
 function pgCreate(){
   if(!SID)return pgLogin();
   var u=me();if(!u)return'';
-  return'<div class="card"><h2>Создать заявку</h2><div class="inf">Опишите, что нужно. Другие откликнутся, вы выберете кто будет выполнять.</div><div id="cerr"></div><form onsubmit="doCreate(event)"><label>Что нужно сделать</label><input name="title" placeholder="Решить контрольную по алгебре" required minlength="3"><label>Категория</label><select name="category" id="cs" onchange="updHint()" required>'+CATS.map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('')+'</select><div class="hint" id="ch" style="margin-top:-4px;margin-bottom:8px">'+esc(HINTS[CATS[0]])+'</div><button type="button" class="sec sm" onclick="insertTpl()" style="margin-bottom:10px">📝 Вставить шаблон</button><label>Описание</label><textarea name="description" id="desc" rows="6" placeholder="Что именно, сроки" required minlength="10"></textarea><label>Оплата, ₽</label><input name="price" type="number" min="10" step="10" value="300" required><button class="full" type="submit">Создать заявку</button></form></div>';
+  return'<div class="card"><h2>Создать заявку</h2><div class="inf">Опишите, что нужно. Другие откликнутся.</div><div id="cerr"></div><form onsubmit="doCreate(event)"><label>Что нужно сделать</label><input name="title" placeholder="Решить контрольную по алгебре" required minlength="3"><label>Категория</label><select name="category" id="cs" onchange="updHint()" required>'+CATS.map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('')+'</select><div class="hint" id="ch" style="margin-top:-4px;margin-bottom:8px">'+esc(HINTS[CATS[0]])+'</div><button type="button" class="sec sm" onclick="insertTpl()" style="margin-bottom:10px">📝 Вставить шаблон</button><label>Описание</label><textarea name="description" id="desc" rows="6" placeholder="Что именно, сроки" required minlength="10"></textarea><label>Оплата, ₽ (макс. 50000)</label><input name="price" type="number" min="10" max="'+MAX_PRICE+'" step="10" value="300" required><button class="full" type="submit">Создать</button></form></div>';
 }
 window.updHint=function(){var s=document.getElementById('cs').value;document.getElementById('ch').textContent=HINTS[s]||''};
 window.insertTpl=function(){var s=document.getElementById('cs').value;var t=TEMPLATES[s]||'';var d=document.getElementById('desc');d.value=t;d.focus()};
@@ -298,7 +384,7 @@ function pgOrder(p){
   var steps=['open','taken','submitted','done'];var ix=steps.indexOf(o.status);
   var stepsHtml=ix>=0?'<div style="display:flex;gap:4px;margin-top:14px;background:var(--c2);padding:10px;border-radius:10px;overflow-x:auto">'+steps.map(function(s,i){return'<div style="flex:1 0 auto;text-align:center;font-size:9px;font-weight:600;text-transform:uppercase;color:'+(i<ix?'var(--ok)':i===ix?'var(--a)':'var(--t3)')+';min-width:70px">'+OS[s]+'</div>'}).join('')+'</div>':'';
   var a='';
-  if(o.status==='open'&&u&&!ic){var mr=Object.keys(D.chats).map(function(k){return D.chats[k]}).find(function(ch){return ch.orderId===o.id&&ch.executorId===u.id});a+=mr?'<div class="suc" style="margin-top:14px">✓ Вы откликнулись</div>':'<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Откликнуться</h3><textarea id="resp-msg" rows="3" placeholder="Почему подходите"></textarea><label>Ваша цена, ₽</label><input id="resp-price" type="number" value="'+o.price+'" min="10" step="10"><button class="full" onclick="doRespond(\''+o.id+'\')">Отправить отклик</button></div>'}
+  if(o.status==='open'&&u&&!ic){var mr=Object.keys(D.chats).map(function(k){return D.chats[k]}).find(function(ch){return ch.orderId===o.id&&ch.executorId===u.id});a+=mr?'<div class="suc" style="margin-top:14px">✓ Вы откликнулись</div>':'<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Откликнуться</h3><textarea id="resp-msg" rows="3" placeholder="Почему подходите"></textarea><label>Ваша цена, ₽</label><input id="resp-price" type="number" value="'+o.price+'" min="10" step="10" max="'+MAX_PRICE+'"><button class="full" onclick="doRespond(\''+o.id+'\')">Отправить отклик</button></div>'}
   if(ic&&o.status==='open'){var rsp=Object.keys(D.chats).map(function(k){return D.chats[k]}).filter(function(ch){return ch.orderId===o.id});if(rsp.length){a+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Отклики ('+rsp.length+')</h3>'+rsp.map(function(ch){var ex=D.users[ch.executorId]||{};return'<div class="review"><div class="review-h"><span><b>'+esc(ex.fullName||'Аноним')+'</b> <span class="pid">'+esc(ex.publicId||'')+'</span></span>'+(ex.ratingCount?stHtml(ex.rating,ex.ratingCount):'')+'</div><div class="review-t">'+esc(ch.lastMsg||'')+'</div><button class="sm ok" onclick="chooseExec(\''+o.id+'\',\''+ch.executorId+'\')" style="margin-top:8px">Выбрать</button></div>'}).join('')+'</div>'}else{a+='<div class="hint" style="margin-top:16px">Пока нет откликов</div>'}}
   if(ic&&o.status==='taken')a+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><p class="hint" style="margin-bottom:10px">Исполнитель работает</p><button class="sec full" onclick="openChat(\''+o.id+'\',\''+o.executorId+'\',\''+o.customerId+'\')">💬 Открыть чат</button></div>';
   if(ie&&o.status==='taken')a+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Результат</h3><textarea id="res-t" rows="5" placeholder="Опишите результат"></textarea><button class="full ok" onclick="submitResult(\''+o.id+'\')">Отправить</button></div>';
@@ -317,6 +403,7 @@ function pgMyOrders(){
   return'<h1>Мои заявки</h1><div class="grid">'+list.map(function(o){var oid=o.customerId===SID?o.executorId:o.customerId;var oth=D.users[oid]||{};var w=oid?('С <a onclick="event.stopPropagation();nav(\'profile\',{uid:\''+oid+'\'})" style="color:var(--in)">'+esc(oth.fullName||'—')+'</a>'):'Пока никого';return'<div class="item" onclick="nav(\'order\',{id:\''+o.id+'\'})"><div class="cat">'+esc(o.category)+'</div><h3>'+esc(o.title)+'</h3><div class="meta"><span class="price">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div><div class="hint" style="margin-top:6px">'+w+'</div></div>'}).join('')+'</div>';
 }
 
+// ============ ПРОФИЛЬ ============
 function pgProfile(p){
   if(!SID)return pgLogin();
   var targetId=p.uid||SID;
@@ -325,23 +412,50 @@ function pgProfile(p){
   var isMe=targetId===SID;
   var reviews=Object.keys(D.revs).map(function(k){return D.revs[k]}).filter(function(r){return r.toId===targetId}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
   var dealsCount=Object.keys(D.orders).map(function(k){return D.orders[k]}).filter(function(o){return o.customerId===targetId||o.executorId===targetId}).length;
-  var html='<div class="card"><div class="profile-head"><div class="profile-av">'+esc(ini(u.fullName))+'</div><div><div class="profile-name">'+esc(u.fullName||'—')+' '+ (u.role==='admin'?'<span class="bdg adm">ADMIN</span>':'')+'</div><div class="hint">ID: <span class="pid">'+esc(u.publicId||'')+'</span></div><div style="margin-top:6px">'+stHtml(u.rating,u.ratingCount)+'</div><div class="hint">Сделок: '+dealsCount+' · '+(onl(u)?'<span class="dot on"></span>онлайн':'<span class="dot"></span>офлайн')+'</div></div></div>';
+  var avStyle=u.avatar?('background-image:url('+u.avatar+');color:transparent'):'';
+  var html='<div class="card"><div class="profile-head"><div class="profile-av" style="'+avStyle+'" '+(isMe?'onclick="pickAvatar()"':'')+'>'+(u.avatar?'':esc(ini(u.fullName)))+(isMe?'<div class="edit-overlay">📷</div>':'')+'</div><div><div class="profile-name">'+esc(u.fullName||'—')+' '+(u.role==='admin'?'<span class="bdg adm">ADMIN</span>':'')+'</div><div class="hint">ID: <span class="pid">'+esc(u.publicId||'')+'</span></div><div style="margin-top:6px">'+stHtml(u.rating,u.ratingCount)+'</div><div class="hint">Сделок: '+dealsCount+' · '+(onl(u)?'<span class="dot on"></span>онлайн':'<span class="dot"></span>офлайн')+'</div></div></div>';
   if(isMe){
-    html+='<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--b)"><h3>Изменить имя</h3><input id="pf-name" value="'+esc(u.fullName||'')+'" placeholder="Ваше имя"><button class="full" onclick="saveProfile()">Сохранить</button></div>';
-    html+='<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--b)"><h3>Сменить пароль</h3><input type="password" id="pf-pass" placeholder="Новый пароль (мин. 6)"><button class="sec full" onclick="changePass()">Сменить пароль</button></div>';
+    html+='<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--b)"><h3>Изменить имя</h3><input id="pf-name" value="'+esc(u.fullName||'')+'"><button class="full" onclick="saveProfile()">Сохранить</button></div>';
+    html+='<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--b)"><h3>Сменить пароль</h3><input type="password" id="pf-pass" placeholder="Новый пароль (мин. 6)"><button class="sec full" onclick="changePass()">Сменить</button></div>';
+    html+='<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--b)"><h3>Telegram-уведомления</h3><p class="hint" style="margin-bottom:10px">Получайте уведомления о новых сообщениях прямо в Telegram.</p><div class="tg-row">Ваш Telegram ID: <span class="tgid">'+(u.tgId||'—')+'</span></div><input id="pf-tg" placeholder="Введите свой Telegram ID" value="'+esc(u.tgId||'')+'"><button class="sec full" onclick="saveTg()">Сохранить ID</button><div class="inf" style="margin-top:10px">Как узнать ID? Напишите боту @userinfobot в Telegram — он пришлёт ваше число.</div></div>';
   }
   html+='</div>';
   html+='<div class="card"><h3>Отзывы ('+reviews.length+')</h3>'+(!reviews.length?'<div class="hint">Пока нет отзывов</div>':reviews.map(function(r){var from=D.users[r.fromId]||{};return'<div class="review"><div class="review-h"><span class="review-name">'+esc(from.fullName||'Аноним')+'</span><span class="stars">'+'★'.repeat(r.stars)+'☆'.repeat(5-r.stars)+'</span></div>'+(r.text?'<div class="review-t">'+esc(r.text)+'</div>':'')+'<div class="review-date">'+dt(r.createdAt)+'</div></div>'}).join(''))+'</div>';
+  html+='<input type="file" id="av-input" style="display:none" accept="image/*" onchange="onAvatarPicked(event)">';
   return html;
 }
+window.pickAvatar=function(){document.getElementById('av-input').click()};
+window.onAvatarPicked=function(e){
+  var f=e.target.files[0];if(!f)return;
+  if(f.size>500*1024){toast('Картинка больше 500 КБ','error');return}
+  var r=new FileReader();
+  r.onload=function(){
+    var img=new Image();
+    img.onload=function(){
+      var cv=document.createElement('canvas');
+      var sz=200;cv.width=sz;cv.height=sz;
+      var ctx=cv.getContext('2d');
+      var m=Math.min(img.width,img.height);
+      var sx=(img.width-m)/2,sy=(img.height-m)/2;
+      ctx.drawImage(img,sx,sy,m,m,0,0,sz,sz);
+      var data=cv.toDataURL('image/jpeg',.7);
+      DB.child('users/'+SID+'/avatar').set(data).then(function(){toast('Аватарка обновлена','success');render()});
+    };
+    img.src=r.result;
+  };
+  r.readAsDataURL(f);
+  e.target.value='';
+};
 window.saveProfile=function(){var v=document.getElementById('pf-name').value.trim();if(!v)return;DB.child('users/'+SID+'/fullName').set(v).then(function(){toast('Сохранено','success');render()})};
-window.changePass=function(){var v=document.getElementById('pf-pass').value;if(v.length<6)return toast('Минимум 6 символов','error');FU.updatePassword(v).then(function(){toast('Пароль изменён','success')}).catch(function(e){toast('Ошибка: '+e.message,'error')})};
+window.changePass=function(){var v=document.getElementById('pf-pass').value;if(v.length<6)return toast('Минимум 6','error');FU.updatePassword(v).then(function(){toast('Пароль изменён','success')}).catch(function(e){toast('Ошибка: '+e.message,'error')})};
+window.saveTg=function(){var v=document.getElementById('pf-tg').value.trim();DB.child('users/'+SID+'/tgId').set(v).then(function(){toast('Telegram ID сохранён','success');render()})};
 
+// ============ ЧАТЫ ============
 function pgChats(){
   if(!SID)return pgLogin();
   var chs=Object.keys(D.chats).map(function(k){return D.chats[k]}).filter(function(c){return c.customerId===SID||c.executorId===SID}).sort(function(a,b){return (b.lastAt||0)-(a.lastAt||0)});
   if(!chs.length)return'<h1>Чаты</h1><div class="empty"><div class="empty-icon">💬</div>Чатов пока нет</div>';
-  return'<h1>Чаты</h1>'+chs.map(function(c){var oid=c.customerId===SID?c.executorId:c.customerId;var o=D.users[oid]||{};var un=(c.customerId===SID&&c.cU)||(c.executorId===SID&&c.eU);return'<div class="citem '+(un?'un':'')+'" onclick="nav(\'chat\',{id:\''+c.id+'\'})"><div class="citem-h"><div style="display:flex;align-items:center;gap:10px"><div class="av">'+esc(ini(o.fullName))+'</div><div><div class="citem-n">'+esc(o.fullName||'—')+'</div><div style="font-size:11px;color:var(--t2)"><span class="dot '+(onl(o)?'on':'')+'"></span>'+(onl(o)?'онлайн':'офлайн')+'</div></div></div>'+(un?'<span class="bdg new">NEW</span>':'')+'</div><div class="citem-p">'+esc(c.lastMsg||'Нет сообщений')+'</div><div style="font-size:10px;color:var(--t3);margin-top:4px">'+(c.lastAt?dt(c.lastAt):'')+'</div></div>'}).join('');
+  return'<h1>Чаты</h1>'+chs.map(function(c){var oid=c.customerId===SID?c.executorId:c.customerId;var o=D.users[oid]||{};var un=(c.customerId===SID&&c.cU)||(c.executorId===SID&&c.eU);var avStyle=o.avatar?('background-image:url('+o.avatar+');color:transparent'):'';return'<div class="citem '+(un?'un':'')+'" onclick="nav(\'chat\',{id:\''+c.id+'\'})"><div class="citem-h"><div style="display:flex;align-items:center;gap:10px"><div class="av" style="'+avStyle+'">'+(o.avatar?'':esc(ini(o.fullName)))+'</div><div><div class="citem-n">'+esc(o.fullName||'—')+'</div><div style="font-size:11px;color:var(--t2)"><span class="dot '+(onl(o)?'on':'')+'"></span>'+(onl(o)?'онлайн':'офлайн')+'</div></div></div>'+(un?'<span class="bdg new">NEW</span>':'')+'</div><div class="citem-p">'+esc(c.lastMsg||'Нет сообщений')+'</div><div style="font-size:10px;color:var(--t3);margin-top:4px">'+(c.lastAt?dt(c.lastAt):'')+'</div></div>'}).join('');
 }
 
 function pgChat(p){
@@ -350,17 +464,40 @@ function pgChat(p){
   var oid=c.customerId===SID?c.executorId:c.customerId;var o=D.users[oid]||{};
   var ms=Object.keys(D.msgs[p.id]||{}).map(function(k){return D.msgs[p.id][k]}).sort(function(a,b){return (a.createdAt||0)-(b.createdAt||0)});
   var msgsHtml=ms.length?ms.map(function(m){return renderMsg(m)}).join(''):'<div class="empty" style="padding:18px">Нет сообщений</div>';
-  return'<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;cursor:pointer" onclick="nav(\'profile\',{uid:\''+oid+'\'})"><div class="av" style="width:44px;height:44px;font-size:15px">'+esc(ini(o.fullName))+'</div><div style="flex:1"><div style="font-weight:700">'+esc(o.fullName||'—')+' <span class="pid">'+esc(o.publicId||'')+'</span></div><div style="font-size:12px"><span class="dot '+(onl(o)?'on':'')+'"></span>'+(onl(o)?'онлайн':'офлайн')+'</div></div></div><div class="msgs" id="cmsgs">'+msgsHtml+'</div><div id="attach-slot"></div><div id="rec-slot"></div><form class="cform" onsubmit="sendMsg(event,\''+p.id+'\')"><button type="button" class="icon-btn" onclick="pickFile()">📎</button><input type="text" id="cinp" placeholder="Написать..."><button type="button" class="icon-btn" id="voice-btn" onclick="toggleVoice()">🎤</button><button type="submit" class="icon-btn" style="background:var(--a);color:#000">→</button></form><input type="file" id="file-input" style="display:none" accept="image/*,application/pdf,.doc,.docx,.txt" onchange="onFilePicked(event)"></div>';
+  var avStyle=o.avatar?('background-image:url('+o.avatar+');color:transparent'):'';
+  return'<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;cursor:pointer" onclick="nav(\'profile\',{uid:\''+oid+'\'})"><div class="av" style="width:44px;height:44px;font-size:15px;'+avStyle+'">'+(o.avatar?'':esc(ini(o.fullName)))+'</div><div style="flex:1"><div style="font-weight:700">'+esc(o.fullName||'—')+' <span class="pid">'+esc(o.publicId||'')+'</span></div><div style="font-size:12px"><span class="dot '+(onl(o)?'on':'')+'"></span>'+(onl(o)?'онлайн':'офлайн')+'</div></div></div><div class="msgs" id="cmsgs">'+msgsHtml+'</div><div id="attach-slot"></div><div id="rec-slot"></div><form class="cform" onsubmit="sendMsg(event,\''+p.id+'\')"><button type="button" class="icon-btn" onclick="pickFile()">📎</button><input type="text" id="cinp" placeholder="Написать..."><button type="button" class="icon-btn" id="voice-btn" onclick="toggleVoice()">🎤</button><button type="submit" class="icon-btn" style="background:var(--a);color:#000">→</button></form><input type="file" id="file-input" style="display:none" accept="image/*,application/pdf,.doc,.docx,.txt" onchange="onFilePicked(event)"></div>';
 }
 
 function renderMsg(m){
   var s=D.users[m.senderId]||{};
   var body='<div class="who">'+esc(s.fullName||'—')+'</div>';
   if(m.body)body+='<p>'+esc(m.body)+'</p>';
-  if(m.attachment){var at=m.attachment;if(at.type==='image')body+='<img src="'+at.data+'">';else if(at.type==='voice')body+='<audio controls src="'+at.data+'"></audio>';else if(at.type==='circle')body+='<video controls src="'+at.data+'" playsinline></video>';else body+='<a class="file-link" href="'+at.data+'" download="'+esc(at.name)+'">📄 '+esc(at.name)+' · '+fmtSize(at.size||0)+'</a>'}
+  if(m.attachment){var at=m.attachment;
+    if(at.type==='image')body+='<img src="'+at.data+'">';
+    else if(at.type==='voice')body+='<audio controls src="'+at.data+'"></audio>';
+    else if(at.type==='circle')body+='<video controls src="'+at.data+'" playsinline></video>';
+    else body+='<div class="file-btn" onclick="openFile(\''+m.id+'\',\''+m.chatId+'\')">📄 '+esc(at.name)+' · '+fmtSize(at.size||0)+'</div>';
+  }
   body+='<small>'+dt(m.createdAt)+'</small>';
   return'<div class="msg '+(m.senderId===SID?'mine':'')+'">'+body+'</div>';
 }
+window.openFile=function(msgId,chatId){
+  var m=D.msgs[chatId]&&D.msgs[chatId][msgId];
+  if(!m||!m.attachment){toast('Файл не найден','error');return}
+  try{
+    var data=m.attachment.data;
+    var byteStr=atob(data.split(',')[1]);
+    var ab=new ArrayBuffer(byteStr.length);
+    var ia=new Uint8Array(ab);
+    for(var i=0;i<byteStr.length;i++)ia[i]=byteStr.charCodeAt(i);
+    var blob=new Blob([ab],{type:m.attachment.type==='pdf'?'application/pdf':'application/octet-stream'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;a.download=m.attachment.name||'file';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  }catch(e){toast('Ошибка открытия','error')}
+};
 
 function pgWallet(p){
   var u=me();if(!u)return pgLogin();
@@ -378,8 +515,9 @@ function pgWallet(p){
   return head+body;
 }
 
-function pgNotifs(){if(!SID)return pgLogin();var list=notifList();if(!list.length)return'<h1>Уведомления</h1><div class="empty"><div class="empty-icon">🔔</div>Уведомлений нет</div>';return'<h1>Уведомления</h1>'+list.map(function(n){return'<div class="notif '+(n.read?'':'un')+'" onclick="readNotif(\''+n.id+'\',\''+(n.link||'')+'\')"><div class="notif-h"><div class="notif-t">'+esc(n.title)+'</div>'+(n.read?'':'<div class="notif-dot"></div>')+'</div><div class="notif-b">'+esc(n.body)+'</div><div class="notif-date">'+dt(n.createdAt)+'</div></div>'}).join('')}
+function pgNotifs(){if(!SID)return pgLogin();var list=notifList();if(!list.length)return'<h1>Уведомления</h1><div class="empty"><div class="empty-icon">🔔</div>Уведомлений нет</div>';return'<h1>Уведомления</h1>'+list.map(function(n){return'<div class="notif '+(n.read?'':'un')+'" onclick="readNotif(\''+n.id+'\')"><div class="notif-h"><div class="notif-t">'+esc(n.title)+'</div>'+(n.count>1?'<span class="notif-count">'+n.count+'</span>':(n.read?'':'<div class="notif-dot"></div>'))+'</div><div class="notif-b">'+esc(n.body)+'</div><div class="notif-date">'+dt(n.createdAt)+'</div></div>'}).join('')}
 
+// ============ АДМИН ============
 function pgAdmin(p){
   var u=me();if(!u||u.role!=='admin')return'<div class="card"><h2>Доступ запрещён</h2></div>';
   var t=p.tab||'stats';
@@ -393,48 +531,87 @@ function pgAdmin(p){
   var tabs='<div class="tabs"><div class="tab '+(t==='stats'?'on':'')+'" onclick="nav(\'admin\',{tab:\'stats\'})">Обзор</div><div class="tab '+(t==='credit'?'on':'')+'" onclick="nav(\'admin\',{tab:\'credit\'})">💰 Зачислить</div><div class="tab '+(t==='deps'?'on':'')+'" onclick="nav(\'admin\',{tab:\'deps\'})">Пополн.'+(pd?' ('+pd+')':'')+'</div><div class="tab '+(t==='wds'?'on':'')+'" onclick="nav(\'admin\',{tab:\'wds\'})">Выводы'+(pw?' ('+pw+')':'')+'</div><div class="tab '+(t==='disps'?'on':'')+'" onclick="nav(\'admin\',{tab:\'disps\'})">Споры'+(pdi?' ('+pdi+')':'')+'</div><div class="tab '+(t==='users'?'on':'')+'" onclick="nav(\'admin\',{tab:\'users\'})">Юзеры'+(newU.length?' ('+newU.length+')':'')+'</div><div class="tab '+(t==='settings'?'on':'')+'" onclick="nav(\'admin\',{tab:\'settings\'})">Настройки</div></div>';
   var hdr='<h1>Админ-панель</h1>'+(newU.length?'<div class="wrn"><b>Новые ('+newU.length+')</b></div>':'')+tabs;
   var body='';
-  if(t==='stats'){var rev=Object.keys(D.revs).length;var totalDeals=Object.keys(D.orders).length;body='<div class="stats"><div class="sbox"><small>Онлайн</small><div class="v" style="color:var(--ok)">'+onlN+'</div></div><div class="sbox"><small>Юзеров</small><div class="v">'+users.length+'</div></div><div class="sbox"><small>Заявок</small><div class="v">'+totalDeals+'</div></div><div class="sbox"><small>В работе</small><div class="v">'+Object.keys(D.orders).filter(function(k){var s=D.orders[k].status;return s==='taken'||s==='submitted'}).length+'</div></div><div class="sbox"><small>Выполнено</small><div class="v" style="color:var(--ok)">'+Object.keys(D.orders).filter(function(k){return D.orders[k].status==='done'}).length+'</div></div><div class="sbox"><small>Отзывов</small><div class="v">'+rev+'</div></div></div>'}
+  if(t==='stats'){var rev=Object.keys(D.revs).length;body='<div class="stats"><div class="sbox"><small>Онлайн</small><div class="v" style="color:var(--ok)">'+onlN+'</div></div><div class="sbox"><small>Юзеров</small><div class="v">'+users.length+'</div></div><div class="sbox"><small>Заявок</small><div class="v">'+Object.keys(D.orders).length+'</div></div><div class="sbox"><small>В работе</small><div class="v">'+Object.keys(D.orders).filter(function(k){var s=D.orders[k].status;return s==='taken'||s==='submitted'}).length+'</div></div><div class="sbox"><small>Выполнено</small><div class="v" style="color:var(--ok)">'+Object.keys(D.orders).filter(function(k){return D.orders[k].status==='done'}).length+'</div></div><div class="sbox"><small>Отзывов</small><div class="v">'+rev+'</div></div></div>'}
   if(t==='credit')body='<div class="card"><h3>Зачислить по ID</h3><label>ID</label><input id="mc-i" placeholder="12345678" inputmode="numeric"><label>Сумма, ₽</label><input id="mc-a" type="number" min="1" step="10" value="300"><button class="full" onclick="adminCredit()">💰 Зачислить</button><div id="mcr"></div></div>';
   if(t==='deps')body=deps.length?deps.map(function(x){var uu=D.users[x.userId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(uu.fullName||'—')+'</b> <span class="pid">'+esc(uu.publicId||'')+'</span><div class="hint">'+esc(uu.email||'')+'</div></div><span class="st st-'+x.status+'">'+(x.status==='pending'?'Ожидает':x.status==='approved'?'Зачислено':'Отклонено')+'</span></div><div style="margin-top:10px"><span class="price">'+money(x.amount)+'</span></div>'+(x.comment?'<div class="hint">Комментарий: '+esc(x.comment)+'</div>':'')+'<div class="hint">'+dt(x.createdAt)+'</div>'+(x.status==='pending'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm ok" onclick="adminDep(\''+x.id+'\',\'ok\')">Зачислить</button><button class="sm dgr" onclick="adminDep(\''+x.id+'\',\'no\')">Отклонить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Заявок нет</div>';
   if(t==='wds')body=wds.length?wds.map(function(x){var uu=D.users[x.userId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(uu.fullName||'—')+'</b> <span class="pid">'+esc(uu.publicId||'')+'</span></div><span class="st st-'+x.status+'">'+(x.status==='pending'?'В обработке':x.status==='completed'?'Выполнено':'Отклонено')+'</span></div><div style="margin-top:10px"><span class="price">'+money(x.amount)+'</span></div>'+(x.service?'<div class="hint">Способ: '+esc(x.service)+'</div>':'')+'<div class="hint">Реквизиты: <b>'+esc(x.dest)+'</b></div>'+(x.status==='pending'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm ok" onclick="adminWd(\''+x.id+'\',\'ok\')">✓ Выполнено</button><button class="sm dgr" onclick="adminWd(\''+x.id+'\',\'no\')">Отклонить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Заявок нет</div>';
   if(t==='disps')body=disps.length?disps.map(function(x){var ord=D.orders[x.orderId]||{},init=D.users[x.initiatorId]||{};return'<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+esc(ord.title||'—')+'</b><div class="hint">'+money(ord.price)+'</div></div><span class="st st-'+(x.status==='open'?'disputed':'done')+'">'+(x.status==='open'?'Открыт':'Решён')+'</span></div><div class="wrn" style="margin-top:10px"><b>От '+esc(init.fullName||'—')+':</b> '+esc(x.reason)+'</div>'+(x.status==='open'?'<div style="display:flex;gap:6px;margin-top:10px"><button class="sm dgr" onclick="adminDisp(\''+x.id+'\',\'refund\')">Вернуть</button><button class="sm ok" onclick="adminDisp(\''+x.id+'\',\'payout\')">Выплатить</button></div>':'')+'</div>'}).join(''):'<div class="empty">Споров нет</div>';
-  if(t==='users')body=users.map(function(arr){var id=arr[0],uu=arr[1];var bal=unl(uu)?'∞':money(uu.balance||0);return'<div class="card" style="'+(uu.isNew?'border-color:var(--dn)':'')+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="display:flex;gap:10px;align-items:center" onclick="nav(\'profile\',{uid:\''+id+'\'})" ><div class="av" style="width:38px;height:38px;font-size:13px">'+esc(ini(uu.fullName))+'</div><div><div style="font-weight:700;font-size:15px"><span class="dot '+(onl(uu)?'on':'')+'"></span>'+esc(uu.fullName||'—')+' '+(uu.role==='admin'?'<span class="bdg adm">ADMIN</span>':'')+(uu.isNew?' <span class="bdg new">NEW</span>':'')+'</div><div style="font-size:11px;color:var(--t2)">'+esc(uu.email||'')+' · '+(uu.emailVerified?'✓':'⚠')+'</div></div></div></div><div style="font-size:12px;color:var(--t2);line-height:1.7">ID: <span class="pid">'+esc(uu.publicId||'—')+'</span><br>IP: <code style="background:var(--bg);padding:2px 6px;border-radius:5px;font-size:11px">'+esc(uu.ip||'—')+'</code><br>Баланс: <b style="color:var(--a)">'+bal+'</b></div><div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><button class="sm ok" onclick="adminQuick(\''+esc(uu.publicId)+'\')">💰 Зачислить</button><button class="sm sec" onclick="copy(\''+esc(uu.publicId)+'\')">📋 ID</button><button class="sm '+(uu.blocked?'':'dgr')+'" onclick="adminBlock(\''+id+'\')">'+(uu.blocked?'Разблок.':'Блок.')+'</button></div></div>'}).join('');
-  if(t==='settings'){var s=D.settings||{};body='<div class="card"><h3>Реквизиты для приёма платежей</h3><label>Карта / телефон СБП</label><input id="s-card" value="'+esc(s.cardNumber||'')+'"><label>Получатель</label><input id="s-holder" value="'+esc(s.cardHolder||'')+'"><label>Банк</label><input id="s-bank" value="'+esc(s.bankName||'')+'"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Комиссия</h3><label>% с каждой сделки</label><input id="s-comm" type="number" min="0" max="50" value="'+((s.commissionRate||.1)*100).toFixed(0)+'"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Лимиты</h3><label>Мин. пополнение, ₽</label><input id="s-md" type="number" value="'+(s.minDeposit||100)+'"><label>Мин. вывод, ₽</label><input id="s-mw" type="number" value="'+(s.minWithdraw||300)+'"><button class="full" style="margin-top:12px" onclick="adminSave()">Сохранить</button></div>'}
+  if(t==='users')body=users.map(function(arr){var id=arr[0],uu=arr[1];var bal=unl(uu)?'∞':money(uu.balance||0);var avStyle=uu.avatar?('background-image:url('+uu.avatar+');color:transparent'):'';return'<div class="card" style="'+(uu.isNew?'border-color:var(--dn)':'')+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="display:flex;gap:10px;align-items:center" onclick="nav(\'profile\',{uid:\''+id+'\'})"><div class="av" style="width:38px;height:38px;font-size:13px;'+avStyle+'">'+(uu.avatar?'':esc(ini(uu.fullName)))+'</div><div><div style="font-weight:700;font-size:15px"><span class="dot '+(onl(uu)?'on':'')+'"></span>'+esc(uu.fullName||'—')+' '+(uu.role==='admin'?'<span class="bdg adm">ADMIN</span>':'')+(uu.isNew?' <span class="bdg new">NEW</span>':'')+'</div><div style="font-size:11px;color:var(--t2)">'+esc(uu.email||'')+' · '+(uu.emailVerified?'✓':'⚠')+'</div></div></div></div><div style="font-size:12px;color:var(--t2);line-height:1.7">ID: <span class="pid">'+esc(uu.publicId||'—')+'</span><br>IP: <code style="background:var(--bg);padding:2px 6px;border-radius:5px;font-size:11px">'+esc(uu.ip||'—')+'</code><br>Telegram: '+(uu.tgId?('<b style="color:var(--a)">'+esc(uu.tgId)+'</b>'):'<span style="color:var(--t3)">не привязан</span>')+'<br>Баланс: <b style="color:var(--a)">'+bal+'</b></div><div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><button class="sm ok" onclick="adminQuick(\''+esc(uu.publicId)+'\')">💰 Зачислить</button><button class="sm sec" onclick="copy(\''+esc(uu.publicId)+'\')">📋 ID</button><button class="sm '+(uu.blocked?'':'dgr')+'" onclick="adminBlock(\''+id+'\')">'+(uu.blocked?'Разблок.':'Блок.')+'</button></div></div>'}).join('');
+  if(t==='settings'){var s=D.settings||{};body='<div class="card"><h3>Реквизиты для приёма платежей</h3><label>Карта / телефон СБП</label><input id="s-card" value="'+esc(s.cardNumber||'')+'"><label>Получатель</label><input id="s-holder" value="'+esc(s.cardHolder||'')+'"><label>Банк</label><input id="s-bank" value="'+esc(s.bankName||'')+'"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Комиссия</h3><label>% с каждой сделки</label><input id="s-comm" type="number" min="0" max="50" value="'+((s.commissionRate||.1)*100).toFixed(0)+'"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Лимиты</h3><label>Мин. пополнение, ₽</label><input id="s-md" type="number" value="'+(s.minDeposit||100)+'"><label>Мин. вывод, ₽</label><input id="s-mw" type="number" value="'+(s.minWithdraw||300)+'"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Версия приложения</h3><p class="hint" style="margin-bottom:8px">При смене версии у всех пользователей появится кнопка «Обновить».</p><input id="s-ver" value="'+esc(s.appVersion||'1.0.0')+'"><div style="height:1px;background:var(--b);margin:14px 0"></div><h3>Telegram-бот</h3><p class="hint" style="margin-bottom:8px">Токен от @BotFather. Пользователи сами вводят свой Telegram ID в профиле, и им приходят уведомления о новых сообщениях.</p><input id="s-tg" placeholder="123456:ABC..." value="'+esc(s.tgToken||'')+'"><button class="full" style="margin-top:12px" onclick="adminSave()">Сохранить всё</button></div>'}
   return hdr+body;
 }
 function stHtml(r,c){if(!c)return'';var f=Math.round(r);return'<span class="stars">'+'★'.repeat(f)+'☆'.repeat(5-f)+'</span> <span style="color:var(--t2);font-size:11px">'+r.toFixed(1)+' ('+c+')</span>'}
 
-// HANDLERS
+// ============ HANDLERS ============
 window.doLogin=function(e){e.preventDefault();var fd=new FormData(e.target);auth.signInWithEmailAndPassword(fd.get('email').trim().toLowerCase(),fd.get('password')).then(function(cred){if(!cred.user.emailVerified){route={name:'verify',params:{}};render()}else toast('Добро пожаловать','success')}).catch(function(err){document.getElementById('aerr').innerHTML='<div class="err">'+err.message+'</div>'})};
-window.doReg=function(e){e.preventDefault();var fd=new FormData(e.target);var email=fd.get('email').trim().toLowerCase();var pw=fd.get('password');var name=fd.get('fullName').trim();if(!fd.get('agree')){document.getElementById('aerr').innerHTML='<div class="err">Нужно принять соглашение</div>';return}if(pw.length<6){document.getElementById('aerr').innerHTML='<div class="err">Пароль короткий</div>';return}auth.createUserWithEmailAndPassword(email,pw).then(function(cred){var uid_=cred.user.uid;var pid=genPid();var isAdmin=(email===ADMIN_EMAIL);var user={id:uid_,publicId:pid,email:email,fullName:name,role:isAdmin?'admin':'user',balance:0,heldBalance:0,totalEarned:0,blocked:false,isUnlimited:isAdmin,ip:'—',deviceId:fp(),lastSeen:Date.now(),rating:0,ratingCount:0,emailVerified:false,isNew:!isAdmin,createdAt:Date.now(),agreedAt:Date.now()};DB.child('users/'+uid_).set(user).then(function(){cred.user.sendEmailVerification().then(function(){toast('Письмо отправлено','success');route={name:'verify',params:{}};render()}).catch(function(err){alert('Ошибка: '+err.message);route={name:'verify',params:{}};render()})})}).catch(function(err){document.getElementById('aerr').innerHTML='<div class="err">'+err.message+'</div>'})};
+
+window.doReg=function(e){e.preventDefault();var fd=new FormData(e.target);var email=fd.get('email').trim().toLowerCase();var pw=fd.get('password');var name=fd.get('fullName').trim();if(!fd.get('agree')){document.getElementById('aerr').innerHTML='<div class="err">Нужно принять соглашение</div>';return}if(pw.length<6){document.getElementById('aerr').innerHTML='<div class="err">Пароль короткий</div>';return}auth.createUserWithEmailAndPassword(email,pw).then(function(cred){var uid_=cred.user.uid;var pid=genPid();var isAdmin=(email===ADMIN_EMAIL);var user={id:uid_,publicId:pid,email:email,fullName:name,role:isAdmin?'admin':'user',balance:0,heldBalance:0,totalEarned:0,blocked:false,isUnlimited:isAdmin,ip:'—',deviceId:fp(),lastSeen:Date.now(),rating:0,ratingCount:0,emailVerified:false,isNew:!isAdmin,createdAt:Date.now(),agreedAt:Date.now(),tgId:''};DB.child('users/'+uid_).set(user).then(function(){cred.user.sendEmailVerification().then(function(){toast('Письмо отправлено','success');route={name:'verify',params:{}};render()}).catch(function(err){alert('Ошибка: '+err.message);route={name:'verify',params:{}};render()})})}).catch(function(err){document.getElementById('aerr').innerHTML='<div class="err">'+err.message+'</div>'})};
+
 window.checkVerify=function(){if(!FU){nav('login');return}FU.reload().then(function(){if(FU.emailVerified){DB.child('users/'+FU.uid+'/emailVerified').set(true);toast('Подтверждено!','success');route={name:'home',params:{}};render()}else alert('Почта ещё не подтверждена. Проверьте «Спам».')})};
 window.resendVerify=function(){if(!FU)return;FU.sendEmailVerification().then(function(){alert('Отправлено на '+FU.email)}).catch(function(err){alert('Ошибка: '+err.message)})};
 window.logout=function(){auth.signOut().then(function(){SID=null;FU=null;localStorage.removeItem('gm_sid');route={name:'login',params:{}};render()})};
-window.readNotif=function(id,link){if(!SID)return;DB.child('notifs/'+SID+'/'+id+'/read').set(true);if(link&&link!==''){nav(link.replace('#',''))}};
 
-window.doCreate=function(e){e.preventDefault();var fd=new FormData(e.target);var u=me();if(!u)return;var id=uid();DB.child('orders/'+id).set({id:id,customerId:u.id,executorId:null,title:fd.get('title').trim(),category:fd.get('category'),description:fd.get('description').trim(),price:Number(fd.get('price')),commissionRate:(D.settings&&D.settings.commissionRate)||0.1,status:'open',resultText:null,createdAt:Date.now(),updatedAt:Date.now()}).then(function(){toast('Создано','success');nav('order',{id:id})})};
-window.doRespond=function(orderId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o)return;var msg=document.getElementById('resp-msg').value.trim();var price=Number(document.getElementById('resp-price').value)||o.price;if(!msg){toast('Напишите','error');return}if(o.customerId===u.id){toast('Ваша заявка','error');return}var chatId=uid();DB.child('chats/'+chatId).set({id:chatId,orderId:orderId,customerId:o.customerId,executorId:u.id,lastAt:Date.now(),lastMsg:msg.slice(0,60),respPrice:price}).then(function(){var mid=uid();DB.child('msgs/'+chatId+'/'+mid).set({id:mid,chatId:chatId,senderId:u.id,body:msg,createdAt:Date.now()});notify(o.customerId,'resp','Новый отклик',u.fullName+' откликнулся','#myorders');toast('Отправлено','success');render()})};
-window.chooseExec=function(orderId,execId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o||o.customerId!==u.id)return;if(!confirm('Выбрать исполнителя?'))return;DB.child('orders/'+orderId).update({executorId:execId,status:'taken',updatedAt:Date.now()}).then(function(){notify(execId,'chosen','Вас выбрали','По заявке «'+o.title+'»','#myorders');toast('Выбран','success');render()})};
-window.submitResult=function(orderId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o||o.executorId!==u.id)return;var t=document.getElementById('res-t').value.trim();if(!t){toast('Введите результат','error');return}DB.child('orders/'+orderId).update({resultText:t,status:'submitted',updatedAt:Date.now()}).then(function(){notify(o.customerId,'result','Результат','Проверьте работу','#myorders');toast('Отправлено','success');render()})};
+window.readNotif=function(id){
+  if(!SID)return;
+  var n=D.notifs[SID]&&D.notifs[SID][id];
+  if(!n)return;
+  DB.child('notifs/'+SID+'/'+id+'/read').set(true);
+  if(n.link)nav(n.link);
+  else render();
+};
+
+window.doCreate=function(e){e.preventDefault();var fd=new FormData(e.target);var u=me();if(!u)return;var price=Number(fd.get('price'));if(price>MAX_PRICE){document.getElementById('cerr').innerHTML='<div class="err">Максимум '+MAX_PRICE+' ₽</div>';return}var id=uid();DB.child('orders/'+id).set({id:id,customerId:u.id,executorId:null,title:fd.get('title').trim(),category:fd.get('category'),description:fd.get('description').trim(),price:price,commissionRate:(D.settings&&D.settings.commissionRate)||0.1,status:'open',resultText:null,createdAt:Date.now(),updatedAt:Date.now()}).then(function(){toast('Создано','success');nav('order',{id:id})})};
+
+window.doRespond=function(orderId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o)return;var msg=document.getElementById('resp-msg').value.trim();var price=Number(document.getElementById('resp-price').value)||o.price;if(!msg){toast('Напишите','error');return}if(o.customerId===u.id){toast('Ваша заявка','error');return}var chatId=uid();DB.child('chats/'+chatId).set({id:chatId,orderId:orderId,customerId:o.customerId,executorId:u.id,lastAt:Date.now(),lastMsg:msg.slice(0,60),respPrice:price}).then(function(){var mid=uid();DB.child('msgs/'+chatId+'/'+mid).set({id:mid,chatId:chatId,senderId:u.id,body:msg,createdAt:Date.now()});notify(o.customerId,'resp','Новый отклик',u.fullName+' откликнулся на «'+o.title+'»','myorders',u.id);toast('Отправлено','success');render()})};
+
+window.chooseExec=function(orderId,execId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o||o.customerId!==u.id)return;if(!confirm('Выбрать исполнителя?'))return;DB.child('orders/'+orderId).update({executorId:execId,status:'taken',updatedAt:Date.now()}).then(function(){notify(execId,'chosen','Вас выбрали','По заявке «'+o.title+'»','myorders',u.id);toast('Выбран','success');render()})};
+
+window.submitResult=function(orderId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o||o.executorId!==u.id)return;var t=document.getElementById('res-t').value.trim();if(!t){toast('Введите результат','error');return}DB.child('orders/'+orderId).update({resultText:t,status:'submitted',updatedAt:Date.now()}).then(function(){notify(o.customerId,'result','Результат','Проверьте работу','myorders',u.id);toast('Отправлено','success');render()})};
+
 window.confirmDone=function(orderId){if(!confirm('Подтвердить и выплатить?'))return;var o=D.orders[orderId];if(!o)return;payout(orderId);DB.child('orders/'+orderId).update({status:'done',updatedAt:Date.now()}).then(function(){toast('Выплачено','success');render()})};
+
 window.cancelOrder=function(orderId){if(!confirm('Отменить?'))return;var o=D.orders[orderId];if(!o)return;if(o.status==='taken'||o.status==='submitted')refund(orderId);DB.child('orders/'+orderId).update({status:'cancelled',updatedAt:Date.now()}).then(function(){toast('Отменено');render()})};
+
 window.doDispute=function(orderId){var r=document.getElementById('disp-r').value.trim();if(r.length<5){toast('Опишите','error');return}var id=uid();DB.child('disps/'+id).set({id:id,orderId:orderId,initiatorId:SID,reason:r,status:'open',createdAt:Date.now()}).then(function(){DB.child('orders/'+orderId+'/status').set('disputed');toast('Спор открыт');render()})};
+
 window.openChat=function(orderId,execId,custId){var exist=Object.keys(D.chats).map(function(k){return D.chats[k]}).find(function(c){return c.orderId===orderId&&c.executorId===execId});if(exist){nav('chat',{id:exist.id});return}var id=uid();DB.child('chats/'+id).set({id:id,orderId:orderId,customerId:custId,executorId:execId,lastAt:Date.now(),lastMsg:'Чат создан'}).then(function(){nav('chat',{id:id})})};
-window.sendMsg=function(e,chatId){e.preventDefault();var inp=document.getElementById('cinp');var body=inp.value.trim();if(!body&&!pendingFile)return;var msg={id:uid(),chatId:chatId,senderId:SID,body:body||'',createdAt:Date.now()};if(pendingFile)msg.attachment=pendingFile;DB.child('msgs/'+chatId+'/'+msg.id).set(msg).then(function(){var c=D.chats[chatId]||{};var upd={lastAt:Date.now(),lastMsg:(body||(pendingFile?'📎 Файл':'')).slice(0,60)};if(c.customerId===SID)upd.eU=true;else upd.cU=true;DB.child('chats/'+chatId).update(upd);var other=c.customerId===SID?c.executorId:c.customerId;notify(other,'msg','Новое сообщение',body||'📎 Файл',null);inp.value='';pendingFile=null;var s=document.getElementById('attach-slot');if(s)s.innerHTML=''})};
+
+window.sendMsg=function(e,chatId){e.preventDefault();var inp=document.getElementById('cinp');var body=inp.value.trim();if(!body&&!pendingFile)return;var msg={id:uid(),chatId:chatId,senderId:SID,body:body||'',createdAt:Date.now()};if(pendingFile)msg.attachment=pendingFile;DB.child('msgs/'+chatId+'/'+msg.id).set(msg).then(function(){var c=D.chats[chatId]||{};var upd={lastAt:Date.now(),lastMsg:(body||(pendingFile?'📎 Файл':'')).slice(0,60)};if(c.customerId===SID)upd.eU=true;else upd.cU=true;DB.child('chats/'+chatId).update(upd);var other=c.customerId===SID?c.executorId:c.customerId;notify(other,'msg','Новое сообщение',body||'📎 Файл',null,SID);inp.value='';pendingFile=null;var s=document.getElementById('attach-slot');if(s)s.innerHTML=''})};
+
 window.pickFile=function(){document.getElementById('file-input').click()};
 window.onFilePicked=function(e){var f=e.target.files[0];if(!f)return;if(f.size>2*1024*1024){toast('Файл >2 МБ','error');return}var r=new FileReader();r.onload=function(){pendingFile={type:f.type.indexOf('image')===0?'image':(f.type==='application/pdf'?'pdf':'file'),name:f.name,size:f.size,data:r.result};var s=document.getElementById('attach-slot');s.innerHTML='<div class="attach-preview"><span>📎 '+esc(f.name)+' · '+fmtSize(f.size)+'</span><button type="button" class="dgr" onclick="cancelAttach()">×</button></div>'};r.readAsDataURL(f);e.target.value=''};
 window.cancelAttach=function(){pendingFile=null;var s=document.getElementById('attach-slot');if(s)s.innerHTML=''};
+
 window.toggleVoice=function(){var btn=document.getElementById('voice-btn');if(mediaRec&&mediaRec.state==='recording'){mediaRec.stop();return}if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){alert('Микрофон недоступен');return}navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){mediaChunks=[];mediaRec=new MediaRecorder(stream);mediaRec.ondataavailable=function(e){if(e.data.size>0)mediaChunks.push(e.data)};mediaRec.onstop=function(){stream.getTracks().forEach(function(t){t.stop()});var blob=new Blob(mediaChunks,{type:'audio/webm'});if(blob.size>1024*1024){toast('Слишком длинное','error');clearRec();return}var r=new FileReader();r.onload=function(){pendingFile={type:'voice',name:'Голосовое',size:blob.size,data:r.result};var s=document.getElementById('attach-slot');s.innerHTML='<div class="attach-preview"><span>🎤 Голосовое · '+fmtSize(blob.size)+'</span><button type="button" class="dgr" onclick="cancelAttach()">×</button></div>';clearRec()};r.readAsDataURL(blob)};mediaRec.start();btn.classList.add('rec');btn.textContent='■';recStart=Date.now();recTimer=setInterval(function(){var sec=Math.floor((Date.now()-recStart)/1000);var s=document.getElementById('rec-slot');s.innerHTML='<div class="rec-bar"><span>🔴 '+sec+' сек</span><button type="button" class="sm dgr" onclick="toggleVoice()">Стоп</button></div>';if(sec>=30)toggleVoice()},500)}).catch(function(err){alert('Нет доступа: '+err.message)})};
 function clearRec(){var b=document.getElementById('voice-btn');if(b){b.classList.remove('rec');b.textContent='🎤'}var s=document.getElementById('rec-slot');if(s)s.innerHTML='';if(recTimer){clearInterval(recTimer);recTimer=null}}
+
 window.doDep=function(){var u=me();if(!u)return;var amt=Number(document.getElementById('dep-a').value);var cmt=document.getElementById('dep-c').value.trim();if(!amt||amt<10){toast('Минимум 10 ₽','error');return}var id=uid();DB.child('deps/'+id).set({id:id,userId:SID,publicId:u.publicId,amount:amt,comment:cmt,status:'pending',createdAt:Date.now()}).then(function(){toast('Заявка отправлена');nav('wallet',{tab:'dep'})})};
+
 window.doWd=function(){var u=me();if(!u)return;var amt=Number(document.getElementById('wd-a').value);var svc=document.getElementById('wd-s').value;var dst=document.getElementById('wd-d').value.trim();var mw=(D.settings&&D.settings.minWithdraw)||300;if(!amt||amt<mw){toast('Минимум '+money(mw),'error');return}if(amt>(u.balance||0)){toast('Недостаточно','error');return}if(dst.length<5){toast('Укажите реквизиты','error');return}var id=uid();DB.child('users/'+SID).update({balance:(u.balance||0)-amt}).then(function(){DB.child('wds/'+id).set({id:id,userId:SID,publicId:u.publicId,amount:amt,service:svc,dest:dst,status:'pending',createdAt:Date.now()});var t=uid();DB.child('txs/'+t).set({id:t,userId:SID,type:'withdrawal',amount:-amt,balanceAfter:(u.balance||0)-amt,createdAt:Date.now()});toast('Заявка создана');nav('wallet',{tab:'wd'})})};
-window.adminCredit=function(){var pid=document.getElementById('mc-i').value.trim();var amt=Number(document.getElementById('mc-a').value);var el=document.getElementById('mcr');if(!pid){el.innerHTML='<div class="err">Введите ID</div>';return}if(!amt||amt<=0){el.innerHTML='<div class="err">Введите сумму</div>';return}var res=uByPid(pid);if(!res){el.innerHTML='<div class="err">ID не найден</div>';return}var userId=res[0],uu=res[1];var nb=(uu.balance||0)+amt;DB.child('users/'+userId+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:userId,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});notify(userId,'credit','Баланс пополнен','Зачислено '+money(amt),'#wallet');el.innerHTML='<div class="suc">✓ Зачислено '+money(amt)+' для <b>'+esc(uu.fullName)+'</b></div>';document.getElementById('mc-i').value=''})};
-window.adminQuick=function(pid){var res=uByPid(String(pid));if(!res){toast('Не найден','error');return}var id=res[0],uu=res[1];var s=prompt('Зачислить '+uu.fullName+'\nБаланс: '+money(uu.balance||0)+'\n\nСумма:','300');if(s===null)return;var amt=Number(s);if(!amt||amt<=0)return;var nb=(uu.balance||0)+amt;DB.child('users/'+id+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:id,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});notify(id,'credit','Баланс пополнен','Зачислено '+money(amt),'#wallet');toast('Зачислено','success');render()})};
-window.adminDep=function(id,act){var d=D.deps[id];if(!d||d.status!=='pending')return;if(act==='ok'){var uu=D.users[d.userId];if(!uu)return;var nb=(uu.balance||0)+d.amount;DB.child('users/'+d.userId+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:d.userId,type:'deposit',amount:d.amount,balanceAfter:nb,createdAt:Date.now()});DB.child('deps/'+id+'/status').set('approved');notify(d.userId,'dep','Пополнение','Зачислено '+money(d.amount),'#wallet');toast('Зачислено');render()})}else{DB.child('deps/'+id+'/status').set('rejected').then(function(){toast('Отклонено');render()})}};
-window.adminWd=function(id,act){var w=D.wds[id];if(!w||w.status!=='pending')return;if(act==='ok'){DB.child('wds/'+id+'/status').set('completed').then(function(){notify(w.userId,'wd','Вывод выполнен','Заявка на '+money(w.amount),'#wallet');toast('Готово');render()})}else{var uu=D.users[w.userId];if(uu){var nb=(uu.balance||0)+w.amount;DB.child('users/'+w.userId+'/balance').set(nb);var t=uid();DB.child('txs/'+t).set({id:t,userId:w.userId,type:'refund',amount:w.amount,balanceAfter:nb,createdAt:Date.now()})}DB.child('wds/'+id+'/status').set('rejected').then(function(){toast('Возвращено');render()})}};
+
+window.adminCredit=function(){var pid=document.getElementById('mc-i').value.trim();var amt=Number(document.getElementById('mc-a').value);var el=document.getElementById('mcr');if(!pid){el.innerHTML='<div class="err">Введите ID</div>';return}if(!amt||amt<=0){el.innerHTML='<div class="err">Введите сумму</div>';return}var res=uByPid(pid);if(!res){el.innerHTML='<div class="err">ID не найден</div>';return}var userId=res[0],uu=res[1];var nb=(uu.balance||0)+amt;DB.child('users/'+userId+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:userId,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});notify(userId,'credit','Баланс пополнен','Зачислено '+money(amt),'wallet');el.innerHTML='<div class="suc">✓ Зачислено '+money(amt)+' для <b>'+esc(uu.fullName)+'</b></div>';document.getElementById('mc-i').value=''})};
+
+window.adminQuick=function(pid){var res=uByPid(String(pid));if(!res){toast('Не найден','error');return}var id=res[0],uu=res[1];var s=prompt('Зачислить '+uu.fullName+'\nБаланс: '+money(uu.balance||0)+'\n\nСумма:','300');if(s===null)return;var amt=Number(s);if(!amt||amt<=0)return;var nb=(uu.balance||0)+amt;DB.child('users/'+id+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:id,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});notify(id,'credit','Баланс пополнен','Зачислено '+money(amt),'wallet');toast('Зачислено','success');render()})};
+
+window.adminDep=function(id,act){var d=D.deps[id];if(!d||d.status!=='pending')return;if(act==='ok'){var uu=D.users[d.userId];if(!uu)return;var nb=(uu.balance||0)+d.amount;DB.child('users/'+d.userId+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:d.userId,type:'deposit',amount:d.amount,balanceAfter:nb,createdAt:Date.now()});DB.child('deps/'+id+'/status').set('approved');notify(d.userId,'dep','Пополнение','Зачислено '+money(d.amount),'wallet');toast('Зачислено');render()})}else{DB.child('deps/'+id+'/status').set('rejected').then(function(){toast('Отклонено');render()})}};
+
+window.adminWd=function(id,act){var w=D.wds[id];if(!w||w.status!=='pending')return;if(act==='ok'){DB.child('wds/'+id+'/status').set('completed').then(function(){notify(w.userId,'wd','Вывод выполнен','Заявка на '+money(w.amount),'wallet');toast('Готово');render()})}else{var uu=D.users[w.userId];if(uu){var nb=(uu.balance||0)+w.amount;DB.child('users/'+w.userId+'/balance').set(nb);var t=uid();DB.child('txs/'+t).set({id:t,userId:w.userId,type:'refund',amount:w.amount,balanceAfter:nb,createdAt:Date.now()})}DB.child('wds/'+id+'/status').set('rejected').then(function(){toast('Возвращено');render()})}};
+
 window.adminDisp=function(id,res){var d=D.disps[id];if(!d||d.status!=='open')return;var o=D.orders[d.orderId];if(!o)return;if(res==='refund'){refund(d.orderId);DB.child('orders/'+d.orderId+'/status').set('cancelled')}else{payout(d.orderId);DB.child('orders/'+d.orderId+'/status').set('done')}DB.child('disps/'+id).update({status:'resolved',resolution:res}).then(function(){toast('Решён');render()})};
+
 window.adminBlock=function(id){var uu=D.users[id];if(!uu)return;DB.child('users/'+id+'/blocked').set(!uu.blocked).then(function(){toast(uu.blocked?'Разблокирован':'Заблокирован','success');render()})};
-window.adminSave=function(){DB.child('settings').update({cardNumber:document.getElementById('s-card').value.trim(),cardHolder:document.getElementById('s-holder').value.trim(),bankName:document.getElementById('s-bank').value.trim(),commissionRate:Number(document.getElementById('s-comm').value)/100,minDeposit:Number(document.getElementById('s-md').value)||100,minWithdraw:Number(document.getElementById('s-mw').value)||300}).then(function(){toast('Сохранено')})};
+
+window.adminSave=function(){var upd={
+  cardNumber:document.getElementById('s-card').value.trim(),
+  cardHolder:document.getElementById('s-holder').value.trim(),
+  bankName:document.getElementById('s-bank').value.trim(),
+  commissionRate:Number(document.getElementById('s-comm').value)/100,
+  minDeposit:Number(document.getElementById('s-md').value)||100,
+  minWithdraw:Number(document.getElementById('s-mw').value)||300,
+  appVersion:document.getElementById('s-ver').value.trim()||'1.0.0',
+  tgToken:document.getElementById('s-tg').value.trim()
+};DB.child('settings').update(upd).then(function(){toast('Сохранено','success')})};
+
 window.applyF=function(){var q=document.getElementById('f-q').value;var sort=document.getElementById('f-sort').value;nav('home',{q:q,sort:sort})};
 
 render();
