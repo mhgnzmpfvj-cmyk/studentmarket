@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
 <meta name="theme-color" content="#0a0a0f"/>
 <title>Ghost Market</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0f'/%3E%3Cpath d='M50 15 C30 15 20 30 20 50 L20 80 L30 72 L38 80 L46 72 L54 80 L62 72 L70 80 L80 72 L80 50 C80 30 70 15 50 15 Z' fill='none' stroke='%23ffd60a' stroke-width='5'/%3E%3Cellipse cx='40' cy='42' rx='4' ry='6' fill='%23ffd60a'/%3E%3Cellipse cx='60' cy='42' rx='4' ry='6' fill='%23ffd60a'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="https://i.imgur.com/Q9AKrv3.png">
+<link rel="apple-touch-icon" href="https://i.imgur.com/Q9AKrv3.png">
 <style>
 :root{--bg:#0a0a0f;--c:#16161f;--c2:#1e1e2a;--b:#26262f;--t:#ededf2;--t2:#8b8b98;--t3:#5c5c68;--a:#ffd60a;--ok:#22c55e;--dn:#ef4444;--in:#5b8cff;--sh:0 1px 3px rgba(0,0,0,.06)}
 [data-theme="light"]{--bg:#f5f6fa;--c:#fff;--c2:#f0f1f5;--b:#e5e7eb;--t:#111827;--t2:#6b7280;--t3:#9ca3af;--a:#f5b800;--ok:#16a34a;--dn:#dc2626;--in:#2563eb}
@@ -26,11 +27,15 @@ button.ok{background:var(--ok);color:#fff}
 button.sm{padding:8px 12px;font-size:13px;min-height:36px;border-radius:9px}
 button.full{width:100%}
 .hdr{position:sticky;top:0;z-index:100;background:var(--c);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);padding:10px 14px;box-shadow:var(--sh)}
-.hrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .logo{font-weight:800;font-size:18px;letter-spacing:-.5px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.logo img{width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0}
 .logo span.mkt{color:var(--a)}
-.logo svg{flex-shrink:0}
-.chip{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);flex-wrap:nowrap;min-width:0}
+.chip .pid{max-width:80px;overflow:hidden;text-overflow:ellipsis}
+.chip .av{flex-shrink:0}
+.chip .theme-btn{flex-shrink:0;min-width:28px;min-height:28px;font-size:13px}
+.chip button.sec.sm{padding:6px 10px;font-size:12px;min-height:30px}
 .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--a),#ff8a00);color:#000;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;overflow:hidden;background-size:cover;background-position:center}
 nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
@@ -103,7 +108,8 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 .pos{color:var(--ok);font-weight:700}.neg{color:var(--dn);font-weight:700}
 .auth{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
 .acard{width:100%;max-width:400px;animation:fi .3s}
-.alogo{text-align:center;font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:10px}
+.alogo{text-align:center;font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:12px}
+.alogo img{width:60px;height:60px;border-radius:14px;object-fit:cover}
 .alogo span.mkt{color:var(--a)}
 .asub{text-align:center;color:var(--t2);font-size:13px;margin-bottom:22px}
 .tst{position:fixed;top:14px;left:14px;right:14px;z-index:2000;background:var(--c);color:var(--t);padding:13px 16px;border-radius:12px;border:1px solid var(--b);box-shadow:0 20px 40px rgba(0,0,0,.3);font-size:13px;animation:sd .25s}
@@ -164,9 +170,9 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 .tg-row{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--t2);margin-bottom:8px}
 .tg-row b{color:var(--t)}
 .tg-row .tgid{font-family:ui-monospace,monospace;color:var(--a);font-weight:700}
-.support-fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--c);border:2px solid var(--a);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:500;text-decoration:none;animation:fi .3s}
+.support-fab{position:fixed;bottom:24px;right:20px;width:60px;height:60px;border-radius:50%;background:var(--c);border:2px solid var(--a);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:500;text-decoration:none;animation:fi .3s;overflow:hidden}
 .support-fab:active{transform:scale(.92)}
-.support-fab svg{filter:drop-shadow(0 0 8px rgba(255,214,10,.5))}
+.support-fab img{width:100%;height:100%;object-fit:cover}
 .typing-ind{color:var(--a);font-size:12px;font-style:italic}
 </style>
 </head>
@@ -179,6 +185,7 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 window.onerror=function(m,u,l){document.getElementById('app').innerHTML='<div style="padding:20px;color:#f66;font-size:14px"><b>Ошибка:</b><br>'+m+'<br>Строка: '+l+'</div>';return false};
 
 var ADMIN_EMAIL='artemogannisyan09@icloud.com';
+var LOGO_URL='https://i.imgur.com/Q9AKrv3.png';
 var CFG={apiKey:"AIzaSyBFpwNqfxsYAdAvcaW5HeTelGTtaA_zPbE",authDomain:"ghost-market-b7a80.firebaseapp.com",databaseURL:"https://ghost-market-b7a80-default-rtdb.europe-west1.firebasedatabase.app",projectId:"ghost-market-b7a80",storageBucket:"ghost-market-b7a80.firebasestorage.app",messagingSenderId:"67074440378",appId:"1:67074440378:web:f505b077262e2e4ab29683"};
 firebase.initializeApp(CFG);
 var auth=firebase.auth(),DB=firebase.database().ref('gm');
@@ -190,9 +197,6 @@ var OS={open:'Открыт',taken:'В работе',submitted:'Результа�
 var MAX_PRICE=50000;
 
 var AGREE_TEXT='ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ Ghost Market\n\n1. ОБЩИЕ ПОЛОЖЕНИЯ\nСервис Ghost Market — площадка для размещения и выполнения учебных заданий. Регистрируясь, вы подтверждаете, что вам исполнилось 14 лет и принимаете условия в полном объёме.\n\n2. ОБРАБОТКА ПЕРСОНАЛЬНЫХ ДАННЫХ (152-ФЗ)\n2.1. Вы даёте согласие на обработку: email, имени, IP-адреса, данных об устройстве, истории действий.\n2.2. Цели: идентификация, работа сервиса, предотвращение мошенничества, связь.\n2.3. Данные не передаются третьим лицам кроме случаев, предусмотренных законом.\n\n3. ФИНАНСОВЫЕ ОПЕРАЦИИ\n3.1. Эскроу: средства замораживаются до подтверждения.\n3.2. Комиссия удерживается с каждой успешной сделки.\n3.3. Пользователь сам отвечает за уплату налогов.\n\n4. ЗАПРЕЩЕНО\n4.1. Экзамены, ЕГЭ, ОГЭ, дипломные работы.\n4.2. Мошенничество, обмен вне платформы.\n\n5. ОТВЕТСТВЕННОСТЬ\nПлатформа не отвечает за качество работ пользователей. Споры — через внутренний арбитраж.\n\n6. ОТЗЫВ СОГЛАСИЯ\nСогласие можно отозвать, написав администрации.';
-
-var GHOST_SVG='<svg viewBox="0 0 100 100" width="32" height="32"><path d="M50 15 C30 15 20 30 20 50 L20 80 L30 72 L38 80 L46 72 L54 80 L62 72 L70 80 L80 72 L80 50 C80 30 70 15 50 15 Z" fill="#0a0a0f" stroke="#ffd60a" stroke-width="5"/><ellipse cx="40" cy="42" rx="4" ry="6" fill="#ffd60a"/><ellipse cx="60" cy="42" rx="4" ry="6" fill="#ffd60a"/></svg>';
-var GHOST_SVG_BIG='<svg viewBox="0 0 100 100" width="36" height="36"><path d="M50 15 C30 15 20 30 20 50 L20 80 L30 72 L38 80 L46 72 L54 80 L62 72 L70 80 L80 72 L80 50 C80 30 70 15 50 15 Z" fill="#0a0a0f" stroke="#ffd60a" stroke-width="5"/><ellipse cx="40" cy="42" rx="4" ry="6" fill="#ffd60a"/><ellipse cx="60" cy="42" rx="4" ry="6" fill="#ffd60a"/></svg>';
 
 var D={users:{},orders:{},chats:{},msgs:{},txs:{},deps:{},wds:{},disps:{},revs:{},notifs:{},settings:{}};
 var FU=null,SID=localStorage.getItem('gm_sid'),route={name:'home',params:{}};
@@ -316,7 +320,7 @@ function render(){
   }
   var avStyle=u&&u.avatar?('background-image:url('+u.avatar+');color:transparent'):'';
 
-  var hdr=isAuth?'':'<header class="hdr"><div class="hrow"><div class="logo" onclick="nav(\'home\')">'+GHOST_SVG+'<span>Ghost<span class="mkt">Market</span></span></div><div class="chip">'+
+  var hdr=isAuth?'':'<header class="hdr"><div class="hrow"><div class="logo" onclick="nav(\'home\')"><img src="'+LOGO_URL+'" alt="Ghost Market"><span>Ghost<span class="mkt">Market</span></span></div><div class="chip">'+
     (u?('<div class="av" style="'+avStyle+'" onclick="nav(\'profile\')">'+(u.avatar?'':esc(ini(u.fullName)))+'</div><span class="pid">'+esc(u.publicId)+'</span><button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sec sm" onclick="logout()">Выйти</button>'):'<button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sm" onclick="nav(\'login\')">Войти</button>')+
     '</div></div><nav>'+
     '<a class="'+(route.name==='home'?'on':'')+'" onclick="nav(\'home\')">Заявки</a>'+
@@ -332,7 +336,10 @@ function render(){
   if(showUpd){body='<div class="update-banner"><div class="txt">🔄 Доступна новая версия</div><button class="sm" onclick="applyUpdate(\''+esc(D.settings.appVersion)+'\')">Обновить</button></div>'}
   body+=c;
 
-  var fab='<a href="https://t.me/ghostmarket_help_bot" target="_blank" class="support-fab" title="Поддержка">'+GHOST_SVG_BIG+'</a>';
+  var fab='';
+  if(route.name==='home'){
+    fab='<a href="https://t.me/ghostmarket_help_bot" target="_blank" class="support-fab" title="Поддержка в Telegram"><img src="'+LOGO_URL+'" alt="Поддержка"></a>';
+  }
 
   document.getElementById('app').innerHTML=hdr+'<div class="wrap">'+body+'</div>'+fab;
   var m=document.getElementById('cmsgs');if(m)m.scrollTop=m.scrollHeight;
@@ -340,13 +347,13 @@ function render(){
 
 
 // ============ СТРАНИЦЫ ============
-function pgLogin(){return'<div class="auth"><div class="acard"><div class="alogo">'+GHOST_SVG+'<span>Ghost<span class="mkt">Market</span></span></div><div class="asub">Площадка для учебных заданий</div><div class="card"><h2>Вход</h2><div id="aerr"></div><form onsubmit="doLogin(event)"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль" required><button class="full" type="submit">Войти</button></form><p class="hint" style="text-align:center;margin-top:12px">Нет аккаунта? <a onclick="nav(\'register\')">Зарегистрироваться</a></p></div></div></div>'}
+function pgLogin(){return'<div class="auth"><div class="acard"><div class="alogo"><img src="'+LOGO_URL+'"><span>Ghost<span class="mkt">Market</span></span></div><div class="asub">Площадка для учебных заданий</div><div class="card"><h2>Вход</h2><div id="aerr"></div><form onsubmit="doLogin(event)"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль" required><button class="full" type="submit">Войти</button></form><p class="hint" style="text-align:center;margin-top:12px">Нет аккаунта? <a onclick="nav(\'register\')">Зарегистрироваться</a></p></div></div></div>'}
 
-function pgReg(){return'<div class="auth"><div class="acard"><div class="alogo">'+GHOST_SVG+'<span>Ghost<span class="mkt">Market</span></span></div><div class="asub">Создайте аккаунт</div><div class="card"><h2>Регистрация</h2><div id="aerr"></div><form onsubmit="doReg(event)"><input name="fullName" placeholder="Имя и фамилия" required minlength="2"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль (мин. 6)" minlength="6" required><label class="agree-check"><input type="checkbox" name="agree" required><span>Я принимаю <a onclick="event.preventDefault();nav(\'agreement\')">пользовательское соглашение</a> и даю согласие на обработку персональных данных (152-ФЗ)</span></label><button class="full" type="submit">Создать аккаунт</button></form><p class="hint" style="text-align:center;margin-top:12px">Уже есть? <a onclick="nav(\'login\')">Войти</a></p></div></div></div>'}
+function pgReg(){return'<div class="auth"><div class="acard"><div class="alogo"><img src="'+LOGO_URL+'"><span>Ghost<span class="mkt">Market</span></span></div><div class="asub">Создайте аккаунт</div><div class="card"><h2>Регистрация</h2><div id="aerr"></div><form onsubmit="doReg(event)"><input name="fullName" placeholder="Имя и фамилия" required minlength="2"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль (мин. 6)" minlength="6" required><label class="agree-check"><input type="checkbox" name="agree" required><span>Я принимаю <a onclick="event.preventDefault();nav(\'agreement\')">пользовательское соглашение</a> и даю согласие на обработку персональных данных (152-ФЗ)</span></label><button class="full" type="submit">Создать аккаунт</button></form><p class="hint" style="text-align:center;margin-top:12px">Уже есть? <a onclick="nav(\'login\')">Войти</a></p></div></div></div>'}
 
-function pgAgreement(){return'<div class="auth"><div class="acard"><div class="alogo">'+GHOST_SVG+'<span>Ghost<span class="mkt">Market</span></span></div><div class="card"><h2>Соглашение</h2><div class="agree-box">'+esc(AGREE_TEXT)+'</div><button class="full" onclick="nav(\'register\')">Вернуться</button></div></div></div>'}
+function pgAgreement(){return'<div class="auth"><div class="acard"><div class="alogo"><img src="'+LOGO_URL+'"><span>Ghost<span class="mkt">Market</span></span></div><div class="card"><h2>Соглашение</h2><div class="agree-box">'+esc(AGREE_TEXT)+'</div><button class="full" onclick="nav(\'register\')">Вернуться</button></div></div></div>'}
 
-function pgVerify(){var u=me();var email=(u&&u.email)||(FU&&FU.email)||'';return'<div class="auth"><div class="acard"><div class="alogo">'+GHOST_SVG+'<span>Ghost<span class="mkt">Market</span></span></div><div class="card"><h2>Подтвердите почту</h2><p class="hint" style="margin-bottom:14px">Письмо на <b style="color:var(--t)">'+esc(email)+'</b>.</p><button class="full ok" onclick="checkVerify()">Я подтвердил</button><button class="sec full" style="margin-top:8px" onclick="resendVerify()">Отправить заново</button><button class="sec full" style="margin-top:8px" onclick="logout()">Выйти</button><div class="inf" style="margin-top:14px"><b>Письма нет?</b> Проверьте «Спам».</div></div></div></div>'}
+function pgVerify(){var u=me();var email=(u&&u.email)||(FU&&FU.email)||'';return'<div class="auth"><div class="acard"><div class="alogo"><img src="'+LOGO_URL+'"><span>Ghost<span class="mkt">Market</span></span></div><div class="card"><h2>Подтвердите почту</h2><p class="hint" style="margin-bottom:14px">Письмо на <b style="color:var(--t)">'+esc(email)+'</b>.</p><button class="full ok" onclick="checkVerify()">Я подтвердил</button><button class="sec full" style="margin-top:8px" onclick="resendVerify()">Отправить заново</button><button class="sec full" style="margin-top:8px" onclick="logout()">Выйти</button><div class="inf" style="margin-top:14px"><b>Письма нет?</b> Проверьте «Спам».</div></div></div></div>'}
 
 function pgHome(){
   var f=route.params;
@@ -435,7 +442,6 @@ function pgChats(){
 function pgChat(p){
   if(!SID)return pgLogin();
   var c=D.chats[p.id];if(!c)return'<div class="card"><h2>Чат не найден</h2></div>';
-  // Сброс непрочитанного при открытии
   if(c.customerId===SID&&c.cU)DB.child('chats/'+p.id+'/cU').set(false);
   if(c.executorId===SID&&c.eU)DB.child('chats/'+p.id+'/eU').set(false);
   var oid=c.customerId===SID?c.executorId:c.customerId;var o=D.users[oid]||{};
