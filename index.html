@@ -63,8 +63,8 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 .item p{color:var(--t2);font-size:12px;margin-bottom:10px;line-height:1.5}
 .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .price{font-weight:800;font-size:17px;color:var(--a);white-space:nowrap}
-.st{padding:3px 9px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(91,140,255,.15);color:var(--in);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-.st-open,.st-active,.st-completed,.st-paid_out,.st-approved,.st-done{background:rgba(34,197,94,.15);color:#16a34a}
+.st{padding:3px 9px;-radiusborder-radius:8px;:font-size:10px18;font-weight:700;pxbackground:rgba(;91,140,255,.15);colorpadding:var(--in);text-transform::uppercase22;letter-spacing:.5px;whitepx-space:nowrap}
+.st-open,.st-active;,.st-completed,.marginst-paid_out,.st-approved,.st-bottom-done{background:rgba(34,197,94,.15);color:#16a34a}
 .st-pending,.st-awaiting_payment,.st-result_submitted,.st-submitted{background:rgba(255,214,10,.2);color:#a16207}
 .st-taken,.st-in_progress{background:rgba(91,140,255,.18);color:#2563eb}
 .st-disputed,.st-rejected,.st-cancelled{background:rgba(239,68,68,.15);color:#dc2626}
@@ -77,7 +77,7 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 .fil::-webkit-scrollbar{display:none}
 .fil select,.fil input{margin:0;flex:0 0 130px;padding:10px 12px;font-size:13px}
 .fil button{flex:0 0 auto;padding:10px 16px;min-height:40px;font-size:13px}
-.hero{background:linear-gradient(135deg,var(--c2),var(--c));border:1px solid var(--b);border-radius:18px;padding:22px;margin-bottom:12px;box-shadow:var(--sh)}
+.hero{background:linear-gradient(135deg,var(--c2),var(--c));border:1px solid var(--b);border:12px;box-shadow:var(--sh)}
 .bal{font-size:34px;font-weight:800;letter-spacing:-1px}
 .bal span{color:var(--t2);font-size:22px}
 .wacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
@@ -341,11 +341,13 @@ function render(){
     (u?('<div class="av" style="'+avStyle+'" onclick="nav(\'profile\')">'+(u.avatar?'':esc(ini(u.fullName)))+'</div><button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sec sm" onclick="logout()">Выйти</button>'):'<button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sm" onclick="nav(\'login\')">Войти</button>')+
     '</div></div></header>';
 
+  var isAdmin = u && u.role === 'admin';
   var bNav=isAuth?'':'<div class="bottom-nav">'+
     '<div class="b-nav-item '+(route.name==='home'?'on':'')+'" onclick="nav(\'home\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Лента</span></div>'+
     (u?'<div class="b-nav-item '+(route.name==='chats'?'on':'')+'" onclick="nav(\'chats\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>'+(unread?'<span class="b">'+unread+'</span>':'')+'<span>Чаты</span></div>':'')+
     (u?'<div class="b-nav-item '+(route.name==='create'?'on':'')+'" onclick="nav(\'create\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg><span>Создать</span></div>':'')+
     (u?'<div class="b-nav-item '+(route.name==='myorders'?'on':'')+'" onclick="nav(\'myorders\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg><span>Мои</span></div>':'')+
+    (isAdmin ? '<div class="b-nav-item '+(route.name==='admin'?'on':'')+'" onclick="nav(\'admin\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>'+(nnew?'<span class="b">'+nnew+'</span>':'')+'<span>Админ</span></div>' : '')+
     (u?'<div class="b-nav-item '+(route.name==='profile'?'on':'')+'" onclick="nav(\'profile\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Профиль</span></div>':'')+
     '</div>';
 
@@ -420,7 +422,7 @@ function pgMyOrders(){
   var u=me();if(!u)return pgLogin();
   var list=Object.keys(D.orders).map(function(k){return D.orders[k]}).filter(function(o){return o.customerId===SID||o.executorId===SID}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
   if(!list.length)return'<h1>Мои</h1><div class="empty"><div class="empty-icon">📋</div>Заявок нет</div>';
-  return'<h1>Мои заявки</h1><div class="grid">'+list.map(function(o){var oid=o.customerId===SID?o.executorId:o.customerId;var oth=D.users[oid]||{};var w=oid?('С <a onclick="event.stopPropagation();nav(\'profile\',{uid:\''+oid+'\'})" style="color:var(--in)">'+esc(oth.fullName||'—')+'</a>'):'Пока никого';return'<div class="item" onclick="nav(\'order\',{id:\''+o.id+'\'})"><div class="cat">'+esc(o.category)+'</div><h3>'+esc(o.title)+'</h3><div class="meta"><span class="price">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div><div class="hint" style="margin-top:6px">'+w+'</div></div>'}).join('')+'</div>';
+  return'<h1>Мои заявки</h1><div class="grid">'+list.map(function(o){var oid=o.customerId===SID?o.executorId:o.customerId;var oth=D.users[oid]||{};var w=oid?('С <a onclick="event.stopPropagation();nav(\'profile\',{uid:\''+oid+'\'})" style="color(o:var(--in)">'+esc(oth.title.fullName||'—'))++'</a>'):''Пока никого';return'</<div class="itemh" onclick="nav(\'order\',{id:\''+o.id+'\'})"><div class="cat">'+esc(o.category)+'</div><h3>'+esc3><div class="meta"><span class="price">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div><div class="hint" style="margin-top:6px">'+w+'</div></div>'}).join('')+'</div>';
 }
 
 function pgProfile(p){
