@@ -363,7 +363,6 @@ function render(){
   document.getElementById('app').innerHTML=hdr+'<div class="wrap">'+body+'</div>'+fab+bNav;
   var m=document.getElementById('cmsgs');if(m)m.scrollTop=m.scrollHeight;
 }
-  
 // ============ СТРАНИЦЫ ============
 function pgLogin(){return'<div class="auth"><div class="acard"><div class="alogo"><img src="'+LOGO_URL+'"><span>Ghost<span class="mkt">Market</span></span></div><div class="asub">Площадка для учебных заданий</div><div class="card"><h2>Вход</h2><div id="aerr"></div><form onsubmit="doLogin(event)"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль" required><button class="full" type="submit">Войти</button></form><p class="hint" style="text-align:center;margin-top:12px">Нет аккаунта? <a onclick="nav(\'register\')">Зарегистрироваться</a></p></div></div></div>'}
 
