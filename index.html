@@ -27,7 +27,7 @@ button.ok{background:var(--ok);color:#fff}
 button.sm{padding:8px 12px;font-size:13px;min-height:36px;border-radius:9px}
 button.full{width:100%}
 .hdr{position:sticky;top:0;z-index:100;background:var(--c);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);padding:10px 14px;box-shadow:var(--sh)}
-.hrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .logo{font-weight:800;font-size:18px;letter-spacing:-.5px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px}
 .logo img{width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0}
 .logo span.mkt{color:var(--a)}
@@ -37,11 +37,10 @@ button.full{width:100%}
 .chip .theme-btn{flex-shrink:0;min-width:28px;min-height:28px;font-size:13px}
 .chip button.sec.sm{padding:6px 10px;font-size:12px;min-height:30px}
 .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--a),#ff8a00);color:#000;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;overflow:hidden;background-size:cover;background-position:center}
-nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
-nav::-webkit-scrollbar{display:none}
-nav a{color:var(--t2);font-size:13px;font-weight:500;padding:7px 11px;border-radius:9px;white-space:nowrap;position:relative}
-nav a.on{background:var(--c2);color:var(--t)}
-nav a .b{position:absolute;top:2px;right:2px;background:var(--dn);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--c);border-top:1px solid var(--b);display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+.b-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--t3);font-size:10px;font-weight:600;gap:4px;cursor:pointer;padding:4px 8px;border-radius:8px;position:relative;transition:color .15s}
+.b-nav-item.on{color:var(--a)}
+.b-nav-item .b{position:absolute;top:0;right:2px;background:var(--dn);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700}
 .wrap{max-width:720px;margin:0 auto;padding:14px 14px 100px;animation:fi .25s ease}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 h1{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:14px}
@@ -87,7 +86,7 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:1 0 auto;padding:9px 12px;text-align:center;cursor:pointer;border-radius:9px;color:var(--t2);font-size:12px;font-weight:600;white-space:nowrap}
 .tab.on{background:var(--c);color:var(--t);box-shadow:var(--sh)}
-.msgs{max-height:55vh;overflow-y:auto;margin-bottom:10px;padding:8px;background:var(--bg);border-radius:12px;border:1px solid var(--b)}
+.msgs{max-height:50vh;overflow-y:auto;margin-bottom:10px;padding:8px;background:var(--bg);border-radius:12px;border:1px solid var(--b)}
 .msg{padding:9px 12px;background:var(--c2);border-radius:12px;margin-bottom:6px;max-width:85%;animation:fi .2s}
 .msg.mine{background:rgba(255,214,10,.12);border:1px solid rgba(255,214,10,.2);margin-left:auto}
 .msg .who{font-size:10px;font-weight:700;color:var(--a);margin-bottom:3px}
@@ -96,6 +95,9 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 .msg img,.msg video{max-width:100%;border-radius:8px;margin-top:6px;display:block}
 .msg audio{width:100%;margin-top:6px}
 .file-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);padding:10px 14px;border-radius:8px;margin-top:6px;font-size:13px;color:var(--t);cursor:pointer;border:1px solid var(--b);font-weight:600}
+.quick-replies{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:4px;scrollbar-width:none}
+.quick-replies::-webkit-scrollbar{display:none}
+.quick-replies button{flex:0 0 auto;padding:8px 12px;font-size:12px;border-radius:15px;background:var(--c2);border:1px solid var(--b);color:var(--t);min-height:auto}
 .cform{display:flex;gap:6px;align-items:center}
 .cform input[type=text]{margin:0;flex:1}
 .cform .icon-btn{background:var(--c2);border:1px solid var(--b);color:var(--t);padding:0;min-height:44px;min-width:44px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center}
@@ -170,10 +172,13 @@ th{color:var(--t2);font-size:10px;text-transform:uppercase}
 .tg-row{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--t2);margin-bottom:8px}
 .tg-row b{color:var(--t)}
 .tg-row .tgid{font-family:ui-monospace,monospace;color:var(--a);font-weight:700}
-.support-fab{position:fixed;bottom:24px;right:20px;width:60px;height:60px;border-radius:50%;background:var(--c);border:2px solid var(--a);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:500;text-decoration:none;animation:fi .3s;overflow:hidden}
+.support-fab{position:fixed;bottom:80px;right:20px;width:60px;height:60px;border-radius:50%;background:var(--c);border:2px solid var(--a);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:500;text-decoration:none;animation:fi .3s;overflow:hidden}
 .support-fab:active{transform:scale(.92)}
 .support-fab img{width:100%;height:100%;object-fit:cover}
 .typing-ind{color:var(--a);font-size:12px;font-style:italic}
+@keyframes skeletonPulse { 0% { opacity: 0.4; } 50% { opacity: 0.8; } 100% { opacity: 0.4; } }
+.skeleton{background:var(--c2);border-radius:10px;animation:skeletonPulse 1.5s ease-in-out infinite}
+.sk-item{height:140px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -252,6 +257,11 @@ function notify(userId,type,title,body,link,fromId){
     var id=existing?existing.id:uid();
     ref.child(id).update({id:id,type:type,title:title,body:body,link:link||null,read:false,createdAt:Date.now(),fromId:fromId||null,count:count});
   });
+  
+  if(SID === userId && window.Notification && Notification.permission === 'granted'){
+    try { new Notification(title, { body: body, icon: LOGO_URL }); } catch(e){}
+  }
+  
   var u=D.users[userId];
   if(u&&u.tgId&&D.settings&&D.settings.tgToken){
     var tgText='🔔 '+title+'\n\n'+body+'\n\n— Ghost Market';
@@ -286,9 +296,16 @@ auth.onAuthStateChanged(function(user){
 
 function render(){
   var u=me();
+  if(SID && Notification.permission === 'default') Notification.requestPermission();
   if(SID&&FU&&!FU.emailVerified&&route.name!=='verify')route={name:'verify',params:{}};
   if(SID&&FU&&FU.emailVerified&&route.name==='verify')route={name:'home',params:{}};
   var isAuth=['login','register','verify','agreement'].indexOf(route.name)>=0;
+  
+  if(!D.users && !isAuth){
+    document.getElementById('app').innerHTML='<div class="hdr"><div class="hrow"><div class="logo"><img src="'+LOGO_URL+'"><span>Ghost<span class="mkt">Market</span></span></div></div></div><div class="wrap"><div class="skeleton" style="height:40px;margin-bottom:20px;width:60%"></div><div class="skeleton sk-item"></div><div class="skeleton sk-item"></div><div class="skeleton sk-item"></div></div>';
+    return;
+  }
+
   var c='';
   if(route.name==='login')c=pgLogin();
   else if(route.name==='register')c=pgReg();
@@ -321,16 +338,16 @@ function render(){
   var avStyle=u&&u.avatar?('background-image:url('+u.avatar+');color:transparent'):'';
 
   var hdr=isAuth?'':'<header class="hdr"><div class="hrow"><div class="logo" onclick="nav(\'home\')"><img src="'+LOGO_URL+'" alt="Ghost Market"><span>Ghost<span class="mkt">Market</span></span></div><div class="chip">'+
-    (u?('<div class="av" style="'+avStyle+'" onclick="nav(\'profile\')">'+(u.avatar?'':esc(ini(u.fullName)))+'</div><span class="pid">'+esc(u.publicId)+'</span><button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sec sm" onclick="logout()">Выйти</button>'):'<button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sm" onclick="nav(\'login\')">Войти</button>')+
-    '</div></div><nav>'+
-    '<a class="'+(route.name==='home'?'on':'')+'" onclick="nav(\'home\')">Заявки</a>'+
-    (u?'<a class="'+(route.name==='create'?'on':'')+'" onclick="nav(\'create\')">+ Создать</a>':'')+
-    (u?'<a class="'+(route.name==='myorders'?'on':'')+'" onclick="nav(\'myorders\')">Мои</a>':'')+
-    (u?'<a class="'+(route.name==='chats'?'on':'')+'" onclick="nav(\'chats\')">Чаты'+(unread?'<span class="b">'+unread+'</span>':'')+'</a>':'')+
-    (u?'<a class="'+(route.name==='notifs'?'on':'')+'" onclick="nav(\'notifs\')">Уведом.'+(un?'<span class="b">'+un+'</span>':'')+'</a>':'')+
-    (u?'<a class="'+(route.name==='wallet'?'on':'')+'" onclick="nav(\'wallet\')">Кошелёк · '+(unl(u)?'∞':(u.balance||0).toFixed(0)+' ₽')+'</a>':'')+
-    (u&&u.role==='admin'?'<a class="'+(route.name==='admin'?'on':'')+'" onclick="nav(\'admin\')">Админ'+(nnew?'<span class="b">'+nnew+'</span>':'')+'</a>':'')+
-    '</nav></header>';
+    (u?('<div class="av" style="'+avStyle+'" onclick="nav(\'profile\')">'+(u.avatar?'':esc(ini(u.fullName)))+'</div><button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sec sm" onclick="logout()">Выйти</button>'):'<button class="theme-btn" onclick="toggleTheme()">'+th+'</button><button class="sm" onclick="nav(\'login\')">Войти</button>')+
+    '</div></div></header>';
+
+  var bNav=isAuth?'':'<div class="bottom-nav">'+
+    '<div class="b-nav-item '+(route.name==='home'?'on':'')+'" onclick="nav(\'home\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Лента</span></div>'+
+    (u?'<div class="b-nav-item '+(route.name==='chats'?'on':'')+'" onclick="nav(\'chats\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>'+(unread?'<span class="b">'+unread+'</span>':'')+'<span>Чаты</span></div>':'')+
+    (u?'<div class="b-nav-item '+(route.name==='create'?'on':'')+'" onclick="nav(\'create\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg><span>Создать</span></div>':'')+
+    (u?'<div class="b-nav-item '+(route.name==='myorders'?'on':'')+'" onclick="nav(\'myorders\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg><span>Мои</span></div>':'')+
+    (u?'<div class="b-nav-item '+(route.name==='profile'?'on':'')+'" onclick="nav(\'profile\')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Профиль</span></div>':'')+
+    '</div>';
 
   var body='';
   if(showUpd){body='<div class="update-banner"><div class="txt">🔄 Доступна новая версия</div><button class="sm" onclick="applyUpdate(\''+esc(D.settings.appVersion)+'\')">Обновить</button></div>'}
@@ -341,11 +358,10 @@ function render(){
     fab='<a href="https://t.me/ghostmarket_help_bot" target="_blank" class="support-fab" title="Поддержка в Telegram"><img src="'+LOGO_URL+'" alt="Поддержка"></a>';
   }
 
-  document.getElementById('app').innerHTML=hdr+'<div class="wrap">'+body+'</div>'+fab;
+  document.getElementById('app').innerHTML=hdr+'<div class="wrap">'+body+'</div>'+fab+bNav;
   var m=document.getElementById('cmsgs');if(m)m.scrollTop=m.scrollHeight;
 }
-
-
+  
 // ============ СТРАНИЦЫ ============
 function pgLogin(){return'<div class="auth"><div class="acard"><div class="alogo"><img src="'+LOGO_URL+'"><span>Ghost<span class="mkt">Market</span></span></div><div class="asub">Площадка для учебных заданий</div><div class="card"><h2>Вход</h2><div id="aerr"></div><form onsubmit="doLogin(event)"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль" required><button class="full" type="submit">Войти</button></form><p class="hint" style="text-align:center;margin-top:12px">Нет аккаунта? <a onclick="nav(\'register\')">Зарегистрироваться</a></p></div></div></div>'}
 
@@ -372,7 +388,7 @@ function renderOrders(list){
 function pgCreate(){
   if(!SID)return pgLogin();
   var u=me();if(!u)return'';
-  return'<div class="card"><h2>Создать заявку</h2><div class="inf">Опишите, что нужно. Другие откликнутся.</div><div id="cerr"></div><form onsubmit="doCreate(event)"><label>Что нужно сделать</label><input name="title" placeholder="Решить контрольную по алгебре" required minlength="3"><label>Категория</label><select name="category" id="cs" onchange="updHint()" required>'+CATS.map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('')+'</select><div class="hint" id="ch" style="margin-top:-4px;margin-bottom:8px">'+esc(HINTS[CATS[0]])+'</div><button type="button" class="sec sm" onclick="insertTpl()" style="margin-bottom:10px">📝 Вставить шаблон</button><label>Описание</label><textarea name="description" id="desc" rows="6" placeholder="Что именно, сроки" required minlength="10"></textarea><label>Оплата, ₽ (макс. 50000)</label><input name="price" type="number" min="10" max="'+MAX_PRICE+'" step="10" value="300" required><button class="full" type="submit">Создать</button></form></div>';
+  return'<div class="card"><h2>Создать заявку</h2><div class="inf">Опишите, что нужно. Другие откликнутся.</div><div id="cerr"></div><form onsubmit="doCreate(event)"><label>Что нужно сделать</label><input name="title" placeholder="Решить контрольную по алгебре" required minlength="3"><label>Категория</label><select name="category" id="cs" onchange="updHint()" required>'+CATS.map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('')+'</select><div class="hint" id="ch" style="margin-top:-4px;margin-bottom:8px">'+esc(HINTS[CATS[0]])+'</div><button type="button" class="sec sm" onclick="insertTpl()" style="margin-bottom:10px">📝 Вставить шаблон</button><label>Описание</label><textarea name="description" id="desc" rows="5" placeholder="Что именно, сроки" required minlength="10"></textarea><label>Срок сдачи (дедлайн)</label><input type="datetime-local" name="deadline" required><label>Оплата, ₽ (макс. 50000)</label><input name="price" type="number" min="10" max="'+MAX_PRICE+'" step="10" value="300" required><button class="full" type="submit">Создать</button></form></div>';
 }
 window.updHint=function(){var s=document.getElementById('cs').value;document.getElementById('ch').textContent=HINTS[s]||''};
 window.insertTpl=function(){var s=document.getElementById('cs').value;var t=TEMPLATES[s]||'';var d=document.getElementById('desc');d.value=t;d.focus()};
@@ -392,7 +408,11 @@ function pgOrder(p){
   if(ic&&o.status==='submitted')a+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><p class="hint" style="margin-bottom:10px">Исполнителю <b style="color:var(--ok)">'+money(o.price*(1-o.commissionRate))+'</b>, комиссия <b style="color:var(--a)">'+money(o.price*o.commissionRate)+'</b></p><button class="full ok" onclick="confirmDone(\''+o.id+'\')">Подтвердить и выплатить</button></div>';
   if(ic&&(o.status==='open'||o.status==='taken'))a+='<div style="margin-top:16px"><button class="full dgr" onclick="cancelOrder(\''+o.id+'\')">Отменить</button></div>';
   if((ic||ie)&&['taken','submitted'].indexOf(o.status)>=0)a+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--b)"><h3>Открыть спор</h3><textarea id="disp-r" rows="3"></textarea><button class="full dgr" onclick="doDispute(\''+o.id+'\')">Открыть спор</button></div>';
-  var ph=o.executorId?'<div class="hint" style="margin-top:10px">Участники: <a onclick="nav(\'profile\',{uid:\''+c.id+'\'})"><b style="color:var(--in)">'+esc(c.fullName||'—')+'</b></a> и <a onclick="nav(\'profile\',{uid:\''+e.id+'\'})"><b style="color:var(--in)">'+esc(e.fullName)+'</b></a></div>':'<div class="hint" style="margin-top:10px">Автор: <a onclick="nav(\'profile\',{uid:\''+c.id+'\'})"><b style="color:var(--in)">'+esc(c.fullName||'—')+'</b></a></div>';
+  
+  var isOver = o.deadline && o.deadline < Date.now() && o.status !== 'done';
+  var dlText = o.deadline ? ('⏳ Срок: <b style="color:'+(isOver?'var(--dn)':'var(--t)')+'">'+dt(o.deadline)+(isOver?' (ПРОСРОЧЕН)':'')+'</b>') : 'Без срока';
+  var ph=o.executorId?'<div class="hint" style="margin-top:10px">Участники: <a onclick="nav(\'profile\',{uid:\''+c.id+'\'})"><b style="color:var(--in)">'+esc(c.fullName||'—')+'</b></a> и <a onclick="nav(\'profile\',{uid:\''+e.id+'\'})"><b style="color:var(--in)">'+esc(e.fullName)+'</b></a><br>'+dlText+'</div>':'<div class="hint" style="margin-top:10px">Автор: <a onclick="nav(\'profile\',{uid:\''+c.id+'\'})"><b style="color:var(--in)">'+esc(c.fullName||'—')+'</b></a><br>'+dlText+'</div>';
+  
   return'<div class="card"><div class="cat">'+esc(o.category)+'</div><h2 style="margin-top:6px">'+esc(o.title)+'</h2><p style="color:var(--t2);margin:14px 0;line-height:1.6;white-space:pre-wrap">'+esc(o.description)+'</p><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="price" style="font-size:26px">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div>'+ph+stepsHtml+a+'</div>';
 }
 
@@ -450,8 +470,9 @@ function pgChat(p){
   var avStyle=o.avatar?('background-image:url('+o.avatar+');color:transparent'):'';
   var typ=c.customerId===SID?(c.exTyping&&Date.now()-c.exTyping<6000):(c.custTyping&&Date.now()-c.custTyping<6000);
   var statusText=typ?'<span class="typing-ind">печатает...</span>':(onl(o)?'в сети':'не в сети');
-  return'<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;cursor:pointer" onclick="nav(\'profile\',{uid:\''+oid+'\'})"><div class="av" style="width:44px;height:44px;font-size:15px;'+avStyle+'">'+(o.avatar?'':esc(ini(o.fullName)))+'</div><div style="flex:1"><div style="font-weight:700">'+esc(o.fullName||'—')+' <span class="pid">'+esc(o.publicId||'')+'</span></div><div style="font-size:12px"><span class="dot '+(onl(o)?'on':'')+'"></span>'+statusText+'</div></div></div><div class="msgs" id="cmsgs">'+msgsHtml+'</div><div id="attach-slot"></div><div id="rec-slot"></div><form class="cform" onsubmit="sendMsg(event,\''+p.id+'\')"><button type="button" class="icon-btn" onclick="pickFile()">📎</button><input type="text" id="cinp" placeholder="Написать..." oninput="typingStart(\''+p.id+'\')"><button type="button" class="icon-btn" id="voice-btn" onclick="toggleVoice()">🎤</button><button type="submit" class="icon-btn" style="background:var(--a);color:#000">→</button></form><input type="file" id="file-input" style="display:none" accept="image/*,application/pdf,.doc,.docx,.txt" onchange="onFilePicked(event)"></div>';
+  return'<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;cursor:pointer" onclick="nav(\'profile\',{uid:\''+oid+'\'})"><div class="av" style="width:44px;height:44px;font-size:15px;'+avStyle+'">'+(o.avatar?'':esc(ini(o.fullName)))+'</div><div style="flex:1"><div style="font-weight:700">'+esc(o.fullName||'—')+' <span class="pid">'+esc(o.publicId||'')+'</span></div><div style="font-size:12px"><span class="dot '+(onl(o)?'on':'')+'"></span>'+statusText+'</div></div></div><div class="msgs" id="cmsgs">'+msgsHtml+'</div><div id="attach-slot"></div><div id="rec-slot"></div><div class="quick-replies"><button type="button" onclick="setQuickReply(\'Привет! Готов взяться\')">Готов взяться</button><button type="button" onclick="setQuickReply(\'Скинь подробности\')">Подробности</button><button type="button" onclick="setQuickReply(\'Сделаю к завтрашнему утру\')">К утру</button><button type="button" onclick="setQuickReply(\'Скинул результат, проверяй\')">Результат</button></div><form class="cform" onsubmit="sendMsg(event,\''+p.id+'\')"><button type="button" class="icon-btn" onclick="pickFile()">📎</button><input type="text" id="cinp" placeholder="Написать..." oninput="typingStart(\''+p.id+'\')"><button type="button" class="icon-btn" id="voice-btn" onclick="toggleVoice()">🎤</button><button type="submit" class="icon-btn" style="background:var(--a);color:#000">→</button></form><input type="file" id="file-input" style="display:none" accept="image/*,application/pdf,.doc,.docx,.txt" onchange="onFilePicked(event)"></div>';
 }
+window.setQuickReply=function(text){var inp=document.getElementById('cinp');if(inp){inp.value=text;inp.focus();}};
 
 function renderMsg(m){
   var s=D.users[m.senderId]||{};
@@ -536,7 +557,7 @@ window.resendVerify=function(){if(!FU)return;FU.sendEmailVerification().then(fun
 window.logout=function(){auth.signOut().then(function(){SID=null;FU=null;localStorage.removeItem('gm_sid');route={name:'login',params:{}};render()})};
 window.readNotif=function(id){if(!SID)return;var n=D.notifs[SID]&&D.notifs[SID][id];if(!n)return;DB.child('notifs/'+SID+'/'+id).update({read:true,count:0});if(n.link)nav(n.link);else render()};
 window.typingStart=function(chatId){if(!SID)return;var c=D.chats[chatId]||{};var f=c.customerId===SID?'custTyping':'exTyping';if(typingTimer)clearTimeout(typingTimer);DB.child('chats/'+chatId+'/'+f).set(Date.now());typingTimer=setTimeout(function(){DB.child('chats/'+chatId+'/'+f).set(0)},5000)};
-window.doCreate=function(e){e.preventDefault();var fd=new FormData(e.target);var u=me();if(!u)return;var price=Number(fd.get('price'));if(price>MAX_PRICE){document.getElementById('cerr').innerHTML='<div class="err">Максимум '+MAX_PRICE+' ₽</div>';return}var id=uid();DB.child('orders/'+id).set({id:id,customerId:u.id,executorId:null,title:fd.get('title').trim(),category:fd.get('category'),description:fd.get('description').trim(),price:price,commissionRate:(D.settings&&D.settings.commissionRate)||0.1,status:'open',resultText:null,createdAt:Date.now(),updatedAt:Date.now()}).then(function(){toast('Создано','success');nav('order',{id:id})})};
+window.doCreate=function(e){e.preventDefault();var fd=new FormData(e.target);var u=me();if(!u)return;var price=Number(fd.get('price'));if(price>MAX_PRICE){document.getElementById('cerr').innerHTML='<div class="err">Максимум '+MAX_PRICE+' ₽</div>';return}var id=uid();DB.child('orders/'+id).set({id:id,customerId:u.id,executorId:null,title:fd.get('title').trim(),category:fd.get('category'),description:fd.get('description').trim(),deadline:new Date(fd.get('deadline')).getTime(),price:price,commissionRate:(D.settings&&D.settings.commissionRate)||0.1,status:'open',resultText:null,createdAt:Date.now(),updatedAt:Date.now()}).then(function(){toast('Создано','success');nav('order',{id:id})})};
 window.doRespond=function(orderId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o)return;var msg=document.getElementById('resp-msg').value.trim();var price=Number(document.getElementById('resp-price').value)||o.price;if(!msg){toast('Напишите','error');return}if(o.customerId===u.id){toast('Ваша заявка','error');return}var chatId=uid();DB.child('chats/'+chatId).set({id:chatId,orderId:orderId,customerId:o.customerId,executorId:u.id,lastAt:Date.now(),lastMsg:msg.slice(0,60),respPrice:price}).then(function(){var mid=uid();DB.child('msgs/'+chatId+'/'+mid).set({id:mid,chatId:chatId,senderId:u.id,body:msg,createdAt:Date.now()});notify(o.customerId,'resp','Новый отклик',u.fullName+' откликнулся на «'+o.title+'»','myorders',u.id);toast('Отправлено','success');render()})};
 window.chooseExec=function(orderId,execId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o||o.customerId!==u.id)return;if(!confirm('Выбрать исполнителя?'))return;DB.child('orders/'+orderId).update({executorId:execId,status:'taken',updatedAt:Date.now()}).then(function(){notify(execId,'chosen','Вас выбрали','По заявке «'+o.title+'»','myorders',u.id);toast('Выбран','success');render()})};
 window.submitResult=function(orderId){var u=me();if(!u)return;var o=D.orders[orderId];if(!o||o.executorId!==u.id)return;var t=document.getElementById('res-t').value.trim();if(!t){toast('Введите результат','error');return}DB.child('orders/'+orderId).update({resultText:t,status:'submitted',updatedAt:Date.now()}).then(function(){notify(o.customerId,'result','Результат','Проверьте работу','myorders',u.id);toast('Отправлено','success');render()})};
@@ -546,7 +567,37 @@ window.doDispute=function(orderId){var r=document.getElementById('disp-r').value
 window.openChat=function(orderId,execId,custId){var exist=Object.keys(D.chats).map(function(k){return D.chats[k]}).find(function(c){return c.orderId===orderId&&c.executorId===execId});if(exist){nav('chat',{id:exist.id});return}var id=uid();DB.child('chats/'+id).set({id:id,orderId:orderId,customerId:custId,executorId:execId,lastAt:Date.now(),lastMsg:'Чат создан'}).then(function(){nav('chat',{id:id})})};
 window.sendMsg=function(e,chatId){e.preventDefault();var inp=document.getElementById('cinp');var body=inp.value.trim();if(!body&&!pendingFile)return;var msg={id:uid(),chatId:chatId,senderId:SID,body:body||'',createdAt:Date.now()};if(pendingFile)msg.attachment=pendingFile;DB.child('msgs/'+chatId+'/'+msg.id).set(msg).then(function(){var c=D.chats[chatId]||{};var upd={lastAt:Date.now(),lastMsg:(body||(pendingFile?'📎 Файл':'')).slice(0,60)};if(c.customerId===SID)upd.eU=true;else upd.cU=true;DB.child('chats/'+chatId).update(upd);var other=c.customerId===SID?c.executorId:c.customerId;notify(other,'msg','Новое сообщение',body||'📎 Файл',null,SID);inp.value='';pendingFile=null;var s=document.getElementById('attach-slot');if(s)s.innerHTML=''})};
 window.pickFile=function(){document.getElementById('file-input').click()};
-window.onFilePicked=function(e){var f=e.target.files[0];if(!f)return;if(f.size>2*1024*1024){toast('Файл >2 МБ','error');return}var r=new FileReader();r.onload=function(){pendingFile={type:f.type.indexOf('image')===0?'image':(f.type==='application/pdf'?'pdf':'file'),name:f.name,size:f.size,data:r.result};var s=document.getElementById('attach-slot');s.innerHTML='<div class="attach-preview"><span>📎 '+esc(f.name)+' · '+fmtSize(f.size)+'</span><button type="button" class="dgr" onclick="cancelAttach()">×</button></div>'};r.readAsDataURL(f);e.target.value=''};
+window.onFilePicked=function(e){
+  var f=e.target.files[0];if(!f)return;
+  if(f.size>5*1024*1024){toast('Файл больше 5 МБ','error');return}
+  var r=new FileReader();
+  r.onload=function(){
+    if(f.type.indexOf('image')===0){
+      var img=new Image();
+      img.onload=function(){
+        var cv=document.createElement('canvas');
+        var max=1000;
+        var w=img.width, h=img.height;
+        if(w>max||h>max){ if(w>h){h=h*(max/w);w=max;}else{w=w*(max/h);h=max;} }
+        cv.width=w;cv.height=h;
+        var ctx=cv.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        var data=cv.toDataURL('image/jpeg',0.7);
+        pendingFile={type:'image',name:f.name,size:data.length*0.75,data:data};
+        var s=document.getElementById('attach-slot');
+        s.innerHTML='<div class="attach-preview"><span>🖼 '+esc(f.name)+' (сжато)</span><button type="button" class="dgr" onclick="cancelAttach()">×</button></div>';
+      };
+      img.src=r.result;
+    } else {
+      if(f.size>2*1024*1024){toast('Файл больше 2 МБ','error');return}
+      pendingFile={type:(f.type==='application/pdf'?'pdf':'file'),name:f.name,size:f.size,data:r.result};
+      var s=document.getElementById('attach-slot');
+      s.innerHTML='<div class="attach-preview"><span>📎 '+esc(f.name)+' · '+fmtSize(f.size)+'</span><button type="button" class="dgr" onclick="cancelAttach()">×</button></div>';
+    }
+  };
+  r.readAsDataURL(f);
+  e.target.value='';
+};
 window.cancelAttach=function(){pendingFile=null;var s=document.getElementById('attach-slot');if(s)s.innerHTML=''};
 window.toggleVoice=function(){var btn=document.getElementById('voice-btn');if(mediaRec&&mediaRec.state==='recording'){mediaRec.stop();return}if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){alert('Микрофон недоступен');return}navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){mediaChunks=[];mediaRec=new MediaRecorder(stream);mediaRec.ondataavailable=function(e){if(e.data.size>0)mediaChunks.push(e.data)};mediaRec.onstop=function(){stream.getTracks().forEach(function(t){t.stop()});var blob=new Blob(mediaChunks,{type:'audio/webm'});if(blob.size>1024*1024){toast('Слишком длинное','error');clearRec();return}var r=new FileReader();r.onload=function(){pendingFile={type:'voice',name:'Голосовое',size:blob.size,data:r.result};var s=document.getElementById('attach-slot');s.innerHTML='<div class="attach-preview"><span>🎤 Голосовое · '+fmtSize(blob.size)+'</span><button type="button" class="dgr" onclick="cancelAttach()">×</button></div>';clearRec()};r.readAsDataURL(blob)};mediaRec.start();btn.classList.add('rec');btn.textContent='■';recStart=Date.now();recTimer=setInterval(function(){var sec=Math.floor((Date.now()-recStart)/1000);var s=document.getElementById('rec-slot');s.innerHTML='<div class="rec-bar"><span>🔴 '+sec+' сек</span><button type="button" class="sm dgr" onclick="toggleVoice()">Стоп</button></div>';if(sec>=30)toggleVoice()},500)}).catch(function(err){alert('Нет доступа: '+err.message)})};
 function clearRec(){var b=document.getElementById('voice-btn');if(b){b.classList.remove('rec');b.textContent='🎤'}var s=document.getElementById('rec-slot');if(s)s.innerHTML='';if(recTimer){clearInterval(recTimer);recTimer=null}}
