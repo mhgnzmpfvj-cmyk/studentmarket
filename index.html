@@ -63,8 +63,8 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 .item p{color:var(--t2);font-size:12px;margin-bottom:10px;line-height:1.5}
 .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .price{font-weight:800;font-size:17px;color:var(--a);white-space:nowrap}
-.st{padding:3px 9px;-radiusborder-radius:8px;:font-size:10px18;font-weight:700;pxbackground:rgba(;91,140,255,.15);colorpadding:var(--in);text-transform::uppercase22;letter-spacing:.5px;whitepx-space:nowrap}
-.st-open,.st-active;,.st-completed,.marginst-paid_out,.st-approved,.st-bottom-done{background:rgba(34,197,94,.15);color:#16a34a}
+.st{padding:3px 9px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(91,140,255,.15);color:var(--in);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.st-open,.st-active,.st-completed,.st-paid_out,.st-approved,.st-done{background:rgba(34,197,94,.15);color:#16a34a}
 .st-pending,.st-awaiting_payment,.st-result_submitted,.st-submitted{background:rgba(255,214,10,.2);color:#a16207}
 .st-taken,.st-in_progress{background:rgba(91,140,255,.18);color:#2563eb}
 .st-disputed,.st-rejected,.st-cancelled{background:rgba(239,68,68,.15);color:#dc2626}
@@ -77,7 +77,7 @@ h3{font-size:15px;font-weight:700;margin-bottom:10px}
 .fil::-webkit-scrollbar{display:none}
 .fil select,.fil input{margin:0;flex:0 0 130px;padding:10px 12px;font-size:13px}
 .fil button{flex:0 0 auto;padding:10px 16px;min-height:40px;font-size:13px}
-.hero{background:linear-gradient(135deg,var(--c2),var(--c));border:1px solid var(--b);border:12px;box-shadow:var(--sh)}
+.hero{background:linear-gradient(135deg,var(--c2),var(--c));border:1px solid var(--b);border-radius:18px;padding:22px;margin-bottom:12px;box-shadow:var(--sh)}
 .bal{font-size:34px;font-weight:800;letter-spacing:-1px}
 .bal span{color:var(--t2);font-size:22px}
 .wacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
@@ -258,9 +258,11 @@ function notify(userId,type,title,body,link,fromId){
     ref.child(id).update({id:id,type:type,title:title,body:body,link:link||null,read:false,createdAt:Date.now(),fromId:fromId||null,count:count});
   });
   
-  if(SID === userId && window.Notification && Notification.permission === 'granted'){
-    try { new Notification(title, { body: body, icon: LOGO_URL }); } catch(e){}
-  }
+  try {
+    if(SID === userId && window.Notification && Notification.permission === 'granted'){
+      new Notification(title, { body: body, icon: LOGO_URL });
+    }
+  } catch(e){}
   
   var u=D.users[userId];
   if(u&&u.tgId&&D.settings&&D.settings.tgToken){
@@ -296,7 +298,7 @@ auth.onAuthStateChanged(function(user){
 
 function render(){
   var u=me();
-  if(SID && Notification.permission === 'default') Notification.requestPermission();
+  try { if(SID && window.Notification && Notification.permission === 'default') Notification.requestPermission(); } catch(e){}
   if(SID&&FU&&!FU.emailVerified&&route.name!=='verify')route={name:'verify',params:{}};
   if(SID&&FU&&FU.emailVerified&&route.name==='verify')route={name:'home',params:{}};
   var isAuth=['login','register','verify','agreement'].indexOf(route.name)>=0;
@@ -363,6 +365,7 @@ function render(){
   document.getElementById('app').innerHTML=hdr+'<div class="wrap">'+body+'</div>'+fab+bNav;
   var m=document.getElementById('cmsgs');if(m)m.scrollTop=m.scrollHeight;
 }
+  
 // ============ СТРАНИЦЫ ============
 function pgLogin(){return'<div class="auth"><div class="acard"><div class="alogo"><img src="'+LOGO_URL+'"><span>Ghost<span class="mkt">Market</span></span></div><div class="asub">Площадка для учебных заданий</div><div class="card"><h2>Вход</h2><div id="aerr"></div><form onsubmit="doLogin(event)"><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Пароль" required><button class="full" type="submit">Войти</button></form><p class="hint" style="text-align:center;margin-top:12px">Нет аккаунта? <a onclick="nav(\'register\')">Зарегистрироваться</a></p></div></div></div>'}
 
@@ -421,7 +424,7 @@ function pgMyOrders(){
   var u=me();if(!u)return pgLogin();
   var list=Object.keys(D.orders).map(function(k){return D.orders[k]}).filter(function(o){return o.customerId===SID||o.executorId===SID}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
   if(!list.length)return'<h1>Мои</h1><div class="empty"><div class="empty-icon">📋</div>Заявок нет</div>';
-  return'<h1>Мои заявки</h1><div class="grid">'+list.map(function(o){var oid=o.customerId===SID?o.executorId:o.customerId;var oth=D.users[oid]||{};var w=oid?('С <a onclick="event.stopPropagation();nav(\'profile\',{uid:\''+oid+'\'})" style="color(o:var(--in)">'+esc(oth.title.fullName||'—'))++'</a>'):''Пока никого';return'</<div class="itemh" onclick="nav(\'order\',{id:\''+o.id+'\'})"><div class="cat">'+esc(o.category)+'</div><h3>'+esc3><div class="meta"><span class="price">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div><div class="hint" style="margin-top:6px">'+w+'</div></div>'}).join('')+'</div>';
+  return'<h1>Мои заявки</h1><div class="grid">'+list.map(function(o){var oid=o.customerId===SID?o.executorId:o.customerId;var oth=D.users[oid]||{};var w=oid?('С <a onclick="event.stopPropagation();nav(\'profile\',{uid:\''+oid+'\'})" style="color:var(--in)">'+esc(oth.fullName||'—')+'</a>'):'Пока никого';return'<div class="item" onclick="nav(\'order\',{id:\''+o.id+'\'})"><div class="cat">'+esc(o.category)+'</div><h3>'+esc(o.title)+'</h3><div class="meta"><span class="price">'+money(o.price)+'</span><span class="st st-'+o.status+'">'+(OS[o.status]||o.status)+'</span></div><div class="hint" style="margin-top:6px">'+w+'</div></div>'}).join('')+'</div>';
 }
 
 function pgProfile(p){
@@ -604,7 +607,7 @@ window.toggleVoice=function(){var btn=document.getElementById('voice-btn');if(me
 function clearRec(){var b=document.getElementById('voice-btn');if(b){b.classList.remove('rec');b.textContent='🎤'}var s=document.getElementById('rec-slot');if(s)s.innerHTML='';if(recTimer){clearInterval(recTimer);recTimer=null}}
 window.doDep=function(){var u=me();if(!u)return;var amt=Number(document.getElementById('dep-a').value);var cmt=document.getElementById('dep-c').value.trim();if(!amt||amt<10){toast('Минимум 10 ₽','error');return}var id=uid();DB.child('deps/'+id).set({id:id,userId:SID,publicId:u.publicId,amount:amt,comment:cmt,status:'pending',createdAt:Date.now()}).then(function(){toast('Заявка отправлена');nav('wallet',{tab:'dep'})})};
 window.doWd=function(){var u=me();if(!u)return;var amt=Number(document.getElementById('wd-a').value);var svc=document.getElementById('wd-s').value;var dst=document.getElementById('wd-d').value.trim();var mw=(D.settings&&D.settings.minWithdraw)||300;if(!amt||amt<mw){toast('Минимум '+money(mw),'error');return}if(amt>(u.balance||0)){toast('Недостаточно','error');return}if(dst.length<5){toast('Укажите реквизиты','error');return}var id=uid();DB.child('users/'+SID).update({balance:(u.balance||0)-amt}).then(function(){DB.child('wds/'+id).set({id:id,userId:SID,publicId:u.publicId,amount:amt,service:svc,dest:dst,status:'pending',createdAt:Date.now()});var t=uid();DB.child('txs/'+t).set({id:t,userId:SID,type:'withdrawal',amount:-amt,balanceAfter:(u.balance||0)-amt,createdAt:Date.now()});toast('Заявка создана');nav('wallet',{tab:'wd'})})};
-window.adminCredit=function(){var pid=document.getElementById('mc-i').value.trim();var amt=Number(document.getElementById('mc-a').value);var el=document.getElementById('mcr');if(!pid){el.innerHTML='<div class="err">Введите ID</div>';return}if(!amt||amt<=0){el.innerHTML='<div class="err">Введите сумму</div>';return}var res=uByPid(pid);if(!res){el.innerHTML='<div class="err">ID не найден</div>';return}var userId=res[0],uu=res[1];var nb=(uu.balance||0)+amt;DB.child('users/'+userId+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:userId,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});notify(userId,'credit','Баланс пополнен','Зачислено '+money(amt),'wallet');el.innerHTML='<div class="suc">✓ Зачислено '+money(amt)+' для <b>'+esc(uu.fullName)+'</b></div>';document.getElementById('mc-i').value=''})};
+window.adminCredit=function(){var pid=document.getElementById('mc-i').value.trim();var amt=Number(document.getElementById('mc-a').value);var el=document.getElementById('mcr');if(!pid){el.innerHTML='<div class="err">Введите ID</div>';return}if(!amt||amt<=0){el.innerHTML='<div class="err">Введите сумму</div>';return}var res=uByPid(pid);if(!res){el.innerHTML='<div class="err">ID не найден</div>';return}var userId=res[0],uu=res[1];var nb=(uu.balance||0)+amt;DB.child('users/'+userId+'/balance').set(nb).then(function(){varт t=uid и();DB.child('txs/'+t).set({id:t,userId:userId,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});notify(userId,'credit','Баланс пополнен','Зачислено '+money(amt),'wallet');el.innerHTML='<div class="suc">✓ Зачислено '+money(amt)+' для <b>'+esc(uu.fullName)+'</b></div>';document.getElementById('mc-i').value=''})};
 window.adminQuick=function(pid){var res=uByPid(String(pid));if(!res){toast('Не найден','error');return}var id=res[0],uu=res[1];var s=prompt('Зачислить '+uu.fullName+'\nБаланс: '+money(uu.balance||0)+'\n\nСумма:','300');if(s===null)return;var amt=Number(s);if(!amt||amt<=0)return;var nb=(uu.balance||0)+amt;DB.child('users/'+id+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:id,type:'deposit',amount:amt,balanceAfter:nb,createdAt:Date.now()});notify(id,'credit','Баланс пополнен','Зачислено '+money(amt),'wallet');toast('Зачислено','success');render()})};
 window.adminDep=function(id,act){var d=D.deps[id];if(!d||d.status!=='pending')return;if(act==='ok'){var uu=D.users[d.userId];if(!uu)return;var nb=(uu.balance||0)+d.amount;DB.child('users/'+d.userId+'/balance').set(nb).then(function(){var t=uid();DB.child('txs/'+t).set({id:t,userId:d.userId,type:'deposit',amount:d.amount,balanceAfter:nb,createdAt:Date.now()});DB.child('deps/'+id+'/status').set('approved');notify(d.userId,'dep','Пополнение','Зачислено '+money(d.amount),'wallet');toast('Зачислено');render()})}else{DB.child('deps/'+id+'/status').set('rejected').then(function(){toast('Отклонено');render()})}};
 window.adminWd=function(id,act){var w=D.wds[id];if(!w||w.status!=='pending')return;if(act==='ok'){DB.child('wds/'+id+'/status').set('completed').then(function(){notify(w.userId,'wd','Вывод выполнен','Заявка на '+money(w.amount),'wallet');toast('Готово');render()})}else{var uu=D.users[w.userId];if(uu){var nb=(uu.balance||0)+w.amount;DB.child('users/'+w.userId+'/balance').set(nb);var t=uid();DB.child('txs/'+t).set({id:t,userId:w.userId,type:'refund',amount:w.amount,balanceAfter:nb,createdAt:Date.now()})}DB.child('wds/'+id+'/status').set('rejected').then(function(){toast('Возвращено');render()})}};
