@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const BOT = '8753571434:AAGBQ_5bkCHCdkrb0olq0gfxJ9CFF7IAcDg';
+  const BOT = '8753571434:AAEPVYENupGmGPVgHzjQhspQrhPydKSvUp8';
   const URL = 'https://studentmarket-tdjy.vercel.app/api/tg-webhook';
   try {
     await fetch('https://api.telegram.org/bot' + BOT + '/deleteWebhook');
