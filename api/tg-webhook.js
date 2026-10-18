@@ -1,18 +1,18 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(200).send('OK');
 
-  const BOT = '8753571434:AAGBQ_5bkCHCdkrb0olq0gfxJ9CFF7IAcDg';
+  const BOT = '8753571434:AAEPVYENupGmGPVgHzjQhspQrhPydKSvUp8';
   const GROUP = -5410980425;
 
   try {
     const u = req.body;
-    if (!u || !u.message) return res.status(200).json({     ok:true});
+    if (!u || !u.message) return res.status(200).json({ok:true});
     const msg = u.message;
 
     if (msg.chat.type === 'private') {
       const uid = msg.chat.id;
       const who = (msg.from.first_name || '') + (msg.from.last_name ? ' ' + msg.from.last_name : '');
- const nick = msg.from.username ? ' (@' + msg.from.username + ')' : '';
+      const nick = msg.from.username ? ' (@' + msg.from.username + ')' : '';
       const text = msg.text || '';
 
       if (text.startsWith('/start')) {
